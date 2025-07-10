@@ -1,0 +1,217 @@
+<div class="row" style="width: 101%">
+  <!--------------------------------------codigo Nuevo---------------------------------->
+  <dx-load-indicator
+    id="large-indicator-custom"
+    indicatorSrc="assets/img/loading1.gif"
+    height="50"
+    width="50"
+    [visible]="loadIndicatorVisible"
+  ></dx-load-indicator>
+  <dx-data-grid
+    [dataSource]="dataSourceUsers"
+    [remoteOperations]="true"
+    [showBorders]="true"
+    [showColumnLines]="true"
+    [showRowLines]="true"
+    [showBorders]="true"
+    [rowAlternationEnabled]="true"
+    (onSaving)="onSaving($event)"
+    height="80vh"
+    [twoWayBindingEnabled]="false"
+    [allowColumnResizing]="true"
+    (onExporting)="onExporting($event)"
+  >
+    <dxo-export [enabled]="true"></dxo-export>
+    <dxo-filter-row [visible]="false"></dxo-filter-row>
+    <dxo-header-filter [visible]="true" allowSearch="true"></dxo-header-filter>
+    <dxo-group-panel [visible]="false"></dxo-group-panel>
+    <dxo-scrolling mode="virtual"></dxo-scrolling>
+
+    <dxo-editing
+      mode="popup"
+      [allowAdding]="true"
+      [allowUpdating]="true"
+      [allowDeleting]="true"
+      [useIcons]="true"
+    >
+      <dxo-popup
+        title="Add/Edit Users"
+        [showTitle]="true"
+        [width]="700"
+        [height]="525"
+      >
+      </dxo-popup>
+      <dxo-form>
+        <dxi-item itemType="group" [colCount]="1" colSpan="2">
+          <dxi-item
+            dataField="Nombre"
+            editorType="dxTextBox"
+            [editorOptions]="{
+              placeholder: 'Nombre',
+              showClearButton: true
+            }"
+          ></dxi-item>
+
+          <dxi-item
+            dataField="Apellido"
+            editorType="dxTextBox"
+            [editorOptions]="{
+              placeholder: 'Apellido',
+              showClearButton: true
+            }"
+          ></dxi-item>
+
+          <dxi-item
+            dataField="Email"
+            editorType="dxTextBox"
+            [editorOptions]="{
+              placeholder: 'Email',
+              showClearButton: true
+            }"
+          ></dxi-item>
+
+          <dxi-item
+            dataField="Role"
+            editorType="dxLookup"
+            [editorOptions]="{
+              dataSource: dataSourceRoles,
+              displayExpr: 'Role',
+              valueExpr: 'Role'
+            }"
+          >
+            <dxo-label text="Role"> </dxo-label>
+            <dxi-validation-rule type="required" message="Role Required">
+            </dxi-validation-rule>
+          </dxi-item>
+
+          <!-- <dxi-item
+            dataField="Nombre"
+            editorType="dxLookup"
+            [editorOptions]="{
+              dataSource: dataSourceUsers,
+              displayExpr: 'Nombre',
+              valueExpr: 'Nombre'
+            }"
+          >
+            <dxo-label text="Nombre"></dxo-label>
+            <dxi-validation-rule
+              type="required"
+              message="Required Name"
+            ></dxi-validation-rule>
+          </dxi-item>  -->
+
+          <dxi-item
+            dataField="isActive"
+            editorType="dxSwitch"
+            [editorOptions]="{
+              dataSource: dataSourceRoles,
+              displayExpr: 'active',
+              valueExpr: 'active',
+              switchedOnText: 'Yes',
+              switchedOffText: 'NO',
+              width: 80
+            }"
+          >
+            <dxo-label location="left"></dxo-label>
+          </dxi-item>
+        </dxi-item>
+      </dxo-form>
+    </dxo-editing>
+
+    <!---------------------Data grid para que se muestre una tabla dentro de agregar user--------------------->
+    <div
+      *dxTemplate="let cellInfo of 'singleDropDownBoxEditor'"
+      style="margin-top: 10px"
+    >
+      <dx-drop-down-box
+        [dataSource]="dataSourceUsers"
+        [(value)]="cellInfo.value"
+        [displayExpr]="getDisplayExpr"
+        valueExpr="Nombre"
+        contentTemplate="contentTemplate"
+      >
+        <div *dxTemplate="let e of 'contentTemplate'">
+          <dx-data-grid
+            [dataSource]="dataSourceUsers"
+            [remoteOperations]="true"
+            [height]="250"
+            [keyExpr]="'Nombre'"
+            [selectedRowKeys]="[cellInfo.value]"
+            [focusedRowEnabled]="true"
+            [focusedRowKey]="cellInfo.value"
+            [hoverStateEnabled]="true"
+            (onSelectionChanged)="
+              onSelectionChanged($event.selectedRowKeys, cellInfo, e.component)
+            "
+          >
+            <dxo-search-panel
+              [visible]="true"
+              [searchVisibleColumnsOnly]="true"
+            ></dxo-search-panel>
+            <!-- <dxi-column dataField="badgeNumber" caption="Badge"></dxi-column> -->
+            <dxi-column dataField="Nombre" caption="Nombre"></dxi-column>
+            <!-- <dxi-column dataField="planta" caption="Plant"></dxi-column> -->
+            <dxo-paging [enabled]="true" [pageSize]="10"></dxo-paging>
+            <dxo-scrolling mode="virtual"></dxo-scrolling>
+            <dxo-selection mode="single"></dxo-selection>
+          </dx-data-grid>
+        </div>
+      </dx-drop-down-box>
+    </div>
+    <!------------------------------------Data grid principal de la tabla---------------------------------------------->
+
+    <dxo-search-panel [visible]="true" [width]="100"></dxo-search-panel>
+    <dxi-column dataField="Nombre" caption="Nombre"> </dxi-column>
+    <dxi-column dataField="Apellido" caption="Apellido"> </dxi-column>
+    <dxi-column dataField="Email" caption="Email"> </dxi-column>
+    <dxi-column alignment="center" dataField="Role" caption="Role">
+      <!-- <dxo-lookup
+        [dataSource]="datasourceroles"
+        valueExpr="idRole"
+        displayExpr="roleName"
+      >
+      </dxo-lookup> -->
+    </dxi-column>
+    <!-- <dxi-column
+      alignment="center"
+      dataField="creationDate"
+      dataType="datetime"
+      caption="Creation Date"
+    ></dxi-column> -->
+    <!-- <dxi-column
+      alignment="center"
+      dataField="createdByIdUser"
+      caption="Created By"
+    >
+      <dxo-lookup
+        [dataSource]="datasourceMixto"
+        valueExpr="idUser"
+        displayExpr="fullNameBadge"
+      >
+      </dxo-lookup>
+    </dxi-column> -->
+    <!-- <dxi-column
+      alignment="center"
+      dataField="modificationDate"
+      dataType="datetime"
+      caption="Modification Date"
+    ></dxi-column> -->
+    <!-- <dxi-column
+      alignment="center"
+      dataField="modifiedByIdUser"
+      caption="Modified By"
+    >
+      <dxo-lookup
+        [dataSource]="datasourceMixto"
+        valueExpr="idUser"
+        displayExpr="fullNameBadge"
+      >
+      </dxo-lookup>
+    </dxi-column> -->
+    <dxi-column
+      alignment="center"
+      dataField="isActive"
+      caption="Is Active"
+    ></dxi-column>
+  </dx-data-grid>
+</div>

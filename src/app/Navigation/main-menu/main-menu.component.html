@@ -1,0 +1,113 @@
+<!-- <ng-container *ngIf="isLogin else elseTemplate">
+
+<app-header (OpenSideBar)="OpenSideBar($event)"></app-header>
+
+<div id="sidebar">
+    <div class="left">
+
+      <div>
+  
+        <dx-load-indicator
+          *ngIf="loadIndicatorVisible"
+          id="large-indicator-custom"
+          indicatorSrc="assets/img/loading1.gif"
+          height="50"
+          width="50"
+          [visible]="loadIndicatorVisible"
+        ></dx-load-indicator>
+  
+      </div>
+
+      <dx-list
+        class="list"
+        [width]="190"
+        [dataSource]="loadIndicatorVisible ? [] : menuCustom2"
+        [grouped]="true"
+        selectionMode="single"
+        [collapsibleGroups]="true"
+        itemTemplate="data"
+        [noDataText]="loadIndicatorVisible ? 'Loading...' : 'No data available'"
+        [pullRefreshEnabled]="false"
+        (onItemClick)="OpenSideBar($event)"
+        (onContentReady)="onContentReady($event)"
+      >
+
+        <div *dxTemplate="let item of 'data'">
+          <a routerLink="{{item.route}}" class="name">
+              <div class="menu-name">
+                <mat-icon>{{item.icons}} </mat-icon> {{ item.nameView }}
+              </div>
+          </a>
+        </div>
+
+        <div *dxTemplate="let item of 'group'">
+          <div>{{ item.nameMenu}}</div>
+        </div>
+      
+      </dx-list>
+      
+    </div>
+</div>
+
+
+<div id="main" #content>
+	<router-outlet></router-outlet>
+</div> 
+
+
+
+</ng-container>
+
+  <ng-template #elseTemplate>
+ 
+  </ng-template> -->
+
+
+
+<ng-container *ngIf="isLogin else elseTemplate">
+
+  <app-header (OpenSideBar)="OpenSideBar($event)"></app-header>
+
+  <div id="sidebar" [class.active]="sidebarOpen">
+    <div class="sidebar-header">
+      <img src="assets/img/logoFila.png" alt="Filadelfia" class="sidebar-logo">
+      <span class="sidebar-title">Menú</span>
+        <button class="close-btn" (click)="OpenSideBar($event)">
+          <mat-icon>close</mat-icon>
+        </button>
+    </div>
+    <ul class="sidebar-menu">
+      <li *ngFor="let group of menuCustom2; let i = index">
+        <div class="group-title" (click)="toggleGroup(i)">
+          <mat-icon class="group-icon">folder</mat-icon>
+          {{ group.nameMenu }}
+          <mat-icon class="expand-icon">
+            {{ openGroupIndex === i ? 'expand_less' : 'expand_more' }}
+          </mat-icon>
+        </div>
+        <ul *ngIf="group.items && openGroupIndex === i" class="submenu">
+          <li *ngFor="let item of group.items">
+            <a [routerLink]="item.route" (click)="OpenSideBar($event)">
+              <mat-icon class="submenu-icon">{{ item.icons }}</mat-icon>
+              {{ item.nameView }}
+            </a>
+          </li>
+        </ul>
+      </li>
+    </ul>
+    <div class="sidebar-user">
+      <mat-icon>account_circle</mat-icon>
+        Daniel Ortega
+    </div>
+  </div>
+ 
+
+  <div id="main" [class.active]="sidebarOpen">
+    <router-outlet></router-outlet>
+  </div>
+
+</ng-container>
+
+<ng-template #elseTemplate>
+  <!-- <app-unauthorized></app-unauthorized> -->
+</ng-template>

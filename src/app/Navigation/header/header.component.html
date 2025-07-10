@@ -1,0 +1,52 @@
+<header>
+    <button class="menu-button"
+     type="button" 
+     aria-label="Toggle sidenav" 
+     mat-icon-button
+     (click)="SendEvent($event)"
+     
+    >
+      <mat-icon style="margin-top: -1px;" aria-label="Side nav toggle icon">menu</mat-icon>
+    </button>
+    
+    <div class="logo">
+      <a href="#">
+        <img src="assets/img/logoFila.png" alt="Logo">
+      </a>
+    </div>
+
+    <div class="title-container">
+      <div  *ngIf="title == '' || title == null" class="title-header">Filadelfia CUU App</div>
+      <div  class="title-header">
+        {{title}}
+      </div>
+    </div>
+    <div class="subtitle">
+      <!-- Home
+      <div>
+        {{userName}}
+      </div> -->
+
+      <div *ngIf="title == '' || title == undefined ">
+                   
+            <div>WELCOME:
+
+              <dx-load-indicator
+                id="large-indicator"
+                indicatorSrc="assets/img/loading1.gif"
+                height="30"
+                width="30"
+                backgroundColor = "white"
+                [visible]="loadIndicatorVisible"
+              ></dx-load-indicator> 
+
+            </div>
+          <div> Daniel Ortega</div>
+          <!-- <div> {{employeeName}} {{employeelastName}} {{employeelastName2}}</div> -->
+          </div>
+        
+          <div *ngIf="title != ''">Filadelfia CUU<br> {{employeeName}} {{employeelastName}} {{employeelastName2}} </div>  
+          <!-- <div *ngIf="title != ''">Filadelfia CUU App<br> {{employeeName}} {{employeelastName}} {{employeelastName2}} </div>   -->
+      </div>
+    
+  </header>

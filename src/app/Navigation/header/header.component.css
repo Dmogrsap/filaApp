@@ -1,0 +1,69 @@
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 60px;
+    background: linear-gradient(90deg, rgb(189, 189, 190) 0%, rgb(0, 0, 0) 50%, rgb(189, 189, 190) 100%);
+    color: white;
+    font-family: 'Segoe UI Light', Tahoma, Geneva, Verdana, sans-serif !important;
+    width: 100%;
+    position: sticky;
+    top: 0;
+    z-index: 999;
+    
+  }
+  
+  .logo {
+    flex: 1;
+  }
+  
+  .logo img {
+    max-width: 120px;
+    height: auto;
+  }
+  
+  .title-container {
+      flex: 1;
+      border-bottom: 60.2px solid #414040;
+      border-left: 25px solid transparent;
+      border-right: 25px solid transparent;
+      height: 0px;
+      width: 100%;
+      min-width: 172px;
+      position: relative;
+  }
+  
+  .title-header{
+    text-align: center;
+    font-size: 35px;
+    position: absolute;
+    top:15px;
+    width: 100%;
+    white-space:nowrap;
+  }
+  
+  .subtitle {
+    flex: 1;
+    text-align: right;
+    font-size: 18px;
+    padding: 20px;
+  }
+  
+  .menu-button {
+        background-color: transparent;
+        border: none;
+        cursor: pointer;
+        
+      }
+      
+      .mat-icon {
+        
+        color: white;
+        margin: 5px;
+  }
+
+
+  #large-indicator{
+    margin-bottom: -1.5%;
+    color: red; 
+  } 

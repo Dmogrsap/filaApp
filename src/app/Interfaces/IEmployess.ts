@@ -1,0 +1,23 @@
+export interface IEmployess{
+    idEmpleado: number,
+    numEmpleado: number,
+    nombre: string,
+    apellido1: string,
+    apellido2: string,
+    planta: string,
+    categoria: string,
+    puesto: string,
+    fechaNacimiento: Date,
+    fechaAntiguedad: Date,
+    idJefe: number,
+    jefe: string,
+    saldoVacaciones: number,
+    nss: string,
+    tipoEmpleado: string,
+    status: string,
+    badgeNumber: string,
+    fullName: string,
+    idUser: number,
+    idRole: number,
+    active: boolean
+}
