@@ -2,6 +2,9 @@ body {
       margin: 0;
       font-family: Arial, sans-serif;
       background-color: #f4f4f4;
+       min-height: 100vh;
+      display: flex;
+      flex-direction: column;
     }
 
     footer {
@@ -9,7 +12,10 @@ body {
       color: #fff;
       text-align: center;
       padding: 20px 0;
+        flex-shrink: 0;
     }
+
+
 
     .social-icons {
       margin: 10px 0;
@@ -51,3 +57,27 @@ body {
       margin-top: 10px;
       color: #aaa;
     }
+
+/* Estilos para el contenedor de la imagen */
+.imgPpl {
+  display: flex;             /* Habilita Flexbox */
+  justify-content: center;   /* Centra horizontalmente el contenido (la imagen) */
+  margin-bottom: 20px;       /* Añade una separación de 20px debajo de la imagen */
+  /* Puedes ajustar 20px a un valor más pequeño si quieres "muy poco" (ej: 10px, 5px) */
+}
+
+/* Estilos para la imagen dentro del contenedor */
+.imgPpl img {
+  /* Elimina los estilos inline del HTML para manejarlos mejor en CSS */
+  width: 100%;
+  height: auto; /* Mantener la proporción, no uses height: 10%; directamente si no controlas el ancho */
+  max-width: 800px; /* O un valor que consideres adecuado para que no sea demasiado grande */
+  display: block; /* Asegura que la imagen se comporte como un bloque para un mejor control */
+}
+
+.tituloFondo h1 {
+  text-align: center;
+  color: #333; /* Cambia el color del texto según tu preferencia */
+  font-size: 2em; /* Ajusta el tamaño de la fuente */
+  margin-top: -10px; /* Añade margen para separar del resto del contenido */
+}
