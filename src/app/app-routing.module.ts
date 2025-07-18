@@ -45,7 +45,7 @@ const routes: Routes = [
         path: 'users',
         //canLoad:[HasRoleGuard],
         component: UsersComponent,
-        data: { title: 'Usuarios', url: 'users',  allowedRoles:['Administrator, Developers'] }
+        data: { title: 'Usuarios', url: 'users' }
       },
 
       {

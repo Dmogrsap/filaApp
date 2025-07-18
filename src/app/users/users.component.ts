@@ -42,7 +42,7 @@ export class UsersComponent implements OnInit {
     this.userService.getUsers().subscribe((result) => {
       this.dataSourceUsers = result.sort((a, b) => a.Nombre.localeCompare(b.Nombre));
       this.loadIndicatorVisible = false;
-      console.log('DataSource', this.dataSourceUsers);
+      //console.log('DataSource', this.dataSourceUsers);
 
       this.usersMultimedia = [];
       for (let i = 0; i < this.dataSourceUsers.length; i++) {
@@ -52,7 +52,7 @@ export class UsersComponent implements OnInit {
         }
       }
 
-      console.log('usersMultimedia', this.usersMultimedia);
+      //console.log('usersMultimedia', this.usersMultimedia);
     });
 
     this.rolesService.getRoles().subscribe((result) => {

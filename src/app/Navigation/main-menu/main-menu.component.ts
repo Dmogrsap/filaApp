@@ -266,7 +266,15 @@ export class MainMenuComponent implements OnInit {
   ngOnInit(): void {
     this.mainMenu.getMenusWithSubmenus().subscribe((data) => {
       this.menusSub = data;
-      console.log('this.submenu', this.menusSub);
+      //console.log('this.submenu', this.menusSub);
+    });
+
+    this.mainMenu.getMenus().subscribe((result) => {
+      this.dataSourceMenus = result.sort((a, b) =>
+        a.Nombre.localeCompare(b.Nombre)
+      );
+      this.loadIndicatorVisible = false;
+      //console.log('DataSource', this.dataSourceMenus);
     });
 
     this.mainMenu.getMenus().subscribe((result) => {
@@ -275,8 +283,26 @@ export class MainMenuComponent implements OnInit {
       );
       this.loadIndicatorVisible = false;
       console.log('DataSource', this.dataSourceMenus);
+
+      this.mainMenu.getsubMenus().subscribe((data) => {
+        this.menusSub = data;
+        // 💡 Asociar submenús a cada menú
+        this.dataSourceMenus.forEach((menu) => {
+          // Inicializa el arreglo 'items' si no existe
+          menu.items = [];
+
+          // Filtra los submenús cuyo nameMenu coincide con el Nombre del menú
+          const submenusRelacionados = this.menusSub.filter(
+            (sub) => sub.nameMenu === menu.Nombre
+          );
+
+          // Asigna los submenús filtrados al campo 'items' del menú
+          menu.items.push(...submenusRelacionados);
+        });
+
+        console.log('Menús con submenús:', this.dataSourceMenus);
+      });
     });
-    
 
     this.menuFila = [
       {

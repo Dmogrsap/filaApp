@@ -77,10 +77,10 @@
         </button>
     </div>
     <ul class="sidebar-menu">
-      <li *ngFor="let group of menuCustom2; let i = index">
+      <li *ngFor="let group of dataSourceMenus; let i = index">
         <div class="group-title" (click)="toggleGroup(i)">
           <mat-icon class="group-icon">folder</mat-icon>
-          {{ group.nameMenu }}
+          {{ group.Nombre }}
           <mat-icon class="expand-icon">
             {{ openGroupIndex === i ? 'expand_less' : 'expand_more' }}
           </mat-icon>
@@ -89,7 +89,7 @@
           <li *ngFor="let item of group.items">
             <a [routerLink]="item.route" (click)="OpenSideBar($event)">
               <mat-icon class="submenu-icon">{{ item.icons }}</mat-icon>
-              {{ item.nameView }}
+              {{ item.Nombre }}
             </a>
           </li>
         </ul>

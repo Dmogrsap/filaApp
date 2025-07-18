@@ -44,6 +44,11 @@ export class MainMenuService {
     );
   }
 
+    getsubMenus(): Observable<any[]> {
+    const menusRefRef = collection(this.firestore, 'submenus');
+    return collectionData(menusRefRef, { idField: 'id' });
+  }
+
 
   // getCurrentUser(): Observable<any>{
   //   return this.http.get<any>(`${this.apiUrl}/CurrentUser`,{ withCredentials: true });
