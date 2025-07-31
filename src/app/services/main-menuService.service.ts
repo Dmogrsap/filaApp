@@ -15,14 +15,13 @@ import {
 } from '@angular/fire/firestore';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class MainMenuService {
-
   public _refresh$ = new Subject<void>();
   // private apiUrl = environment.baseUrl;
 
-  constructor(private http: HttpClient, private firestore: Firestore) { }
+  constructor(private http: HttpClient, private firestore: Firestore) {}
 
   getMenus(): Observable<any[]> {
     const menusRefRef = collection(this.firestore, 'Menus');
@@ -33,10 +32,13 @@ export class MainMenuService {
     const menusRef = collection(this.firestore, 'Menus');
     return collectionData(menusRef, { idField: 'id' }).pipe(
       switchMap((menus: any[]) => {
-        const menuWithSubs$ = menus.map(menu => {
-          const submenusRef = collection(this.firestore, `Menus/${menu.id}/Submenus`);
+        const menuWithSubs$ = menus.map((menu) => {
+          const submenusRef = collection(
+            this.firestore,
+            `Menus/${menu.id}/Submenus`
+          );
           return collectionData(submenusRef, { idField: 'id' }).pipe(
-            map(submenus => ({ menu, submenus }))
+            map((submenus) => ({ menu, submenus }))
           );
         });
         return forkJoin(menuWithSubs$);
@@ -44,34 +46,17 @@ export class MainMenuService {
     );
   }
 
-    getsubMenus(): Observable<any[]> {
+  getsubMenus(): Observable<any[]> {
     const menusRefRef = collection(this.firestore, 'submenus');
     return collectionData(menusRefRef, { idField: 'id' });
   }
 
-
   // getCurrentUser(): Observable<any>{
   //   return this.http.get<any>(`${this.apiUrl}/CurrentUser`,{ withCredentials: true });
   // }
-  
+
   // getCurrentUser(): Observable<any>{
   //   return this.http.get<any>(`${this.apiUrl}/CurrentUser`,{ withCredentials: true });
-  // }
-  
-  // getEmployeesByBadge(badge:string){
-  //   return this.http.get<any>(`${this.apiUrl}/CrossBadgeEmpleado/GetBadge?badge=${badge}`, { withCredentials: true });
-  // }
-
-  // getMenu(): Observable<any>{
-  //   return this.http.get<any>(`${this.apiUrl}/Menu/Get`, { withCredentials: true });
-  // }
-
-  // getAccesses(): Observable<any>{
-  //   return this.http.get<any>(`${this.apiUrl}/Accesses/Get`, { withCredentials: true });
-  // }
-
-  // getMenusSubmenus( role: number): Observable<any> {
-  //   return this.http.get<any>(`${this.apiUrl}/Menu/GetRole?role=${role}`, { withCredentials: true });
   // }
 
   // putMenu(id: number, menu: IMenu ) {
@@ -97,5 +82,4 @@ export class MainMenuService {
   // getAccessesRole(idRole: number): Observable<any> {
   //   return this.http.get<any>(`${this.apiUrl}/Menu/GetGroup?role=${idRole}`, { withCredentials: true });
   // }
-
 }
