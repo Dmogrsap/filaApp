@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { UsersService } from '../services/usersService.service';
 import { RolesService } from '../services/rolesService.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-lideres',
@@ -37,11 +38,10 @@ export class LideresComponent implements OnInit {
             // Verifica si el rol es 'pastor' (exacto) o si incluye 'lider'
             return userRole === 'pastor' || userRole.includes('lider');
           });
-        
-
-        console.log('datasourceLideres', this.datasourceLideres);
       }
+      console.log('datasourceLideres', this.datasourceLideres);
     });
+
 
     this.rolesService.getRoles().subscribe((result) => {
       this.dataSourceRoles = result.sort((a, b) =>
@@ -50,6 +50,8 @@ export class LideresComponent implements OnInit {
       //console.log('dataSourceRoles', this.dataSourceRoles);
     });
   }
+
+
 
   // Additional methods for the component can be added here
 }
