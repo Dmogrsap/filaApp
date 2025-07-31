@@ -5,6 +5,8 @@ import { HeaderComponent } from './Navigation/header/header.component';
 import { HomeComponent } from './Navigation/home/home.component';
 import { UsersComponent } from './users/users.component';
 import { RolesComponent } from './roles/roles.component';
+import { LideresComponent } from './lideres/lideres.component';
+import { AccessComponent } from './access/access.component';
 
 const routes: Routes = [
   { 
@@ -21,12 +23,12 @@ const routes: Routes = [
         data: { title: 'Filadelfia CUU App', url: '', allowedRoles:['']}
       },
 
-      // {
-      //   path: 'accesses',
-      //   // canLoad:[HasRoleGuard],
-      //   component: AccessesComponent,
-      //   data: { title: 'Accesses', url: 'accesses', allowedRoles:['Administrator, Developers'] }
-      // },
+      {
+        path: 'access',
+        // canLoad:[HasRoleGuard],
+        component: AccessComponent,
+        data: { title: 'Accesos', url: 'access' }
+      },
 
       // {
       //   path: 'activemenus',
@@ -46,6 +48,13 @@ const routes: Routes = [
         //canLoad:[HasRoleGuard],
         component: UsersComponent,
         data: { title: 'Usuarios', url: 'users' }
+      },
+
+      {
+        path: 'lideres',
+        //canLoad:[HasRoleGuard],
+        component: LideresComponent,
+        data: { title: 'Lideres', url: 'lideres' }
       },
 
       {

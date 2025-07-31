@@ -26,6 +26,8 @@ import { initializeApp,provideFirebaseApp } from '@angular/fire/app';
 import { environment } from '../environments/environment';
 import { provideAuth,getAuth } from '@angular/fire/auth';
 import { provideFirestore,getFirestore } from '@angular/fire/firestore';
+import { LideresComponent } from './lideres/lideres.component';
+import { AccessComponent } from './access/access.component';
 
 
 @NgModule({
@@ -36,6 +38,8 @@ import { provideFirestore,getFirestore } from '@angular/fire/firestore';
     HomeComponent,
     UsersComponent,
     RolesComponent,
+    LideresComponent,
+    AccessComponent,
  
   ],
   imports: [

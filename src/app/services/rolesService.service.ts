@@ -42,7 +42,7 @@ export class RolesService {
     return updateDoc(userRef, user);
   }
 
-  deleteUser(id: string): Promise<void> {
+  deleteRoles(id: string): Promise<void> {
     const userRef = doc(this.firestore, 'Roles', id);
     return deleteDoc(userRef);
   }

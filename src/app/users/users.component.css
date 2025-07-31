@@ -8,17 +8,6 @@
     color: red;
 }
 
-/* ::ng-deep  .dx-popup-title {
-  color: white;
-  background-color:  #004b78;
-}
-
-::ng-deep  .dx-popup-bottom.dx-toolbar {
-  padding: 20px;
-  overflow: visible;
-  background-color:  #004b78;
-} */
-
 ::ng-deep .dx-popup-draggable .dx-button-content {
   color:whitesmoke;
   background:  rgb(51, 51, 51);
