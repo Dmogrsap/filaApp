@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MainMenuService } from '../services/main-menuService.service';
+import { AccessService } from '../services/access.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-access',
@@ -13,29 +15,108 @@ export class AccessComponent implements OnInit {
   loadIndicatorVisible = true;
   selectedRows: [] = [];
 
-  constructor(private mainMenu: MainMenuService) {}
+  constructor(private mainMenu: MainMenuService, private accessService: AccessService) {}
 
   ngOnInit(): void {
     this.dataSourceMenusTab = [{ Nombre: 'Add/ Edit Menus' }, { Nombre: 'Add/ Edit subMenus' }];
 
-    this.mainMenu.getMenus().subscribe((result) => {
+    this.accessService.getMenus().subscribe((result) => {
       this.dataSourceMenus = result.sort((a, b) =>
         a.Nombre.localeCompare(b.Nombre)
       );
       this.loadIndicatorVisible = false;
-      console.log('DataSource', this.dataSourceMenus);
+      //console.log('DataSource', this.dataSourceMenus);
     });
 
-    this.mainMenu.getsubMenus().subscribe((result) => {
+    this.accessService.getsubMenus().subscribe((result) => {
       this.dataSourcesubMenus = result.sort((a, b) =>
         a.Nombre.localeCompare(b.Nombre)
       );
       this.loadIndicatorVisible = false;
-      console.log('DataSourceSubMenus', this.dataSourcesubMenus);
+      //console.log('DataSourceSubMenus', this.dataSourcesubMenus);
     });
   }
 
   onSaving(e: any) {
+    const change = e.changes[0];
+    // this.userService.getUsers().subscribe((result) => {
+    //   this.dataSourceUsers = result;
+    // });
+    if (change) {
+      e.cancel = false;
+    }
+    if (change.type == 'insert') {
+      // Limpia los campos no válidos
+      const cleanData = { ...change.data };
+      Object.keys(cleanData).forEach((key) => {
+        if (/^__.*__$/.test(key)) {
+          delete cleanData[key];
+        }
+      });
+      this.accessService.addMenus(cleanData).then((docRef) => {
+        //console.log('Usuario agregado con ID:', docRef.id);
+        Swal.fire({
+          icon: 'success',
+          title: 'success',
+          text: 'User Added Successfully!',
+        });
+        // this.rolesService.getRoles().subscribe((result) => {
+        //   this.dataSourceRoles = result.sort((a, b) =>
+        //     a.Role.localeCompare(b.Role)
+        //   );
+        //   console.log('Roles', this.dataSourceRoles);
+        // });
+      });
+    }
+    // if (change.type == 'update') {
+    //   // Limpia los campos no válidos
+    //   const cleanData = { ...change.data };
+    //   Object.keys(cleanData).forEach((key) => {
+    //     if (/^__.*__$/.test(key)) {
+    //       delete cleanData[key];
+    //     }
+    //   });
+    //   this.rolesService.updateRoles(change.key.id, cleanData).then(() => {
+    //     //console.log('Usuario actualizado');
+    //     Swal.fire({
+    //       icon: 'success',
+    //       title: 'success',
+    //       text: 'User Updated Successfully!',
+    //     });
+    //     this.rolesService.getRoles().subscribe((result) => {
+    //       this.dataSourceRoles = result.sort((a, b) =>
+    //         a.Role.localeCompare(b.Role)
+    //       );
+    //       //console.log('Roles', this.dataSourceRoles);
+    //     });
+    //   });
+    // }
+    // if (change.type == 'remove') {
+    //   const id = typeof change.key === 'string' ? change.key : change.key.id;
+    //   this.rolesService.deleteRoles(id).then(() => {
+    //     Swal.fire({
+    //       icon: 'success',
+    //       title: 'success',
+    //       text: 'User Eliminated',
+    //     });
+    //     this.rolesService.getRoles().subscribe((result) => {
+    //       this.dataSourceRoles = result.sort((a, b) =>
+    //         a.Role.localeCompare(b.Role)
+    //       );
+    //       console.log('Roles', this.dataSourceRoles);
+    //     });
+    //   });
+    // }
+    // if (change.type == 'refresh') {
+    //   this.rolesService.getRoles().subscribe((result) => {
+    //     this.dataSourceRoles = result.sort((a, b) =>
+    //       a.Role.localeCompare(b.Role)
+    //     );
+    //   });
+    // }
+  }
+
+    onSaving1(e: any) {
     // const change = e.changes[0];
     // // this.userService.getUsers().subscribe((result) => {
     // //   this.dataSourceUsers = result;

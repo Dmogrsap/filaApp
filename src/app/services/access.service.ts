@@ -29,7 +29,12 @@ export class AccessService {
   }
 
   getsubMenus(): Observable<any[]> {
-    const menusRefRef = collection(this.firestore, 'submenus');
-    return collectionData(menusRefRef, { idField: 'id' });
+    const menusRef = collection(this.firestore, 'submenus');
+    return collectionData(menusRef, { idField: 'id' });
+  }
+
+  addMenus(user: any): Promise<any> {
+    const menusRef = collection(this.firestore, 'Menus');
+    return addDoc(menusRef, user);
   }
 }

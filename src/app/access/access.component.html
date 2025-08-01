@@ -7,196 +7,251 @@
                 </dxi-item>
               </dx-tab-panel> -->
 
-
 <dx-tab-panel
-    height="87vh" 
-    width="100%"
-    [dataSource]="dataSourceMenusTab"
-    [selectedIndex]="0"
-    [loop]="false"
-    [animationEnabled]="true"
-    [swipeEnabled]="true"
-    [scrollingEnabled]= "true"
+  height="87vh"
+  width="100%"
+  [dataSource]="dataSourceMenusTab"
+  [selectedIndex]="0"
+  [loop]="false"
+  [animationEnabled]="true"
+  [swipeEnabled]="true"
+  [scrollingEnabled]="true"
+>
+  <dxo-scrolling mode="virtual"></dxo-scrolling>
 
-    >
-    <dxo-scrolling mode="virtual"></dxo-scrolling>
-
-    <div *dxTemplate="let titulo of 'title'">
-    <span id="titles">{{titulo.Nombre}}</span>
-    </div>
-    <div *dxTemplate="let items of 'item'">
+  <div *dxTemplate="let titulo of 'title'">
+    <span id="titles">{{ titulo.Nombre }}</span>
+  </div>
+  <div *dxTemplate="let items of 'item'">
     <div class="tabpanel-item">
-        <div *ngIf="items.Nombre == 'Add/ Edit subMenus'" class="container-fluid">
+      <div *ngIf="items.Nombre == 'Add/ Edit subMenus'" class="container-fluid">
+        <dx-data-grid
+          id="grid"
+          [dataSource]="dataSourcesubMenus"
+          [remoteOperations]="true"
+          [showBorders]="true"
+          [showColumnLines]="true"
+          [showRowLines]="true"
+          [rowAlternationEnabled]="true"
+          (onSaving)="onSaving1($event)"
+          height="70vh"
+          [twoWayBindingEnabled]="true"
+          [selectedRowKeys]="selectedRows"
+          (onExporting)="onExporting($event)"
+          [allowColumnResizing]="true"
+        >
+          <dxo-grouping #expand [autoExpandAll]="true"> </dxo-grouping>
+          <dxo-export [enabled]="true"></dxo-export>
+          <dxo-filter-row [visible]="false"></dxo-filter-row>
+          <dxo-header-filter
+            [visible]="true"
+            allowSearch="true"
+          ></dxo-header-filter>
+          <dxo-group-panel [visible]="true"></dxo-group-panel>
+          <dxo-scrolling mode="virtual"></dxo-scrolling>
 
-            <dx-data-grid  
-            id="grid"
-            [dataSource]="dataSourcesubMenus" 
-            [remoteOperations]="true" 
-            [showBorders]="true"
-            [showColumnLines]="true" 
-            [showRowLines]="true" 
-            [rowAlternationEnabled]="true" 
-            (onSaving)="onSaving($event)" 
-            height="70vh" 
-            [twoWayBindingEnabled]="true"
-            [selectedRowKeys]="selectedRows"
-            (onExporting)="onExporting($event)"
-            [allowColumnResizing]="true">
-                <dxo-grouping #expand [autoExpandAll]="true">
-                </dxo-grouping>
-                <dxo-export [enabled]="true"></dxo-export>
-                <dxo-filter-row [visible]="false"></dxo-filter-row>
-                <dxo-header-filter [visible]="true" allowSearch="true"></dxo-header-filter>
-                <dxo-group-panel [visible]="true"></dxo-group-panel>
-                <dxo-scrolling mode="virtual"></dxo-scrolling>
+          <dxo-editing
+            mode="popup"
+            [allowAdding]="true"
+            [allowUpdating]="true"
+            [allowDeleting]="true"
+            [useIcons]="true"
+          >
+            <dxo-popup
+              title="subMenus"
+              [showTitle]="true"
+              [width]="700"
+              [height]="525"
+            >
+            </dxo-popup>
+            <dxo-form>
+              <dxi-item itemType="group" [colCount]="1" [colSpan]="2">
+                <dxi-item dataField="Nombre">
+                  <dxi-validation-rule
+                    type="required"
+                    message="Name View Required"
+                  >
+                  </dxi-validation-rule>
+                </dxi-item>
 
-                <dxo-editing mode="popup" [allowAdding]="true" [allowUpdating]="true" [allowDeleting]="true" [useIcons]="true">
-                    <dxo-popup title="subMenus" [showTitle]="true" [width]="700" [height]="525">
-                    </dxo-popup>
-                    <dxo-form>
-                        <dxi-item
-                        itemType="group" [colCount]="1" [colSpan]="2">
-                        <dxi-item
-                            dataField="Nombre">
-                            <dxi-validation-rule
-                                type="required"  message="Name View Required">
-                            </dxi-validation-rule>
-                        </dxi-item>
+                <dxi-item dataField="route">
+                  <dxi-validation-rule message="Name View Required">
+                  </dxi-validation-rule>
+                </dxi-item>
 
-                        <dxi-item
-                            dataField="route">
-                            <dxi-validation-rule
-                                message="Name View Required">
-                            </dxi-validation-rule>
-                        </dxi-item>
-                        
-                        <!-- <dxi-item
+                <!-- <dxi-item
                             dataField="items"
                             editorType="dxTextArea" [editorOptions]="{maxLength: 500, height: 90}">
                         </dxi-item> -->
 
-                        <dxi-item
-                            dataField="isActive"
-                            editorType="dxSwitch"
-                            [editorOptions]="{
-                            dataSource: dataSourcesubMenus,
-                            displayExpr: 'active',
-                            valueExpr: 'active',
-                            switchedOnText: 'Yes',
-                            switchedOffText: 'NO',
-                            width: 80
-                            }"
-                    >  </dxi-item>
-                        <dxo-label location="left" ></dxo-label>
+                <dxi-item
+                  dataField="isActive"
+                  editorType="dxSwitch"
+                  [editorOptions]="{
+                    dataSource: dataSourcesubMenus,
+                    displayExpr: 'active',
+                    valueExpr: 'active',
+                    switchedOnText: 'Yes',
+                    switchedOffText: 'NO',
+                    width: 80
+                  }"
+                >
+                </dxi-item>
+                <dxo-label location="left"></dxo-label>
 
-                        <dxi-item
-                            dataField="icons">
-                            <dxi-validation-rule
-                                type="required"  message="Icon Required">
-                            </dxi-validation-rule>
-                        </dxi-item>
+                <dxi-item dataField="icons">
+                  <dxi-validation-rule type="required" message="Icon Required">
+                  </dxi-validation-rule>
+                </dxi-item>
 
-                        <dxi-item dataField="idMenu" editorType="dxLookup" [editorOptions]="{dataSource: dataSourceMenus, displayExpr: 'Nombre', valueExpr: 'id'}">
-                            <dxo-label text="Menu">
-                            </dxo-label>
-                            <dxi-validation-rule type="required" message="Menu Required">
-                            </dxi-validation-rule>
-                        </dxi-item>
+                <dxi-item
+                  dataField="idMenu"
+                  editorType="dxLookup"
+                  [editorOptions]="{
+                    dataSource: dataSourceMenus,
+                    displayExpr: 'Nombre',
+                    valueExpr: 'id'
+                  }"
+                >
+                  <dxo-label text="Menu"> </dxo-label>
+                  <dxi-validation-rule type="required" message="Menu Required">
+                  </dxi-validation-rule>
+                </dxi-item>
 
-                        <!-- <dxi-item
+                <!-- <dxi-item
                             dataField="orderBy">
                         </dxi-item> -->
-                        
-                        </dxi-item>
-                    </dxo-form>
-                
-                </dxo-editing>
-                    <dxo-search-panel [visible]="true" [width]="100"></dxo-search-panel>
-                    <dxi-column alignment="center" dataField="Nombre" caption="Nombre"></dxi-column>
-                    <dxi-column alignment="center" dataField="isActive" caption="isActive"></dxi-column>
-                    <dxi-column alignment="center" dataField="route"  caption="Ruta"></dxi-column>
-                    <dxi-column alignment="center" dataField="icons" caption="Iconos"></dxi-column>
-                    <dxi-column alignment="center" dataField="nameMenu" caption="Menu">
-                        <!-- <dxo-lookup
+              </dxi-item>
+            </dxo-form>
+          </dxo-editing>
+          <dxo-search-panel [visible]="true" [width]="100"></dxo-search-panel>
+          <dxi-column
+            alignment="center"
+            dataField="Nombre"
+            caption="Nombre"
+          ></dxi-column>
+          <dxi-column
+            alignment="center"
+            dataField="isActive"
+            caption="isActive"
+          ></dxi-column>
+          <dxi-column
+            alignment="center"
+            dataField="route"
+            caption="Ruta"
+          ></dxi-column>
+          <dxi-column
+            alignment="center"
+            dataField="icons"
+            caption="Iconos"
+          ></dxi-column>
+          <!-- <dxi-column alignment="center" dataField="nameMenu" caption="Menu">
+                    </dxi-column> -->
+          <dxi-column
+            alignment="center"
+            dataField="nameMenu"
+            [groupIndex]="0"
+            [visible]="false"
+          >
+            <!-- <dxo-lookup
                         [dataSource]="dataSourceMenus"
                         valueExpr="id"
-                        displayExpr="Nombre">
-                        </dxo-lookup> -->
-                    </dxi-column>
-                    <dxi-column alignment="center" dataField="orderBy" [visible]="false"  caption="Order">
-                        <dxo-lookup
-                        [dataSource]="dataSourceMenusTab"
-                        valueExpr="idMenu"
                         displayExpr="nameMenu">
-                        </dxo-lookup>
-                    </dxi-column>
-            </dx-data-grid>
+                        </dxo-lookup> -->
+          </dxi-column>
+        </dx-data-grid>
 
-            <br>
+        <br />
+      </div>
 
-        </div>
+      <div *ngIf="items.Nombre == 'Add/ Edit Menus'" class="container-fluid">
+        <dx-data-grid
+          id="grid"
+          [dataSource]="dataSourceMenus"
+          [remoteOperations]="true"
+          [showBorders]="true"
+          [showColumnLines]="true"
+          [showRowLines]="true"
+          [rowAlternationEnabled]="true"
+          (onSaving)="onSaving($event)"
+          [twoWayBindingEnabled]="true"
+          [selectedRowKeys]="selectedRows"
+          [allowColumnResizing]="true"
+        >
+          <!-- <dxo-grouping #expand [autoExpandAll]="true">
+                </dxo-grouping> -->
+          <dxo-export [enabled]="false"></dxo-export>
+          <dxo-filter-row [visible]="false"></dxo-filter-row>
+          <dxo-header-filter
+            [visible]="true"
+            allowSearch="true"
+          ></dxo-header-filter>
+          <dxo-group-panel [visible]="false"></dxo-group-panel>
+          <dxo-scrolling mode="virtual"></dxo-scrolling>
 
-        <div *ngIf="items.TitleName == 'Add/Edit Menu'" class="container-fluid">
-<!-- 
-            <dx-data-grid  
-            id="grid"
-            [dataSource]="menu" 
-            [remoteOperations]="true" 
-            [showBorders]="true"
-            [showColumnLines]="true" 
-            [showRowLines]="true" 
-            [rowAlternationEnabled]="true" 
-            (onSaving)="onSaving1($event)" 
-            [twoWayBindingEnabled]="true"
-            [selectedRowKeys]="selectedRows"
-            [allowColumnResizing]="true">
+          <dxo-editing
+            mode="popup"
+            [allowAdding]="true"
+            [allowUpdating]="true"
+            [allowDeleting]="true"
+            [useIcons]="true"
+          >
+            <dxo-popup
+              title="Add/Edit Accesses"
+              [showTitle]="true"
+              [width]="700"
+              [height]="525"
+            >
+            </dxo-popup>
+            <dxo-form>
+              <dxi-item itemType="group" [colCount]="1" [colSpan]="2">
+                <dxi-item dataField="Nombre">
+                  <dxi-validation-rule
+                    type="required"
+                    message="Name View Required"
+                  >
+                  </dxi-validation-rule>
+                </dxi-item>
 
-                <dxo-export [enabled]="false"></dxo-export>
-                <dxo-filter-row [visible]="false"></dxo-filter-row>
-                <dxo-header-filter [visible]="true" allowSearch="true"></dxo-header-filter>
-                <dxo-group-panel [visible]="false"></dxo-group-panel>
-                <dxo-scrolling mode="virtual"></dxo-scrolling>
+                <dxi-item dataField="iconMenu">
+                  <!-- <dxi-validation-rule
+                                type="required"  message="Icon Required">
+                            </dxi-validation-rule> -->
+                </dxi-item>
 
-                <dxo-editing mode="popup" [allowAdding]="true" [allowUpdating]="true" [allowDeleting]="true" [useIcons]="true">
-                    <dxo-popup title="Add/Edit Accesses" [showTitle]="true" [width]="700" [height]="525">
-                    </dxo-popup>
-                    <dxo-form>
-                        <dxi-item
-                        itemType="group" [colCount]="1" [colSpan]="2">
-                        <dxi-item
-                            dataField="nameMenu">
-                            <dxi-validation-rule
-                                type="required"  message="Name View Required">
-                            </dxi-validation-rule>
-                        </dxi-item>
-
-                        <dxi-item
-                            dataField="iconMenu">
-                        </dxi-item>
-
-                        <dxi-item
-                            dataField="active"
-                            editorType="dxSwitch"
-                            [editorOptions]="{switchedOnText: 'Yes', switchedOffText: 'NO', width: 80}">
-                            <dxo-label location="left" ></dxo-label>
-                        </dxi-item>
-                        
-                        </dxi-item>
-                    </dxo-form>
-                
-                </dxo-editing>
-                    <dxo-search-panel [visible]="true" [width]="100"></dxo-search-panel>
-                    <dxi-column alignment="center" dataField="nameMenu" caption="Menu"></dxi-column>
-                    <dxi-column alignment="center" dataField="iconMenu" caption="Icons"></dxi-column>
-                    <dxi-column alignment="center" dataField="active"  caption="Active"></dxi-column>
-                    <dxi-column alignment="center" dataField="hasAccess" caption="Has Access"></dxi-column>
-
-            </dx-data-grid> -->
-
-            <br>
-           
-        </div>
-
+                <dxi-item
+                  dataField="active"
+                  editorType="dxSwitch"
+                  [editorOptions]="{
+                    switchedOnText: 'Yes',
+                    switchedOffText: 'NO',
+                    width: 80
+                  }"
+                >
+                  <dxo-label location="left"></dxo-label>
+   
+                </dxi-item>
+              </dxi-item>
+            </dxo-form>
+          </dxo-editing>
+          <dxo-search-panel [visible]="true" [width]="100"></dxo-search-panel>
+          <dxi-column
+            alignment="center"
+            dataField="Nombre"
+            caption="Menu"
+          ></dxi-column>
+          <dxi-column
+            alignment="center"
+            dataField="isActive"
+            caption="Active"
+          ></dxi-column>
+          <dxi-column
+            alignment="center"
+            dataField="icons"
+            caption="Iconos"
+          ></dxi-column>
+        </dx-data-grid>
+      </div>
     </div>
-    </div>
+  </div>
 </dx-tab-panel>
