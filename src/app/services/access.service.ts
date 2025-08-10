@@ -37,4 +37,30 @@ export class AccessService {
     const menusRef = collection(this.firestore, 'Menus');
     return addDoc(menusRef, user);
   }
+
+  addSubMenus(user: any): Promise<any> {
+    const menusRef = collection(this.firestore, 'submenus');
+    return addDoc(menusRef, user);
+  }
+
+  updateMenus(id: string, user: any): Promise<void> {
+    const userRef = doc(this.firestore, 'Menus', id);
+    return updateDoc(userRef, user);
+  }
+
+  updatesubMenus(id: string, user: any): Promise<void> {
+    const userRef = doc(this.firestore, 'submenus', id);
+    return updateDoc(userRef, user);
+  }
+
+  deleteMenus(id: string): Promise<void> {
+    const userRef = doc(this.firestore, 'Menus', id);
+    return deleteDoc(userRef);
+  }
+
+  deletesubMenus(id: string): Promise<void> {
+    const userRef = doc(this.firestore, 'submenus', id);
+    return deleteDoc(userRef);
+  }
+
 }

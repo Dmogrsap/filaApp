@@ -58,7 +58,7 @@
             [useIcons]="true"
           >
             <dxo-popup
-              title="subMenus"
+              title="Add/Edit subMenus"
               [showTitle]="true"
               [width]="700"
               [height]="525"
@@ -75,7 +75,7 @@
                 </dxi-item>
 
                 <dxi-item dataField="route">
-                  <dxi-validation-rule message="Name View Required">
+                  <dxi-validation-rule type="required" message="Name View Required">
                   </dxi-validation-rule>
                 </dxi-item>
 
@@ -96,6 +96,8 @@
                     width: 80
                   }"
                 >
+                   <dxi-validation-rule type="required" message="Name View Required">
+                  </dxi-validation-rule>
                 </dxi-item>
                 <dxo-label location="left"></dxo-label>
 
@@ -105,12 +107,12 @@
                 </dxi-item>
 
                 <dxi-item
-                  dataField="idMenu"
+                  dataField="nameMenu"
                   editorType="dxLookup"
                   [editorOptions]="{
                     dataSource: dataSourceMenus,
                     displayExpr: 'Nombre',
-                    valueExpr: 'id'
+                    valueExpr: 'Nombre'
                   }"
                 >
                   <dxo-label text="Menu"> </dxo-label>
@@ -213,14 +215,20 @@
                   </dxi-validation-rule>
                 </dxi-item>
 
-                <dxi-item dataField="iconMenu">
+                <dxi-item dataField="icons">
+                  <dxi-validation-rule
+                    type="required"  message="Icon Required">
+                  </dxi-validation-rule>
+                </dxi-item>
+
+                <dxi-item dataField="items">
                   <!-- <dxi-validation-rule
                                 type="required"  message="Icon Required">
                             </dxi-validation-rule> -->
                 </dxi-item>
 
                 <dxi-item
-                  dataField="active"
+                  dataField="isActive"
                   editorType="dxSwitch"
                   [editorOptions]="{
                     switchedOnText: 'Yes',
@@ -228,8 +236,12 @@
                     width: 80
                   }"
                 >
+                  <dxi-validation-rule
+                    type="required"
+                    message="Is Active Required"
+                  >
+                  </dxi-validation-rule>
                   <dxo-label location="left"></dxo-label>
-   
                 </dxi-item>
               </dxi-item>
             </dxo-form>

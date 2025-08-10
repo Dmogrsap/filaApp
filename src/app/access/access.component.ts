@@ -60,93 +60,66 @@ export class AccessComponent implements OnInit {
           title: 'success',
           text: 'User Added Successfully!',
         });
-        // this.rolesService.getRoles().subscribe((result) => {
-        //   this.dataSourceRoles = result.sort((a, b) =>
-        //     a.Role.localeCompare(b.Role)
-        //   );
-        //   console.log('Roles', this.dataSourceRoles);
-        // });
       });
     }
-    // if (change.type == 'update') {
-    //   // Limpia los campos no válidos
-    //   const cleanData = { ...change.data };
-    //   Object.keys(cleanData).forEach((key) => {
-    //     if (/^__.*__$/.test(key)) {
-    //       delete cleanData[key];
-    //     }
-    //   });
-    //   this.rolesService.updateRoles(change.key.id, cleanData).then(() => {
-    //     //console.log('Usuario actualizado');
-    //     Swal.fire({
-    //       icon: 'success',
-    //       title: 'success',
-    //       text: 'User Updated Successfully!',
-    //     });
-    //     this.rolesService.getRoles().subscribe((result) => {
-    //       this.dataSourceRoles = result.sort((a, b) =>
-    //         a.Role.localeCompare(b.Role)
-    //       );
-    //       //console.log('Roles', this.dataSourceRoles);
-    //     });
-    //   });
-    // }
-    // if (change.type == 'remove') {
-    //   const id = typeof change.key === 'string' ? change.key : change.key.id;
-    //   this.rolesService.deleteRoles(id).then(() => {
-    //     Swal.fire({
-    //       icon: 'success',
-    //       title: 'success',
-    //       text: 'User Eliminated',
-    //     });
-    //     this.rolesService.getRoles().subscribe((result) => {
-    //       this.dataSourceRoles = result.sort((a, b) =>
-    //         a.Role.localeCompare(b.Role)
-    //       );
-    //       console.log('Roles', this.dataSourceRoles);
-    //     });
-    //   });
-    // }
-    // if (change.type == 'refresh') {
-    //   this.rolesService.getRoles().subscribe((result) => {
-    //     this.dataSourceRoles = result.sort((a, b) =>
-    //       a.Role.localeCompare(b.Role)
-    //     );
-    //   });
-    // }
+    if (change.type == 'update') {
+      // Limpia los campos no válidos
+      const cleanData = { ...change.data };
+      Object.keys(cleanData).forEach((key) => {
+        if (/^__.*__$/.test(key)) {
+          delete cleanData[key];
+        }
+      });
+      this.accessService.updateMenus(change.key.id, cleanData).then(() => {
+        //console.log('Usuario actualizado');
+        Swal.fire({
+          icon: 'success',
+          title: 'success',
+          text: 'User Updated Successfully!',
+        });
+      });
+    }
+    if (change.type == 'remove') {
+      const id = typeof change.key === 'string' ? change.key : change.key.id;
+      this.accessService.deleteMenus(id).then(() => {
+        Swal.fire({
+          icon: 'success',
+          title: 'success',
+          text: 'User Eliminated',
+        });
+      });
+    }
+    if (change.type == 'refresh') {
+      this.accessService.getMenus().subscribe((result) => {
+        this.dataSourceMenus = result.sort((a, b) =>
+          a.Role.localeCompare(b.Role)
+        );
+      });
+    }
   }
 
-    onSaving1(e: any) {
-    // const change = e.changes[0];
-    // // this.userService.getUsers().subscribe((result) => {
-    // //   this.dataSourceUsers = result;
-    // // });
-    // if (change) {
-    //   e.cancel = false;
-    // }
-    // if (change.type == 'insert') {
-    //   // Limpia los campos no válidos
-    //   const cleanData = { ...change.data };
-    //   Object.keys(cleanData).forEach((key) => {
-    //     if (/^__.*__$/.test(key)) {
-    //       delete cleanData[key];
-    //     }
-    //   });
-    //   this.rolesService.addRoles(cleanData).then((docRef) => {
-    //     //console.log('Usuario agregado con ID:', docRef.id);
-    //     Swal.fire({
-    //       icon: 'success',
-    //       title: 'success',
-    //       text: 'User Added Successfully!',
-    //     });
-    //     this.rolesService.getRoles().subscribe((result) => {
-    //       this.dataSourceRoles = result.sort((a, b) =>
-    //         a.Role.localeCompare(b.Role)
-    //       );
-    //       console.log('Roles', this.dataSourceRoles);
-    //     });
-    //   });
-    // }
+  onSaving1(e: any) {
+    const change = e.changes[0];
+    if (change) {
+      e.cancel = false;
+    }
+    if (change.type == 'insert') {
+      // Limpia los campos no válidos
+      const cleanData = { ...change.data };
+      Object.keys(cleanData).forEach((key) => {
+        if (/^__.*__$/.test(key)) {
+          delete cleanData[key];
+        }
+      });
+      this.accessService.addSubMenus(cleanData).then((docRef) => {
+        //console.log('Usuario agregado con ID:', docRef.id);
+        Swal.fire({
+          icon: 'success',
+          title: 'success',
+          text: 'User Added Successfully!',
+        });
+      });
+    }
     // if (change.type == 'update') {
     //   // Limpia los campos no válidos
     //   const cleanData = { ...change.data };
