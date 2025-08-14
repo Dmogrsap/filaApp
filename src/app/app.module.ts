@@ -28,6 +28,7 @@ import { provideAuth,getAuth } from '@angular/fire/auth';
 import { provideFirestore,getFirestore } from '@angular/fire/firestore';
 import { LideresComponent } from './lideres/lideres.component';
 import { AccessComponent } from './access/access.component';
+import { ServidoresAlabanzaComponent } from './servidores-alabanza/servidores-alabanza.component';
 
 
 @NgModule({
@@ -40,6 +41,7 @@ import { AccessComponent } from './access/access.component';
     RolesComponent,
     LideresComponent,
     AccessComponent,
+    ServidoresAlabanzaComponent,
  
   ],
   imports: [

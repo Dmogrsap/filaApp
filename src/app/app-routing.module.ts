@@ -7,6 +7,8 @@ import { UsersComponent } from './users/users.component';
 import { RolesComponent } from './roles/roles.component';
 import { LideresComponent } from './lideres/lideres.component';
 import { AccessComponent } from './access/access.component';
+import { ServidoresAlabanzaService } from './services/servidores-alabanza.service';
+import { ServidoresAlabanzaComponent } from './servidores-alabanza/servidores-alabanza.component';
 
 const routes: Routes = [
   { 
@@ -64,11 +66,11 @@ const routes: Routes = [
         data: { title: 'Roles', url: 'roles',  allowedRoles:['IAdministrator, Developers'] }
       },
 
-      // {
-      //   path: 'Lideres',
-      //   component: UsersComponent,
-      //   data: { title: 'Lideres', url: 'users' }
-      // },
+      {
+        path: 'servidores-alabanza',
+        component: ServidoresAlabanzaComponent,
+        data: { title: 'Servidores Alabanza', url: '/servidores-alabanza' }
+      },
 
       // {
       //   path: 'unauthorized',

@@ -58,7 +58,7 @@ export class AccessComponent implements OnInit {
         Swal.fire({
           icon: 'success',
           title: 'success',
-          text: 'User Added Successfully!',
+          text: 'Menu Added Successfully!',
         });
       });
     }
@@ -75,7 +75,7 @@ export class AccessComponent implements OnInit {
         Swal.fire({
           icon: 'success',
           title: 'success',
-          text: 'User Updated Successfully!',
+          text: 'Menu Updated Successfully!',
         });
       });
     }
@@ -85,7 +85,7 @@ export class AccessComponent implements OnInit {
         Swal.fire({
           icon: 'success',
           title: 'success',
-          text: 'User Eliminated',
+          text: 'Menu Eliminated',
         });
       });
     }
@@ -116,56 +116,46 @@ export class AccessComponent implements OnInit {
         Swal.fire({
           icon: 'success',
           title: 'success',
-          text: 'User Added Successfully!',
+          text: 'SubMenu Added Successfully!',
         });
       });
     }
-    // if (change.type == 'update') {
-    //   // Limpia los campos no válidos
-    //   const cleanData = { ...change.data };
-    //   Object.keys(cleanData).forEach((key) => {
-    //     if (/^__.*__$/.test(key)) {
-    //       delete cleanData[key];
-    //     }
-    //   });
-    //   this.rolesService.updateRoles(change.key.id, cleanData).then(() => {
-    //     //console.log('Usuario actualizado');
-    //     Swal.fire({
-    //       icon: 'success',
-    //       title: 'success',
-    //       text: 'User Updated Successfully!',
-    //     });
-    //     this.rolesService.getRoles().subscribe((result) => {
-    //       this.dataSourceRoles = result.sort((a, b) =>
-    //         a.Role.localeCompare(b.Role)
-    //       );
-    //       //console.log('Roles', this.dataSourceRoles);
-    //     });
-    //   });
-    // }
-    // if (change.type == 'remove') {
-    //   const id = typeof change.key === 'string' ? change.key : change.key.id;
-    //   this.rolesService.deleteRoles(id).then(() => {
-    //     Swal.fire({
-    //       icon: 'success',
-    //       title: 'success',
-    //       text: 'User Eliminated',
-    //     });
-    //     this.rolesService.getRoles().subscribe((result) => {
-    //       this.dataSourceRoles = result.sort((a, b) =>
-    //         a.Role.localeCompare(b.Role)
-    //       );
-    //       console.log('Roles', this.dataSourceRoles);
-    //     });
-    //   });
-    // }
-    // if (change.type == 'refresh') {
-    //   this.rolesService.getRoles().subscribe((result) => {
-    //     this.dataSourceRoles = result.sort((a, b) =>
-    //       a.Role.localeCompare(b.Role)
-    //     );
-    //   });
-    // }
+    if (change.type == 'update') {
+      // Limpia los campos no válidos
+      const cleanData = { ...change.data };
+      Object.keys(cleanData).forEach((key) => {
+        if (/^__.*__$/.test(key)) {
+          delete cleanData[key];
+        }
+      });
+      this.accessService.updatesubMenus(change.key.id, cleanData).then(() => {
+        //console.log('Usuario actualizado');
+        Swal.fire({
+          icon: 'success',
+          title: 'success',
+          text: 'SubMenu Updated Successfully!',
+        });
+      });
+    }
+    if (change.type == 'remove') {
+      const id = typeof change.key === 'string' ? change.key : change.key.id;
+      this.accessService.deletesubMenus(id).then(() => {
+        Swal.fire({
+          icon: 'success',
+          title: 'success',
+          text: 'SubMenu Eliminated',
+        });
+      });
+    }
+    if (change.type == 'refresh') {
+      this.accessService.getsubMenus().subscribe((result) => {
+      this.dataSourcesubMenus = result.sort((a, b) =>
+        a.Nombre.localeCompare(b.Nombre)
+      );
+      this.loadIndicatorVisible = false;
+      //console.log('DataSourceSubMenus', this.dataSourcesubMenus);
+    });
+    }
   }
 
   onExporting(e: any) {
