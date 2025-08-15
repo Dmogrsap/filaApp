@@ -29,6 +29,7 @@ import { provideFirestore,getFirestore } from '@angular/fire/firestore';
 import { LideresComponent } from './lideres/lideres.component';
 import { AccessComponent } from './access/access.component';
 import { ServidoresAlabanzaComponent } from './servidores-alabanza/servidores-alabanza.component';
+import { SongManagerComponent } from './song-manager/song-manager.component';
 
 
 @NgModule({
@@ -42,6 +43,7 @@ import { ServidoresAlabanzaComponent } from './servidores-alabanza/servidores-al
     LideresComponent,
     AccessComponent,
     ServidoresAlabanzaComponent,
+    SongManagerComponent,
  
   ],
   imports: [

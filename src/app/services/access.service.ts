@@ -24,8 +24,8 @@ export class AccessService {
   }
 
   getMenus(): Observable<any[]> {
-    const usersRef = collection(this.firestore, 'Menus');
-    return collectionData(usersRef, { idField: 'id' });
+    const menusRef = collection(this.firestore, 'Menus');
+    return collectionData(menusRef, { idField: 'id' });
   }
 
   getsubMenus(): Observable<any[]> {

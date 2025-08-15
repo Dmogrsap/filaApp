@@ -9,6 +9,7 @@ import { LideresComponent } from './lideres/lideres.component';
 import { AccessComponent } from './access/access.component';
 import { ServidoresAlabanzaService } from './services/servidores-alabanza.service';
 import { ServidoresAlabanzaComponent } from './servidores-alabanza/servidores-alabanza.component';
+import { SongManagerComponent } from './song-manager/song-manager.component';
 
 const routes: Routes = [
   { 
@@ -78,11 +79,11 @@ const routes: Routes = [
       //   data: { title: 'Unauthorized System', url: 'unauthorized' }
       // },
 
-      // {
-      //   path: 'generalcatalog',
-      //   component: GeneralcatalogComponent,
-      //   data: { title: 'General Catalog', url: 'generalcatalog', allowedRoles:['Administrator, Developers']}
-      // },
+      {
+        path: 'song-manager',
+        component: SongManagerComponent,
+        data: { title: 'Letras y Acordes', url: '/song-manager'}
+      },
       // {
       //   path: 'newsystems',
       //   component: NewsystemsComponent,
