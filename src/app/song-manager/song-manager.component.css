@@ -41,3 +41,41 @@
 ::ng-deep .dx-popup-bottom .dx-button:focus .dx-button-text {
     color: #111 !important;
 }
+
+::ng-deep .dx-datagrid-content .dx-datagrid-cell {
+  white-space: normal !important;
+  word-break: break-word !important;
+  overflow-wrap: anywhere !important;
+}
+
+.preview {
+  display: flex;             /* Habilita Flexbox */
+  flex-wrap: wrap;           /* Permite que los elementos se envuelvan a la siguiente línea si no caben */
+  justify-content: center;   /* Opcional: Centra los elementos horizontalmente */
+  align-items: flex-start;   /* Opcional: Alinea los elementos en la parte superior */
+  gap: 20px;                 /* Añade un espacio entre los elementos y evita márgenes complejos */
+  padding: 10px;             /* Espacio interno para que no se pegue a los bordes */
+
+}
+
+.column {
+flex-grow: 1;              /* Permite que la columna crezca para ocupar espacio disponible */
+  flex-shrink: 1;            /* Permite que la columna se encoja para caber en la pantalla */
+  flex-basis: 300px;         /* Define un tamaño base para la columna. Puedes ajustarlo. */
+
+  /* Estilos visuales */
+  padding: 10px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;    /* Asegura que el padding no añada ancho extra */
+}
+
+/* Estilos para el texto y listas son los mismos */
+h3, h4 {
+  margin-top: 0;
+  text-align: center;
+}
+
+ul {
+  list-style-type: disc;
+  margin-left: 20px;
+}
