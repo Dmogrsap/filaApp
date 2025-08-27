@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, SimpleChanges } from '@angular/core';
 import { SongManagerService } from '../services/song-manager.service';
 import { DataType } from 'devextreme/common';
 import Swal from 'sweetalert2';
@@ -15,6 +15,7 @@ export class SongManagerComponent implements OnInit {
 
   public loadIndicatorVisible = true;
   public datasourceSongs: any[] = [];
+  public filteredSundaySongs: any[] = [];
 
   // columns =  [
   //   { dataField: 'title', caption: 'Título' },
@@ -31,6 +32,19 @@ export class SongManagerComponent implements OnInit {
       this.loadIndicatorVisible = false;
       console.log('datasourceSongs', this.datasourceSongs);
     });
+
+    for (let i = 0; i < this.datasourceSongs.length; i++) {
+      if (this.datasourceSongs[i].seusaeldomingo === true) {
+        this.filteredSundaySongs.push(this.datasourceSongs[i]);
+      }
+    }
+
+    console.log('filteredSundaySongs', this.filteredSundaySongs);
+
+    // if (this.datasourceSongs.some(song => song['se usa el domingo'] === true)) {
+    //   this.filteredSundaySongs = this.datasourceSongs.filter(song => song['se usa el domingo']);
+    // } 
+
   }
 
   onAdd(e: any) {

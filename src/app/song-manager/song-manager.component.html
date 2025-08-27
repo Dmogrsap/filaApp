@@ -89,6 +89,21 @@
             >
               <dxo-label location="left"></dxo-label>
             </dxi-item>
+
+            <dxi-item
+              dataField="se usa el domingo"
+              editorType="dxSwitch"
+              [editorOptions]="{
+                dataSource: datasourceSongs,
+                displayExpr: 'active',
+                valueExpr: 'active',
+                switchedOnText: 'Yes',
+                switchedOffText: 'NO',
+                width: 80
+              }"
+            >
+              <dxo-label location="left"></dxo-label>
+            </dxi-item>
           </dxi-item>
         </dxo-form>
         <dx-switch
@@ -145,9 +160,11 @@
       <dxi-column dataField="Titulo" caption="Titulo"> </dxi-column>
       <dxi-column dataField="Acordes" caption="Acordes"> </dxi-column>
       <dxi-column dataField="Letra" caption="Letra"> </dxi-column>
+      <dxi-column dataField="isActive" caption="is Active" alignment="center">
+      </dxi-column>
       <dxi-column
         alignment="center"
-        dataField="isActive"
+        dataField="se usa el domingo"
         caption="Se usa el Domingo?"
       ></dxi-column>
     </dx-data-grid>
@@ -160,7 +177,7 @@
 <div *ngIf="loadIndicatorVisible === false" class="preview">
   <div class="column">
     <h3>Previsualización</h3>
-    <dx-data-grid
+    <!-- <dx-data-grid
       [dataSource]="selectedSong ? [selectedSong] : []"
       [showBorders]="true"
       [columnAutoWidth]="false"
@@ -172,9 +189,9 @@
       <dxi-column dataField="Titulo" caption="Título"></dxi-column>
       <dxi-column dataField="Acordes" caption="Acordes"></dxi-column>
       <dxi-column dataField="Letra" caption="Letra"></dxi-column>
-    </dx-data-grid>
+    </dx-data-grid> -->
     <!-- <pre>{{ previewText }}</pre> -->
-    <!-- <div style="display: flex; gap: 20px">
+    <div style="display: flex; gap: 20px">
       <div style="flex: 1">
         <h4>Título</h4>
         <pre>{{ previewTitulo }}</pre>
@@ -187,19 +204,33 @@
         <h4>Letra</h4>
         <pre>{{ previewLetra }}</pre>
       </div>
-    </div> -->
+    </div>
   </div>
 
   <div class="column">
     <h3>Canciones para el domingo</h3>
-    <ul>
+    <!-- <ul>
       <li
         *ngFor="let song of filteredSongs"
         (click)="onRowClick({ data: song })"
       >
         {{ song.Titulo }}
       </li>
-    </ul>
+    </ul> -->
+    <!-- [dataSource]="selectedSong ? [selectedSong] : []" -->
+    <div >
+      <dx-data-grid
+        [dataSource]="filteredSundaySongs"
+        [showBorders]="true"
+        [columnAutoWidth]="false"
+        [rowAlternationEnabled]="true"
+        height="auto"
+        width="100%"
+        style="max-width: 580px"
+      >
+        <dxi-column dataField="Titulo" caption="Título"></dxi-column>
+      </dx-data-grid>
+    </div>
   </div>
 
   <div class="column">
