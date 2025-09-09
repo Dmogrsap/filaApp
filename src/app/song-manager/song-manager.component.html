@@ -72,7 +72,7 @@
             }"
           ></dxi-item>
 
-          <!-- <dxi-item
+          <dxi-item
             dataField="isActive"
             editorType="dxSwitch"
             [editorOptions]="{
@@ -85,13 +85,14 @@
             }"
           >
             <dxo-label location="left"></dxo-label>
-          </dxi-item> -->
-          <dx-switch
-            [(value)]="showOnlySunday"
-            text="Mostrar solo canciones para el domingo"
-          ></dx-switch>
-                </dxi-item>
+          </dxi-item>
+        </dxi-item>
       </dxo-form>
+
+      <dx-switch
+        [(value)]="showOnlySunday"
+        text="Mostrar solo canciones para el domingo"
+      ></dx-switch>
     </dxo-editing>
 
     <!---------------------Data grid para que se muestre una tabla dentro de agregar user--------------------->
@@ -155,7 +156,7 @@
 <div>
   <h3>Canciones para el domingo</h3>
   <ul>
-    <li *ngFor="let song of filteredSongs" (click)="onRowClick({data: song})">
+    <li *ngFor="let song of filteredSongs" (click)="onRowClick({ data: song })">
       {{ song.Titulo }}
     </li>
   </ul>

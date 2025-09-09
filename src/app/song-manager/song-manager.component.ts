@@ -25,10 +25,10 @@ export class SongManagerComponent implements OnInit {
   ngOnInit() {
     this.songService.getSongs().subscribe((result) => {
       this.datasourceSongs = result.sort((a, b) =>
-        a.Nombre.localeCompare(b.Nombre)
+        a.Titulo.localeCompare(b.Titulo)
       );
       this.loadIndicatorVisible = false;
-      //console.log('DataSource', this.dataSourceMenus);
+      console.log('datasourceSongs', this.datasourceSongs);
     });
   }
 
