@@ -7,72 +7,75 @@
     width="50"
     [visible]="loadIndicatorVisible"
   ></dx-load-indicator>
-
-  <dx-data-grid
-    [dataSource]="datasourceSongs"
-    [remoteOperations]="true"
-    [showBorders]="true"
-    [showColumnLines]="true"
-    [showRowLines]="true"
-    [showBorders]="true"
-    [rowAlternationEnabled]="true"
-    (onSaving)="onSaving($event)"
-    height="20vh"
-    [twoWayBindingEnabled]="false"
-    [allowColumnResizing]="true"
-    (onExporting)="onExporting($event)"
-    (onRowClick)="onRowClick($event)"
-  >
-    <dxo-export [enabled]="true"></dxo-export>
-    <dxo-filter-row [visible]="false"></dxo-filter-row>
-    <dxo-header-filter [visible]="true" allowSearch="true"></dxo-header-filter>
-    <dxo-group-panel [visible]="false"></dxo-group-panel>
-    <dxo-scrolling mode="virtual"></dxo-scrolling>
-
-    <dxo-editing
-      mode="popup"
-      [allowAdding]="true"
-      [allowUpdating]="true"
-      [allowDeleting]="true"
-      [useIcons]="true"
+  <div *ngIf="loadIndicatorVisible === false">
+    <dx-data-grid
+      [dataSource]="datasourceSongs"
+      [remoteOperations]="true"
+      [showBorders]="true"
+      [showColumnLines]="true"
+      [showRowLines]="true"
+      [showBorders]="true"
+      [rowAlternationEnabled]="true"
+      (onSaving)="onSaving($event)"
+      height="30vh"
+      [twoWayBindingEnabled]="false"
+      [allowColumnResizing]="true"
+      (onExporting)="onExporting($event)"
+      (onRowClick)="onRowClick($event)"
     >
-      <dxo-popup
-        title="Add/Edit Letras"
-        [showTitle]="true"
-        [width]="700"
-        [height]="525"
+      <dxo-export [enabled]="true"></dxo-export>
+      <dxo-filter-row [visible]="false"></dxo-filter-row>
+      <dxo-header-filter
+        [visible]="true"
+        allowSearch="true"
+      ></dxo-header-filter>
+      <dxo-group-panel [visible]="false"></dxo-group-panel>
+      <dxo-scrolling mode="virtual"></dxo-scrolling>
+
+      <dxo-editing
+        mode="popup"
+        [allowAdding]="true"
+        [allowUpdating]="true"
+        [allowDeleting]="true"
+        [useIcons]="true"
       >
-      </dxo-popup>
-      <dxo-form>
-        <dxi-item itemType="group" [colCount]="1" colSpan="2">
-          <dxi-item
-            dataField="Titulo"
-            editorType="dxTextBox"
-            [editorOptions]="{
-              placeholder: 'Titulo',
-              showClearButton: true
-            }"
-          ></dxi-item>
+        <dxo-popup
+          title="Add/Edit Letras"
+          [showTitle]="true"
+          [width]="700"
+          [height]="525"
+        >
+        </dxo-popup>
+        <dxo-form>
+          <dxi-item itemType="group" [colCount]="1" [colSpan]="2">
+            <dxi-item
+              dataField="Titulo"
+              editorType="dxTextBox"
+              [editorOptions]="{
+                placeholder: 'Titulo',
+                showClearButton: true
+              }"
+            ></dxi-item>
 
-          <dxi-item
-            dataField="Acordes"
-            editorType="dxTextBox"
-            [editorOptions]="{
-              placeholder: 'Acordes',
-              showClearButton: true
-            }"
-          ></dxi-item>
+            <dxi-item
+              dataField="Acordes"
+              editorType="dxTextArea"
+              [editorOptions]="{
+                placeholder: 'Acordes',
+                showClearButton: true
+              }"
+            ></dxi-item>
 
-          <dxi-item
-            dataField="Letra"
-            editorType="dxTextBox"
-            [editorOptions]="{
-              placeholder: 'Letra',
-              showClearButton: true
-            }"
-          ></dxi-item>
+            <dxi-item
+              dataField="Letra"
+              editorType="dxTextArea"
+              [editorOptions]="{
+                placeholder: 'Letra',
+                showClearButton: true
+              }"
+            ></dxi-item>
 
-          <dxi-item
+          <!-- <dxi-item
             dataField="isActive"
             editorType="dxSwitch"
             [editorOptions]="{
@@ -85,78 +88,114 @@
             }"
           >
             <dxo-label location="left"></dxo-label>
-          </dxi-item>
-        </dxi-item>
+          </dxi-item> -->
+          <dx-switch
+            [(value)]="showOnlySunday"
+            text="Mostrar solo canciones para el domingo"
+          ></dx-switch>
+                </dxi-item>
       </dxo-form>
-
-      <dx-switch
-        [(value)]="showOnlySunday"
-        text="Mostrar solo canciones para el domingo"
-      ></dx-switch>
     </dxo-editing>
 
-    <!---------------------Data grid para que se muestre una tabla dentro de agregar user--------------------->
-    <div
-      *dxTemplate="let cellInfo of 'singleDropDownBoxEditor'"
-      style="margin-top: 10px"
-    >
-      <!-- <dx-drop-down-box
-        [dataSource]="dataSourceUsers"
-        [(value)]="cellInfo.value"
-        [displayExpr]="getDisplayExpr"
-        valueExpr="Nombre"
-        contentTemplate="contentTemplate"
+      <!---------------------Data grid para que se muestre una tabla dentro de agregar user--------------------->
+      <div
+        *dxTemplate="let cellInfo of 'singleDropDownBoxEditor'"
+        style="margin-top: 10px"
       >
-        <div *dxTemplate="let e of 'contentTemplate'">
-          <dx-data-grid
-            [dataSource]="dataSourceUsers"
-            [remoteOperations]="true"
-            [height]="250"
-            [keyExpr]="'Nombre'"
-            [selectedRowKeys]="[cellInfo.value]"
-            [focusedRowEnabled]="true"
-            [focusedRowKey]="cellInfo.value"
-            [hoverStateEnabled]="true"
-            (onSelectionChanged)="
-              onSelectionChanged($event.selectedRowKeys, cellInfo, e.component)
-            "
-          >
-            <dxo-search-panel
-              [visible]="true"
-              [searchVisibleColumnsOnly]="true"
-            ></dxo-search-panel>
-            <dxi-column dataField="Nombre" caption="Nombre"></dxi-column>
-            <dxo-paging [enabled]="true" [pageSize]="10"></dxo-paging>
-            <dxo-scrolling mode="virtual"></dxo-scrolling>
-            <dxo-selection mode="single"></dxo-selection>
-          </dx-data-grid>
-        </div>
-      </dx-drop-down-box> -->
-    </div>
-    <!------------------------------------Data grid principal de la tabla---------------------------------------------->
+        <dx-drop-down-box
+          [dataSource]="datasourceSongs"
+          [(value)]="cellInfo.value"
+          [displayExpr]="getDisplayExpr"
+          valueExpr="Nombre"
+          contentTemplate="contentTemplate"
+        >
+          <div *dxTemplate="let e of 'contentTemplate'">
+            <dx-data-grid
+              [dataSource]="datasourceSongs"
+              [remoteOperations]="true"
+              [height]="250"
+              [keyExpr]="'Nombre'"
+              [selectedRowKeys]="[cellInfo.value]"
+              [focusedRowEnabled]="true"
+              [focusedRowKey]="cellInfo.value"
+              [hoverStateEnabled]="true"
+              (onSelectionChanged)="
+                onSelectionChanged(
+                  $event.selectedRowKeys,
+                  cellInfo,
+                  e.component
+                )
+              "
+            >
+              <dxo-search-panel
+                [visible]="true"
+                [searchVisibleColumnsOnly]="true"
+              ></dxo-search-panel>
+              <dxi-column dataField="Nombre" caption="Nombre"></dxi-column>
+              <dxo-paging [enabled]="true" [pageSize]="10"></dxo-paging>
+              <dxo-scrolling mode="virtual"></dxo-scrolling>
+              <dxo-selection mode="single"></dxo-selection>
+            </dx-data-grid>
+          </div>
+        </dx-drop-down-box>
+      </div>
+      <!------------------------------------Data grid principal de la tabla---------------------------------------------->
 
-    <dxo-search-panel [visible]="true" [width]="100"></dxo-search-panel>
-    <dxi-column dataField="Titulo" caption="Titulo"> </dxi-column>
-    <dxi-column dataField="Acordes" caption="Acordes"> </dxi-column>
-    <dxi-column dataField="Letra" caption="Letra"> </dxi-column>
-    <dxi-column
-      alignment="center"
-      dataField="isActive"
-      caption="Se usa el Domingo?"
-    ></dxi-column>
-  </dx-data-grid>
+      <dxo-search-panel [visible]="true" [width]="100"></dxo-search-panel>
+      <dxi-column dataField="Titulo" caption="Titulo"> </dxi-column>
+      <dxi-column dataField="Acordes" caption="Acordes"> </dxi-column>
+      <dxi-column dataField="Letra" caption="Letra"> </dxi-column>
+      <dxi-column dataField="isActive" caption="is Active" alignment="center">
+      </dxi-column>
+      <dxi-column
+        alignment="center"
+        dataField="se usa el domingo"
+        caption="Se usa el Domingo?"
+      ></dxi-column>
+    </dx-data-grid>
+  </div>
 </div>
+
+<br /><br />
 
 <!-- <div *ngIf="selectedSong" class="preview"> -->
-<div class="preview">
-  <h3>Previsualización</h3>
-  <pre>{{ previewText }}</pre>
-</div>
+<div *ngIf="loadIndicatorVisible === false" class="preview">
+  <div class="column">
+    <h3>Previsualización</h3>
+    <!-- <dx-data-grid
+      [dataSource]="selectedSong ? [selectedSong] : []"
+      [showBorders]="true"
+      [columnAutoWidth]="false"
+      [rowAlternationEnabled]="true"
+      height="auto"
+      width="100%"
+      style="max-width: 580px"
+    >
+      <dxi-column dataField="Titulo" caption="Título"></dxi-column>
+      <dxi-column dataField="Acordes" caption="Acordes"></dxi-column>
+      <dxi-column dataField="Letra" caption="Letra"></dxi-column>
+    </dx-data-grid> -->
+    <!-- <pre>{{ previewText }}</pre> -->
+    <div style="display: flex; gap: 20px">
+      <div style="flex: 1">
+        <h4>Título</h4>
+        <pre>{{ previewTitulo }}</pre>
+      </div>
+      <div style="flex: 1">
+        <h4>Acordes</h4>
+        <pre>{{ previewAcordes }}</pre>
+      </div>
+      <div style="flex: 1">
+        <h4>Letra</h4>
+        <pre>{{ previewLetra }}</pre>
+      </div>
+    </div>
+  </div>
 
 <div>
   <h3>Canciones para el domingo</h3>
   <ul>
-    <li *ngFor="let song of filteredSongs" (click)="onRowClick({ data: song })">
+    <li *ngFor="let song of filteredSongs" (click)="onRowClick({data: song})">
       {{ song.Titulo }}
     </li>
   </ul>
