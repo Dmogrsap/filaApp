@@ -75,27 +75,43 @@
               }"
             ></dxi-item>
 
-          <!-- <dxi-item
-            dataField="isActive"
-            editorType="dxSwitch"
-            [editorOptions]="{
-              dataSource: datasourceSongs,
-              displayExpr: 'active',
-              valueExpr: 'active',
-              switchedOnText: 'Yes',
-              switchedOffText: 'NO',
-              width: 80
-            }"
-          >
-            <dxo-label location="left"></dxo-label>
-          </dxi-item> -->
-          <dx-switch
+            <dxi-item
+              dataField="isActive"
+              editorType="dxSwitch"
+              [editorOptions]="{
+                dataSource: datasourceSongs,
+                displayExpr: 'active',
+                valueExpr: 'active',
+                switchedOnText: 'Yes',
+                switchedOffText: 'NO',
+                width: 80
+              }"
+            >
+              <dxo-label location="left"></dxo-label>
+            </dxi-item>
+
+            <dxi-item
+              dataField="isActive"
+              editorType="dxSwitch"
+              [editorOptions]="{
+                dataSource: datasourceSongs,
+                displayExpr: 'active',
+                valueExpr: 'active',
+                switchedOnText: 'Yes',
+                switchedOffText: 'NO',
+                width: 80
+              }"
+            >
+              <dxo-label location="left"></dxo-label>
+            </dxi-item>
+          </dxi-item>
+
+          <!-- <dx-switch
             [(value)]="showOnlySunday"
             text="Mostrar solo canciones para el domingo"
-          ></dx-switch>
-                </dxi-item>
-      </dxo-form>
-    </dxo-editing>
+          ></dx-switch> -->
+        </dxo-form>
+      </dxo-editing>
 
       <!---------------------Data grid para que se muestre una tabla dentro de agregar user--------------------->
       <div
@@ -192,11 +208,15 @@
     </div>
   </div>
 
-<div>
-  <h3>Canciones para el domingo</h3>
-  <ul>
-    <li *ngFor="let song of filteredSongs" (click)="onRowClick({data: song})">
-      {{ song.Titulo }}
-    </li>
-  </ul>
+  <div>
+    <h3>Canciones para el domingo</h3>
+    <ul>
+      <li
+        *ngFor="let song of filteredSongs"
+        (click)="onRowClick({ data: song })"
+      >
+        {{ song.Titulo }}
+      </li>
+    </ul>
+  </div>
 </div>
