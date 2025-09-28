@@ -91,7 +91,7 @@
             </dxi-item>
 
             <dxi-item
-              dataField="isActive"
+              dataField="se usa el domingo"
               editorType="dxSwitch"
               [editorOptions]="{
                 dataSource: datasourceSongs,
@@ -105,12 +105,11 @@
               <dxo-label location="left"></dxo-label>
             </dxi-item>
           </dxi-item>
-
-          <!-- <dx-switch
-            [(value)]="showOnlySunday"
-            text="Mostrar solo canciones para el domingo"
-          ></dx-switch> -->
         </dxo-form>
+        <dx-switch
+          [(value)]="showOnlySunday"
+          text="Mostrar solo canciones para el domingo"
+        ></dx-switch>
       </dxo-editing>
 
       <!---------------------Data grid para que se muestre una tabla dentro de agregar user--------------------->
@@ -208,8 +207,34 @@
     </div>
   </div>
 
-  <div>
+  <div class="column">
     <h3>Canciones para el domingo</h3>
+    <!-- <ul>
+      <li
+        *ngFor="let song of filteredSongs"
+        (click)="onRowClick({ data: song })"
+      >
+        {{ song.Titulo }}
+      </li>
+    </ul> -->
+    <!-- [dataSource]="selectedSong ? [selectedSong] : []" -->
+    <div >
+      <dx-data-grid
+        [dataSource]="filteredSundaySongs"
+        [showBorders]="true"
+        [columnAutoWidth]="false"
+        [rowAlternationEnabled]="true"
+        height="auto"
+        width="100%"
+        style="max-width: 580px"
+      >
+        <dxi-column dataField="Titulo" caption="Título"></dxi-column>
+      </dx-data-grid>
+    </div>
+  </div>
+
+  <div class="column">
+    <h3>Musicos para el domingo</h3>
     <ul>
       <li
         *ngFor="let song of filteredSongs"
