@@ -17,11 +17,6 @@ export class SongManagerComponent implements OnInit {
   public datasourceSongs: any[] = [];
   public filteredSundaySongs: any[] = [];
 
-  // columns =  [
-  //   { dataField: 'title', caption: 'Título' },
-  //   { dataField: 'selectedForSunday', caption: 'Domingo', dataType: 'boolean' }
-  // ];
-
   constructor(private songService: SongManagerService) {}
 
   ngOnInit() {
@@ -29,22 +24,25 @@ export class SongManagerComponent implements OnInit {
       this.datasourceSongs = result.sort((a, b) =>
         a.Titulo.localeCompare(b.Titulo)
       );
+
+      if (this.showOnlySunday) {
+        this.filteredSundaySongs = this.datasourceSongs.filter(
+          (song) => song.usaDomingo === true
+        );
+      } else {
+        
+      }
       this.loadIndicatorVisible = false;
-      console.log('datasourceSongs', this.datasourceSongs);
+      //console.log('datasourceSongs', this.datasourceSongs);
+
+      // for (let i = 0; i < this.datasourceSongs.length; i++) {
+      //   if (this.datasourceSongs[i].usaDomingo === true) {
+      //     this.filteredSundaySongs.push(this.datasourceSongs[i]);
+      //   }
+      // }
     });
 
-    for (let i = 0; i < this.datasourceSongs.length; i++) {
-      if (this.datasourceSongs[i].seusaeldomingo === true) {
-        this.filteredSundaySongs.push(this.datasourceSongs[i]);
-      }
-    }
-
-    console.log('filteredSundaySongs', this.filteredSundaySongs);
-
-    // if (this.datasourceSongs.some(song => song['se usa el domingo'] === true)) {
-    //   this.filteredSundaySongs = this.datasourceSongs.filter(song => song['se usa el domingo']);
-    // } 
-
+    //console.log('filteredSundaySongs', this.filteredSundaySongs);
   }
 
   onAdd(e: any) {
@@ -116,7 +114,7 @@ export class SongManagerComponent implements OnInit {
         Swal.fire({
           icon: 'success',
           title: 'success',
-          text: 'User Added Successfully!',
+          text: 'Song Added Successfully!',
         });
         this.songService.getSongs().subscribe((result) => {
           this.datasourceSongs = result.sort((a, b) =>
@@ -125,46 +123,46 @@ export class SongManagerComponent implements OnInit {
         });
       });
     }
-    // if (change.type == 'update') {
-    //   // Limpia los campos no válidos
-    //   const cleanData = { ...change.data };
-    //   Object.keys(cleanData).forEach((key) => {
-    //     if (/^__.*__$/.test(key)) {
-    //       delete cleanData[key];
-    //     }
-    //   });
-    //   this.userService.updateUser(change.key.id, cleanData).then(() => {
-    //     //console.log('Usuario actualizado');
-    //     Swal.fire({
-    //       icon: 'success',
-    //       title: 'success',
-    //       text: 'User Updated Successfully!',
-    //     });
-    //     this.userService.getUsers().subscribe((result) => {
-    //       this.dataSourceUsers = result.sort((a, b) =>
-    //         a.Nombre.localeCompare(b.Nombre)
-    //       );
-    //     });
-    //   });
-    // }
-    // if (change.type == 'remove') {
-    //   const id = typeof change.key === 'string' ? change.key : change.key.id;
-    //   this.userService.deleteUser(id).then(() => {
-    //     Swal.fire({
-    //       icon: 'success',
-    //       title: 'success',
-    //       text: 'User Eliminated',
-    //     });
-    //     this.userService.getUsers().subscribe((result) => {
-    //       this.dataSourceUsers = result.sort((a, b) =>
-    //         a.Nombre.localeCompare(b.Nombre)
-    //       );
-    //     });
-    //   });
-    // }
+    if (change.type == 'update') {
+      // Limpia los campos no válidos
+      const cleanData = { ...change.data };
+      Object.keys(cleanData).forEach((key) => {
+        if (/^__.*__$/.test(key)) {
+          delete cleanData[key];
+        }
+      });
+      this.songService.updateSongs(change.key.id, cleanData).then(() => {
+        //console.log('Usuario actualizado');
+        Swal.fire({
+          icon: 'success',
+          title: 'success',
+          text: 'Song Updated Successfully!',
+        });
+        // this.songService.getSongs().subscribe((result) => {
+        //   this.datasourceSongs = result.sort((a, b) =>
+        //     a.Nombre.localeCompare(b.Nombre)
+        //   );
+        // });
+      });
+    }
+    if (change.type == 'remove') {
+      const id = typeof change.key === 'string' ? change.key : change.key.id;
+      this.songService.deleteSongs(id).then(() => {
+        Swal.fire({
+          icon: 'success',
+          title: 'success',
+          text: 'Song Eliminated',
+        });
+        this.songService.getSongs().subscribe((result) => {
+          this.datasourceSongs = result.sort((a, b) =>
+            a.Nombre.localeCompare(b.Nombre)
+          );
+        });
+      });
+    }
     // if (change.type == 'refresh') {
-    //   this.userService.getUsers().subscribe((result) => {
-    //     this.dataSourceUsers = result.sort((a, b) =>
+    //   this.songService.getSongs().subscribe((result) => {
+    //     this.datasourceSongs = result.sort((a, b) =>
     //       a.Nombre.localeCompare(b.Nombre)
     //     );
     //   });
