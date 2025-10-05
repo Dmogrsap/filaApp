@@ -41,7 +41,7 @@ export class ServidoresAlabanzaComponent implements OnInit {
           return userRole.includes('alabanza');
         });
       }
-      console.log('datasourceServidores', this.datasourceServidores);
+      //console.log('datasourceServidores', this.datasourceServidores);
     });
 
     this.rolesService.getRoles().subscribe((result) => {
