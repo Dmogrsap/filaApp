@@ -22,6 +22,7 @@ export class SongManagerComponent implements OnInit {
   public datasourceServidores: any[] = [];
   public datasourceRolesLider: any[] = [];
   public selectedMusicos: any[] = [];
+  public selectedMusicosIds: any[] = [];
 
   constructor(
     private songService: SongManagerService,
@@ -29,67 +30,99 @@ export class SongManagerComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.songService.getSongs().subscribe((result) => {
-      this.datasourceSongs = result.sort((a, b) =>
-        a.Titulo.localeCompare(b.Titulo)
-      );
+    // this.songService.getSongs().subscribe((result) => {
+    //   this.datasourceSongs = result.sort((a, b) =>
+    //     a.Titulo.localeCompare(b.Titulo)
+    //   );
 
-      if (this.showOnlySunday == false || this.showOnlySunday === undefined) {
-        this.filteredSundaySongs = this.datasourceSongs.filter(
-          (song) => song.usaDomingo === true
-        );
-      } else {
-      }
-      this.loadIndicatorVisible = false;
-    });
+    //   if (this.showOnlySunday == false || this.showOnlySunday === undefined) {
+    //     this.filteredSundaySongs = this.datasourceSongs.filter(
+    //       (song) => song.usaDomingo === true
+    //     );
+    //   } else {
+    //   }
+    //   this.loadIndicatorVisible = false;
+    // });
 
-    this.userService.getUsers().subscribe((result) => {
-      this.dataSourceUsers = result.sort((a, b) =>
-        a.Nombre.localeCompare(b.Nombre)
-      );
-      this.loadIndicatorVisible = false;
-      //console.log('DataSource', this.dataSourceUsers);
+    // this.userService.getUsers().subscribe((result) => {
+    //   this.dataSourceUsers = result.sort((a, b) =>
+    //     a.Nombre.localeCompare(b.Nombre)
+    //   );
+    //   this.loadIndicatorVisible = false;
+    //   //console.log('DataSource', this.dataSourceUsers);
 
-      this.datasourceServidores = [];
+    //   this.datasourceServidores = [];
 
-      for (let i = 0; i < this.dataSourceUsers.length; i++) {
-        this.datasourceServidores = this.dataSourceUsers.filter((user) => {
-          // Convierte el rol a minúsculas para una comparación insensible a mayúsculas/minúsculas
-          const userRole = user.Role ? user.Role.toLowerCase() : ''; // Manejo de caso si 'Role' es undefined/null
+    //   for (let i = 0; i < this.dataSourceUsers.length; i++) {
+    //     // this.datasourceServidores = this.dataSourceUsers.filter((user) => {
+    //     //   // Convierte el rol a minúsculas para una comparación insensible a mayúsculas/minúsculas
+    //     //   const userRole = user.Role ? user.Role.toLowerCase() : ''; // Manejo de caso si 'Role' es undefined/null
 
-          // Verifica si el rol incluye 'alabanza'
-          return userRole.includes('alabanza');
-        });
-      }
-      //console.log('datasourceServidores', this.datasourceServidores);
-    });
+    //     //   // Verifica si el rol incluye 'alabanza'
+    //     //   return userRole.includes('alabanza');
+    //     // });
+
+    //     this.datasourceServidores = this.dataSourceUsers
+    //       .filter((user) => {
+    //         const userRole = user.Role ? user.Role.toLowerCase() : '';
+    //         return userRole.includes('alabanza');
+    //       })
+    //       .map((user) => ({
+    //         ...user,
+    //         id: user.id || user.uid, // usa el campo correcto de tu base
+    //       }));
+    //   }
+    //   console.log('datasourceServidores', this.datasourceServidores);
+    // });
 
     //console.log('filteredSundaySongs', this.filteredSundaySongs);
+  this.songService.getSongs().subscribe((result) => {
+    this.datasourceSongs = result.sort((a, b) =>
+      a.Titulo.localeCompare(b.Titulo)
+    );
+    this.filteredSundaySongs = this.datasourceSongs.filter(
+      (song) => song.usaDomingo === true
+    );
+    this.loadIndicatorVisible = false;
+  });
+
+  this.userService.getUsers().subscribe((result) => {
+    this.dataSourceUsers = result.sort((a, b) =>
+      a.Nombre.localeCompare(b.Nombre)
+    );
+    // Llena una sola vez y asegura el campo 'id'
+    this.datasourceServidores = this.dataSourceUsers
+      .filter((user) => {
+        const userRole = user.Role ? user.Role.toLowerCase() : '';
+        return userRole.includes('alabanza');
+      })
+      .map((user) => ({
+      ...user,
+      id: user.id || user.uid || user.ID || user.Id || Math.random().toString(36).substr(2, 9), // genera uno si no existe
+    }))
+      .filter((user) => user.id); // elimina los que no tengan id
+      
+    console.log('datasourceServidores', this.datasourceServidores);
+    
+  });
+  
   }
 
-  get selectedMusicosIds(): number[] {
-  return Array.isArray(this.selectedMusicos)
-    ? this.selectedMusicos.map(m => m.id)
-    : [];
-}
+  // get selectedMusicosIds(): number[] {
+  //   return Array.isArray(this.selectedMusicos)
+  //     ? this.selectedMusicos.map((m) => m.id)
+  //     : [];
+  // }
 
 onMusicosSelectionChanged(e: any) {
-  this.selectedMusicos = this.datasourceServidores.filter(m =>
-    (e.selectedItemKeys || []).includes(m.id)
+  this.selectedMusicosIds = Array.isArray(e.selectedItemKeys) ? e.selectedItemKeys : [];
+  this.selectedMusicos = this.datasourceServidores.filter(
+    (m) => m.id && this.selectedMusicosIds.includes(m.id)
   );
+  console.log('Selected Musicos IDs:', this.selectedMusicosIds);
+  console.log('Selected Musicos:', this.selectedMusicos);
 }
 
-  onAdd(e: any) {
-    this.songService.addSongs(e.data);
-  }
-
-  onUpdate(e: any) {
-    this.songService.updateSongs(e.data.id, e.data);
-  }
-
-  onDelete(e: any) {
-    this.songService.deleteSongs(e.data.id);
-  }
 
   onExporting(e: any) {
     // const workbook = new ExcelJS.Workbook();
@@ -194,13 +227,6 @@ onMusicosSelectionChanged(e: any) {
         });
       });
     }
-    // if (change.type == 'refresh') {
-    //   this.songService.getSongs().subscribe((result) => {
-    //     this.datasourceSongs = result.sort((a, b) =>
-    //       a.Nombre.localeCompare(b.Nombre)
-    //     );
-    //   });
-    // }
   }
 
   onRowClick(e: any) {
