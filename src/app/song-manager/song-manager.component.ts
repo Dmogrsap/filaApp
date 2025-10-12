@@ -17,12 +17,16 @@ export class SongManagerComponent implements OnInit {
   public loadIndicatorVisible = true;
   public datasourceSongs: any[] = [];
   public filteredSundaySongs: any[] = [];
+  public filteredServidores: any[] = [];
+  public dataSourceMenusTab: any[] = [];
+  
 
   public dataSourceUsers: any[] = [];
   public datasourceServidores: any[] = [];
   public datasourceRolesLider: any[] = [];
   public selectedMusicos: any[] = [];
   public selectedMusicosIds: any[] = [];
+  public popupVisible = false;
 
   constructor(
     private songService: SongManagerService,
@@ -30,6 +34,10 @@ export class SongManagerComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+
+    this.dataSourceMenusTab = [{ Nombre: 'Add/ Edit Canciones' }, { Nombre: 'Add/ Edit Musicos' }];
+
+
     // this.songService.getSongs().subscribe((result) => {
     //   this.datasourceSongs = result.sort((a, b) =>
     //     a.Titulo.localeCompare(b.Titulo)
@@ -76,52 +84,59 @@ export class SongManagerComponent implements OnInit {
     // });
 
     //console.log('filteredSundaySongs', this.filteredSundaySongs);
-  this.songService.getSongs().subscribe((result) => {
-    this.datasourceSongs = result.sort((a, b) =>
-      a.Titulo.localeCompare(b.Titulo)
-    );
-    this.filteredSundaySongs = this.datasourceSongs.filter(
-      (song) => song.usaDomingo === true
-    );
-    this.loadIndicatorVisible = false;
-  });
+    this.songService.getSongs().subscribe((result) => {
+      this.datasourceSongs = result.sort((a, b) =>
+        a.Titulo.localeCompare(b.Titulo)
+      );
+      this.filteredSundaySongs = this.datasourceSongs.filter(
+        (song) => song.usaDomingo === true
+      );
+      this.loadIndicatorVisible = false;
+    });
 
-  this.userService.getUsers().subscribe((result) => {
-    this.dataSourceUsers = result.sort((a, b) =>
-      a.Nombre.localeCompare(b.Nombre)
-    );
-    // Llena una sola vez y asegura el campo 'id'
-    this.datasourceServidores = this.dataSourceUsers
-      .filter((user) => {
-        const userRole = user.Role ? user.Role.toLowerCase() : '';
-        return userRole.includes('alabanza');
-      })
-      .map((user) => ({
-      ...user,
-      id: user.id || user.uid || user.ID || user.Id || Math.random().toString(36).substr(2, 9), // genera uno si no existe
-    }))
-      .filter((user) => user.id); // elimina los que no tengan id
-      
-    console.log('datasourceServidores', this.datasourceServidores);
-    
-  });
-  
+    this.userService.getUsers().subscribe((result) => {
+      this.dataSourceUsers = result.sort((a, b) =>
+        a.Nombre.localeCompare(b.Nombre)
+      );
+      // Llena una sola vez y asegura el campo 'id'
+      // this.datasourceServidores = this.dataSourceUsers
+      //   .filter((user) => {
+      //     const userRole = user.Role ? user.Role.toLowerCase() : '';
+      //     return userRole.includes('alabanza');
+      //   })
+      //   .map((user) => ({
+      //   ...user,
+      //   id: user.id || user.uid || user.ID || user.Id || Math.random().toString(36).substr(2, 9), // genera uno si no existe
+      // }))
+      //   .filter((user) => user.id); // elimina los que no tengan id
+
+      // console.log('datasourceServidores', this.datasourceServidores);
+
+      this.datasourceServidores = this.dataSourceUsers
+        .filter((user) => {
+          const userRole = user.Role ? user.Role.toLowerCase() : '';
+          return userRole.includes('alabanza');
+        })
+        .map((user) => ({
+          ...user,
+          id:
+            user.id ||
+            user.uid ||
+            user.ID ||
+            user.Id ||
+            Math.random().toString(36).substr(2, 9), // genera uno si no existe
+        }))
+        .filter((user) => user.id); // elimina los que no tengan id
+
+        this.filteredServidores = this.datasourceServidores.filter(
+        (servidor) => servidor.tocaDomingo === true
+
+        //console.log('filteredServidores', this.filteredServidores);
+      );
+      console.log('filteredServidores', this.filteredServidores);
+      this.loadIndicatorVisible = false;
+    });
   }
-
-  // get selectedMusicosIds(): number[] {
-  //   return Array.isArray(this.selectedMusicos)
-  //     ? this.selectedMusicos.map((m) => m.id)
-  //     : [];
-  // }
-
-onMusicosSelectionChanged(e: any) {
-  this.selectedMusicosIds = Array.isArray(e.selectedItemKeys) ? e.selectedItemKeys : [];
-  this.selectedMusicos = this.datasourceServidores.filter(
-    (m) => m.id && this.selectedMusicosIds.includes(m.id)
-  );
-  console.log('Selected Musicos IDs:', this.selectedMusicosIds);
-  console.log('Selected Musicos:', this.selectedMusicos);
-}
 
 
   onExporting(e: any) {
@@ -239,11 +254,13 @@ onMusicosSelectionChanged(e: any) {
     this.previewText = '';
   }
 
-  get filteredSongs() {
-    return this.showOnlySunday
-      ? this.datasourceSongs.filter((song) => song.isActive)
-      : this.datasourceSongs;
-  }
+  // get filteredSongs() {
+  //   return this.showOnlySunday
+  //     ? this.datasourceSongs.filter((song) => song.isActive)
+  //     : this.datasourceSongs;
+  // }
+
+
 
   get previewTitulo() {
     return this.selectedSong ? this.selectedSong.Titulo : '';

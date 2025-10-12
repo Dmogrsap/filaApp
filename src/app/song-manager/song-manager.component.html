@@ -8,7 +8,348 @@
     [visible]="loadIndicatorVisible"
   ></dx-load-indicator>
   <div *ngIf="loadIndicatorVisible === false">
-    <dx-data-grid
+    <dx-tab-panel
+      width="100%"
+      [dataSource]="dataSourceMenusTab"
+      [selectedIndex]="0"
+      [loop]="false"
+      [animationEnabled]="true"
+      [swipeEnabled]="true"
+      [scrollingEnabled]="true"
+    >
+      <dxo-scrolling mode="virtual"></dxo-scrolling>
+
+      <div *dxTemplate="let titulo of 'title'">
+        <span id="titles">{{ titulo.Nombre }}</span>
+      </div>
+      <div *dxTemplate="let items of 'item'">
+        <div class="tabpanel-item">
+          <div
+            *ngIf="items.Nombre == 'Add/ Edit Canciones'"
+            class="container-fluid"
+          >
+            <dx-data-grid
+              [dataSource]="datasourceSongs"
+              [remoteOperations]="true"
+              [showBorders]="true"
+              [showColumnLines]="true"
+              [showRowLines]="true"
+              [showBorders]="true"
+              [rowAlternationEnabled]="true"
+              (onSaving)="onSaving($event)"
+              height="30vh"
+              [twoWayBindingEnabled]="false"
+              [allowColumnResizing]="true"
+              (onExporting)="onExporting($event)"
+              (onRowClick)="onRowClick($event)"
+            >
+              <dxo-export [enabled]="true"></dxo-export>
+              <dxo-filter-row [visible]="false"></dxo-filter-row>
+              <dxo-header-filter
+                [visible]="true"
+                allowSearch="true"
+              ></dxo-header-filter>
+              <dxo-group-panel [visible]="false"></dxo-group-panel>
+              <dxo-scrolling mode="virtual"></dxo-scrolling>
+
+              <dxo-editing
+                mode="popup"
+                [allowAdding]="true"
+                [allowUpdating]="true"
+                [allowDeleting]="true"
+                [useIcons]="true"
+              >
+                <dxo-popup
+                  title="Add/Edit Letras"
+                  [showTitle]="true"
+                  [width]="700"
+                  [height]="525"
+                >
+                </dxo-popup>
+                <dxo-form>
+                  <dxi-item itemType="group" [colCount]="1" [colSpan]="2">
+                    <dxi-item
+                      dataField="Titulo"
+                      editorType="dxTextBox"
+                      [editorOptions]="{
+                        placeholder: 'Titulo',
+                        showClearButton: true
+                      }"
+                    ></dxi-item>
+
+                    <dxi-item
+                      dataField="Acordes"
+                      editorType="dxTextArea"
+                      [editorOptions]="{
+                        placeholder: 'Acordes',
+                        showClearButton: true
+                      }"
+                    ></dxi-item>
+
+                    <dxi-item
+                      dataField="Letra"
+                      editorType="dxTextArea"
+                      [editorOptions]="{
+                        placeholder: 'Letra',
+                        showClearButton: true
+                      }"
+                    ></dxi-item>
+
+                    <dxi-item
+                      dataField="isActive"
+                      editorType="dxSwitch"
+                      [editorOptions]="{
+                        dataSource: datasourceSongs,
+                        displayExpr: 'active',
+                        valueExpr: 'active',
+                        switchedOnText: 'Yes',
+                        switchedOffText: 'NO',
+                        width: 80
+                      }"
+                    >
+                      <dxo-label location="left"></dxo-label>
+                    </dxi-item>
+
+                    <dxi-item
+                      dataField="usaDomingo"
+                      editorType="dxSwitch"
+                      [editorOptions]="{
+                        dataSource: datasourceSongs,
+                        displayExpr: 'active',
+                        valueExpr: 'active',
+                        switchedOnText: 'Yes',
+                        switchedOffText: 'NO',
+                        width: 80
+                      }"
+                    >
+                      <dxo-label location="left"></dxo-label>
+                    </dxi-item>
+                  </dxi-item>
+                </dxo-form>
+                <dx-switch
+                  [(value)]="showOnlySunday"
+                  text="Mostrar solo canciones para el domingo"
+                ></dx-switch>
+              </dxo-editing>
+
+              <!---------------------Data grid para que se muestre una tabla dentro de agregar user--------------------->
+              <div
+                *dxTemplate="let cellInfo of 'singleDropDownBoxEditor'"
+                style="margin-top: 10px"
+              >
+                <dx-drop-down-box
+                  [dataSource]="datasourceSongs"
+                  [(value)]="cellInfo.value"
+                  [displayExpr]="getDisplayExpr"
+                  valueExpr="Nombre"
+                  contentTemplate="contentTemplate"
+                >
+                  <div *dxTemplate="let e of 'contentTemplate'">
+                    <dx-data-grid
+                      [dataSource]="datasourceSongs"
+                      [remoteOperations]="true"
+                      [height]="250"
+                      [keyExpr]="'Nombre'"
+                      [selectedRowKeys]="[cellInfo.value]"
+                      [focusedRowEnabled]="true"
+                      [focusedRowKey]="cellInfo.value"
+                      [hoverStateEnabled]="true"
+                      (onSelectionChanged)="
+                        onSelectionChanged(
+                          $event.selectedRowKeys,
+                          cellInfo,
+                          e.component
+                        )
+                      "
+                    >
+                      <dxo-search-panel
+                        [visible]="true"
+                        [searchVisibleColumnsOnly]="true"
+                      ></dxo-search-panel>
+                      <dxi-column
+                        dataField="Nombre"
+                        caption="Nombre"
+                      ></dxi-column>
+                      <dxo-paging [enabled]="true" [pageSize]="10"></dxo-paging>
+                      <dxo-scrolling mode="virtual"></dxo-scrolling>
+                      <dxo-selection mode="single"></dxo-selection>
+                    </dx-data-grid>
+                  </div>
+                </dx-drop-down-box>
+              </div>
+              <!------------------------------------Data grid principal de la tabla---------------------------------------------->
+
+              <dxo-search-panel
+                [visible]="true"
+                [width]="100"
+              ></dxo-search-panel>
+              <dxi-column dataField="Titulo" caption="Titulo"> </dxi-column>
+              <dxi-column dataField="Acordes" caption="Acordes"> </dxi-column>
+              <dxi-column dataField="Letra" caption="Letra"> </dxi-column>
+              <dxi-column
+                dataField="isActive"
+                caption="is Active"
+                alignment="center"
+              >
+              </dxi-column>
+              <dxi-column
+                alignment="center"
+                dataField="usaDomingo"
+                caption="Se usa el Domingo?"
+              ></dxi-column>
+            </dx-data-grid>
+
+            <br />
+          </div>
+
+          <div
+            *ngIf="items.Nombre == 'Add/ Edit Musicos'"
+            class="container-fluid"
+          >
+            <dx-data-grid
+              [dataSource]="datasourceServidores"
+              [remoteOperations]="true"
+              [showBorders]="true"
+              [showColumnLines]="true"
+              [showRowLines]="true"
+              [showBorders]="true"
+              [rowAlternationEnabled]="true"
+              (onSaving)="onSaving($event)"
+              height="30vh"
+              [twoWayBindingEnabled]="false"
+              [allowColumnResizing]="true"
+              (onExporting)="onExporting($event)"
+              (onRowClick)="onRowClick($event)"
+            >
+              <dxo-export [enabled]="true"></dxo-export>
+              <dxo-filter-row [visible]="false"></dxo-filter-row>
+              <dxo-header-filter
+                [visible]="true"
+                allowSearch="true"
+              ></dxo-header-filter>
+              <dxo-group-panel [visible]="false"></dxo-group-panel>
+              <dxo-scrolling mode="virtual"></dxo-scrolling>
+
+              <dxo-editing
+                mode="popup"
+                [allowAdding]="true"
+                [allowUpdating]="true"
+                [allowDeleting]="true"
+                [useIcons]="true"
+              >
+                <dxo-popup
+                  title="Add/Edit Servidores"
+                  [showTitle]="true"
+                  [width]="700"
+                  [height]="525"
+                >
+                </dxo-popup>
+                <dxo-form>
+                  <dxi-item itemType="group" [colCount]="1" [colSpan]="2">
+                    <dxi-item
+                      dataField="Nombre"
+                      editorType="dxTextBox"
+                      [editorOptions]="{
+                        placeholder: 'Titulo',
+                        showClearButton: true
+                      }"
+                    ></dxi-item>
+
+                    <dxi-item
+                      dataField="tocaDomingo"
+                      editorType="dxSwitch"
+                      [editorOptions]="{
+                        dataSource: datasourceServidores,
+                        displayExpr: 'active',
+                        valueExpr: 'active',
+                        switchedOnText: 'Yes',
+                        switchedOffText: 'NO',
+                        width: 80
+                      }"
+                    >
+                      <dxo-label location="left"></dxo-label>
+                    </dxi-item>
+                  </dxi-item>
+                </dxo-form>
+                <dx-switch
+                  [(value)]="showOnlySunday"
+                  text="Mostrar solo Servidores que participaran el domingo"
+                ></dx-switch>
+              </dxo-editing>
+
+              <!---------------------Data grid para que se muestre una tabla dentro de agregar user--------------------->
+              <!-- <div
+                *dxTemplate="let cellInfo of 'singleDropDownBoxEditor'"
+                style="margin-top: 10px"
+              >
+                <dx-drop-down-box
+                  [dataSource]="datasourceSongs"
+                  [(value)]="cellInfo.value"
+                  [displayExpr]="getDisplayExpr"
+                  valueExpr="Nombre"
+                  contentTemplate="contentTemplate"
+                >
+                  <div *dxTemplate="let e of 'contentTemplate'">
+                    <dx-data-grid
+                      [dataSource]="datasourceServidores"
+                      [remoteOperations]="true"
+                      [height]="250"
+                      [keyExpr]="'Nombre'"
+                      [selectedRowKeys]="[cellInfo.value]"
+                      [focusedRowEnabled]="true"
+                      [focusedRowKey]="cellInfo.value"
+                      [hoverStateEnabled]="true"
+                      (onSelectionChanged)="
+                        onSelectionChanged(
+                          $event.selectedRowKeys,
+                          cellInfo,
+                          e.component
+                        )
+                      "
+                    >
+                      <dxo-search-panel
+                        [visible]="true"
+                        [searchVisibleColumnsOnly]="true"
+                      ></dxo-search-panel>
+                      <dxi-column
+                        dataField="Nombre"
+                        caption="Nombre"
+                      ></dxi-column>
+                      <dxo-paging [enabled]="true" [pageSize]="10"></dxo-paging>
+                      <dxo-scrolling mode="virtual"></dxo-scrolling>
+                      <dxo-selection mode="single"></dxo-selection>
+                    </dx-data-grid>
+                  </div>
+                </dx-drop-down-box>
+             
+              </div> -->
+              <!------------------------------------Data grid principal de la tabla---------------------------------------------->
+
+              <dxo-search-panel
+                [visible]="true"
+                [width]="100"
+              ></dxo-search-panel>
+              <dxi-column dataField="Nombre" caption="Nombre"> </dxi-column>
+              <dxi-column dataField="Acordes" caption="Acordes"> </dxi-column>
+              <dxi-column dataField="Letra" caption="Letra"> </dxi-column>
+              <dxi-column
+                dataField="isActive"
+                caption="is Active"
+                alignment="center"
+              >
+              </dxi-column>
+              <dxi-column
+                alignment="center"
+                dataField="tocaDomingo"
+                caption="Toca el Domingo?"
+              ></dxi-column>
+            </dx-data-grid>
+            
+          </div>
+        </div>
+      </div>
+    </dx-tab-panel>
+    <!-- <dx-data-grid
       [dataSource]="datasourceSongs"
       [remoteOperations]="true"
       [showBorders]="true"
@@ -112,7 +453,7 @@
         ></dx-switch>
       </dxo-editing>
 
-      <!---------------------Data grid para que se muestre una tabla dentro de agregar user--------------------->
+     
       <div
         *dxTemplate="let cellInfo of 'singleDropDownBoxEditor'"
         style="margin-top: 10px"
@@ -154,8 +495,7 @@
           </div>
         </dx-drop-down-box>
       </div>
-      <!------------------------------------Data grid principal de la tabla---------------------------------------------->
-
+      
       <dxo-search-panel [visible]="true" [width]="100"></dxo-search-panel>
       <dxi-column dataField="Titulo" caption="Titulo"> </dxi-column>
       <dxi-column dataField="Acordes" caption="Acordes"> </dxi-column>
@@ -167,7 +507,7 @@
         dataField="usaDomingo"
         caption="Se usa el Domingo?"
       ></dxi-column>
-    </dx-data-grid>
+    </dx-data-grid> -->
   </div>
 </div>
 
@@ -227,42 +567,52 @@
     </ul>
   </div> -->
 
-<div class="column">
-  <h3>Selecciona músicos para el domingo</h3>
-  <dx-drop-down-box
-    [dataSource]="datasourceServidores"
-    displayExpr="Nombre"
-    valueExpr="id"
-    [value]="selectedMusicosIds"
-    [showClearButton]="true"
-    [deferRendering]="false"
-    placeholder="Selecciona músicos"
-    style="max-width: 300px; margin-bottom: 20px"
-  >
-    <div *dxTemplate="let data of 'content'">
-      <dx-list
-        [dataSource]="datasourceServidores"
-        displayExpr="Nombre"
-        keyExpr="id"
-        selectionMode="multiple"
-        [selectedItemKeys]="selectedMusicosIds"
-        (onSelectionChanged)="onMusicosSelectionChanged($event)"
-        [showSelectionControls]="true"
-        style="max-height: 300px"
-      ></dx-list>
-    </div>
-  </dx-drop-down-box>
+  <div class="column">
+    <h3>Selecciona músicos para el domingo</h3>
 
-  <h4>Músicos seleccionados</h4>
-  <dx-data-grid
-    [dataSource]="selectedMusicos"
-    [showBorders]="true"
-    [columnAutoWidth]="true"
-    height="auto"
-    width="100%"
-    style="max-width: 300px"
-  >
-    <dxi-column dataField="Nombre" caption="Participante"></dxi-column>
-  </dx-data-grid>
-</div>
+    <dx-popup
+      [(visible)]="popupVisible"
+      [width]="600"
+      [height]="400"
+      [showTitle]="true"
+      title="Selecciona músicos para el domingo"
+    >
+      <dx-data-grid
+        [dataSource]="filteredServidores"
+        [showBorders]="true"
+        [columnAutoWidth]="false"
+        [rowAlternationEnabled]="true"
+        height="auto"
+        width="100%"
+        style="max-width: 580px"
+      >
+        <dxi-column dataField="Nombre" caption="Músico"></dxi-column>
+        <dxi-column
+          dataField="tocaDomingo"
+          caption="Toca este domingo"
+          dataType="boolean"
+          [allowEditing]="true"
+        ></dxi-column>
+      </dx-data-grid>
+      <div style="text-align: right; margin-top: 20px">
+        <dx-button text="Cerrar" (onClick)="popupVisible = false"></dx-button>
+      </div>
+    </dx-popup>
+
+    <dx-data-grid
+      [dataSource]="filteredServidores"
+      [showBorders]="true"
+      [columnAutoWidth]="false"
+      [rowAlternationEnabled]="true"
+      height="auto"
+      width="100%"
+      style="max-width: 580px"
+    >
+      <dxi-column dataField="Nombre" caption="Nombre"></dxi-column>
+      <dxi-column
+        dataField="tocaDomingo"
+        caption="Toca/Canta el Domingo"
+      ></dxi-column>
+    </dx-data-grid>
+  </div>
 </div>
