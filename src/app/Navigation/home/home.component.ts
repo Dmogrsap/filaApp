@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ImageService } from 'src/app/services/image.service';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -7,6 +8,8 @@ import Swal from 'sweetalert2';
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent implements OnInit {
+
+  constructor(private imageService: ImageService) { }
 
   ngOnInit(): void {
     Swal.fire({
@@ -22,5 +25,24 @@ export class HomeComponent implements OnInit {
       // imageAlt: 'Custom image',
     });
   }
+
+  async onFileSelected(event: any) {
+  const file = event.target.files[0];
+  if (file) {
+    await this.imageService.uploadImage(file, 'Nombre de la imagen', 'Descripción opcional');
+    Swal.fire({
+      icon: 'success',
+      title: 'Image Uploaded Successfully',
+      text: 'Your image has been uploaded.',
+      imageUrl: 'assets/img/success.png',
+      imageWidth: 600,
+      imageHeight: 300,
+      width: 600,
+      
+
+      // imageAlt: 'Custom image',
+    });
+  }
+}
 
 }

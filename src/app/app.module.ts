@@ -30,6 +30,7 @@ import { LideresComponent } from './lideres/lideres.component';
 import { AccessComponent } from './access/access.component';
 import { ServidoresAlabanzaComponent } from './servidores-alabanza/servidores-alabanza.component';
 import { SongManagerComponent } from './song-manager/song-manager.component';
+import { EditHomeComponent } from './edit-home/edit-home.component';
 
 
 @NgModule({
@@ -44,6 +45,7 @@ import { SongManagerComponent } from './song-manager/song-manager.component';
     AccessComponent,
     ServidoresAlabanzaComponent,
     SongManagerComponent,
+    EditHomeComponent,
  
   ],
   imports: [
