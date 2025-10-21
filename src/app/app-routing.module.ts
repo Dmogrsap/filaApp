@@ -10,6 +10,7 @@ import { AccessComponent } from './access/access.component';
 import { ServidoresAlabanzaService } from './services/servidores-alabanza.service';
 import { ServidoresAlabanzaComponent } from './servidores-alabanza/servidores-alabanza.component';
 import { SongManagerComponent } from './song-manager/song-manager.component';
+import { EditHomeComponent } from './edit-home/edit-home.component';
 
 const routes: Routes = [
   { 
@@ -71,6 +72,12 @@ const routes: Routes = [
         path: 'servidores-alabanza',
         component: ServidoresAlabanzaComponent,
         data: { title: 'Servidores Alabanza', url: '/servidores-alabanza' }
+      },
+
+      {
+        path: 'edit-home',
+        component: EditHomeComponent,
+        data: { title: 'Edicion de Portada', url: '/edit-home' }
       },
 
       // {

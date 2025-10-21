@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import Swal from 'sweetalert2';
-import { ImageService } from '../services/image.service';
-import { async, Observable } from 'rxjs';
+import { SupabaseImageService } from '../services/image.service';
+import { async, from, Observable } from 'rxjs';
 import { collectionData, collection, Firestore } from '@angular/fire/firestore';
 
 
@@ -12,37 +12,38 @@ import { collectionData, collection, Firestore } from '@angular/fire/firestore';
 })
 export class EditHomeComponent {
 
-  imagenes$: Observable<any[]> | undefined;
-  public imagenes: any[] = [];
+    public imageUrls: string[] = [];
+  public imagenes$!: Observable<any[]>; // datos para el grid
 
-  constructor(private imageService: ImageService,  private firestore: Firestore) { }
+  constructor(private supabaseImageService: SupabaseImageService) {}
 
+  async ngOnInit() {
+    await this.loadImages();
+  }
 
-  ngOnInit() {
-  const imagenesRef = collection(this.firestore, 'imagenes');
-  this.imagenes$ = collectionData(imagenesRef, { idField: 'id' });
-  
-}
+  private async loadImages() {
+    try {
+      const images = await this.supabaseImageService.listImages(); // debe devolver array de objetos { name, path, url, description, created_at }
+      // llena imageUrls para la previsualización simple
+      this.imageUrls = images.map(img => img.url ?? img.public_url ?? img.path ?? '');
+      // expone un Observable para el dx-data-grid
+      this.imagenes$ = from(Promise.resolve(images));
+    } catch (err) {
+      console.error('Error cargando imágenes:', err);
+    }
+  }
 
   async onFileSelected(event: any) {
-    const file = event.target.files[0];
-    if (file) {
-      await this.imageService.uploadImage(
-        file,
-        'Nombre de la imagen',
-        'Descripción opcional'
-      );
-      Swal.fire({
-        icon: 'success',
-        title: 'Image Uploaded Successfully',
-        text: 'Your image has been uploaded.',
-        imageUrl: 'assets/img/success.png',
-        imageWidth: 600,
-        imageHeight: 300,
-        width: 600,
-
-        // imageAlt: 'Custom image',
-      });
+    const file: File | undefined = event.target.files?.[0];
+    if (!file) return;
+    try {
+      // uploadAndSave debe subir al bucket y guardar metadatos en la tabla; devolver metadata o url
+      await this.supabaseImageService.uploadAndSave(file, file.name);
+      await this.loadImages(); // recargar lista tras subir
+      Swal.fire('OK', 'Imagen subida y guardada', 'success');
+    } catch (err: any) {
+      console.error('Error subiendo imagen:', err);
+      Swal.fire('Error', err?.message || 'Fallo al subir imagen', 'error');
     }
   }
 }

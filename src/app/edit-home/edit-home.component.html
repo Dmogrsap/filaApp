@@ -1,3 +1,19 @@
 <p>edit-home works!</p>
 
 <input type="file" (change)="onFileSelected($event)" />
+<div *ngFor="let url of imageUrls">
+  <img [src]="url" alt="imagen" style="max-width: 100px; max-height: 100px;" />
+</div>
+
+<dx-data-grid [dataSource]="imagenes$ | async" [showBorders]="true">
+  <dxi-column dataField="nombre" caption="Nombre"></dxi-column>
+  <dxi-column dataField="descripcion" caption="Descripción"></dxi-column>
+  <dxi-column dataField="fecha" caption="Fecha"></dxi-column>
+  <dxi-column
+    caption="Imagen"
+    cellTemplate="imageCell"
+  ></dxi-column>
+  <div *dxTemplate="let data of 'imageCell'">
+    <img [src]="data.url" alt="imagen" style="max-width: 100px; max-height: 100px;" />
+  </div>
+</dx-data-grid>
