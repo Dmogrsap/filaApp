@@ -10,8 +10,8 @@ export const environment = {
   },
 
   production: false,
-  supabaseUrl: 'https://fila-app.supabase.co',
-  supabaseKey: 'TU_ANON_KEY_O_SERVICE_ROLE_KEY', // para operaciones desde servidor usar service role; para cliente usar anon
+  supabaseUrl: 'https://jidbusphubjurkiuljvg.supabase.co',
+  supabaseKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImppZGJ1c3BodWJqdXJraXVsanZnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA2MTg2NjAsImV4cCI6MjA3NjE5NDY2MH0.z7N7ePslpAmVie87fgnYamDWsAKp1aGeJvDcRjU15Cs', // para operaciones desde servidor usar service role; para cliente usar anon
   // production: true,
   // baseUrl: "http://ah969226/APIS/ITSoftwareControlAPI/api",
   // redirectUrl: "http://ah969226/ITSoftwareControl/",

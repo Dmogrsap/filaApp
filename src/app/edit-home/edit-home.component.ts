@@ -4,16 +4,14 @@ import { SupabaseImageService } from '../services/image.service';
 import { async, from, Observable } from 'rxjs';
 import { collectionData, collection, Firestore } from '@angular/fire/firestore';
 
-
 @Component({
   selector: 'app-edit-home',
   templateUrl: './edit-home.component.html',
   styleUrls: ['./edit-home.component.css'],
 })
 export class EditHomeComponent {
-
-    public imageUrls: string[] = [];
-  public imagenes$!: Observable<any[]>; // datos para el grid
+  public images: any[] = [];
+  public loading = false;
 
   constructor(private supabaseImageService: SupabaseImageService) {}
 
@@ -21,15 +19,26 @@ export class EditHomeComponent {
     await this.loadImages();
   }
 
-  private async loadImages() {
+  async loadImages() {
     try {
-      const images = await this.supabaseImageService.listImages(); // debe devolver array de objetos { name, path, url, description, created_at }
-      // llena imageUrls para la previsualización simple
-      this.imageUrls = images.map(img => img.url ?? img.public_url ?? img.path ?? '');
-      // expone un Observable para el dx-data-grid
-      this.imagenes$ = from(Promise.resolve(images));
+      this.loading = true;
+      const data = await this.supabaseImageService.listImages();
+      // normaliza campos esperados por el grid
+      this.images = (data || []).map((it: any) => ({
+        ...it,
+        name: it.name ?? it.nombre ?? '',
+        url: it.url ?? it.public_url ?? it.path ?? '',
+        description: it.description ?? it.descripcion ?? '',
+        created_at: it.created_at
+          ? new Date(it.created_at)
+          : it.fecha
+          ? new Date(it.fecha)
+          : null,
+      }));
     } catch (err) {
-      console.error('Error cargando imágenes:', err);
+      console.error('Error loading images', err);
+    } finally {
+      this.loading = false;
     }
   }
 
@@ -37,15 +46,15 @@ export class EditHomeComponent {
     const file: File | undefined = event.target.files?.[0];
     if (!file) return;
     try {
-      // uploadAndSave debe subir al bucket y guardar metadatos en la tabla; devolver metadata o url
-      await this.supabaseImageService.uploadAndSave(file, file.name);
-      await this.loadImages(); // recargar lista tras subir
+      this.loading = true;
+      await this.supabaseImageService.uploadAndSave(file, '');
+      await this.loadImages();
       Swal.fire('OK', 'Imagen subida y guardada', 'success');
     } catch (err: any) {
-      console.error('Error subiendo imagen:', err);
+      console.error('Error uploading image', err);
       Swal.fire('Error', err?.message || 'Fallo al subir imagen', 'error');
+    } finally {
+      this.loading = false;
     }
   }
 }
-
-

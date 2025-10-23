@@ -13,43 +13,62 @@ export class SupabaseImageService {
   constructor() {
     this.supabase = createClient(environment.supabaseUrl, environment.supabaseKey);
   }
+  
+async uploadAndSave(file: File, description = '') {
+    try {
+      const filePath = `${Date.now()}_${file.name}`;
 
-  // sube al bucket 'images' y guarda metadata en la tabla 'images'
-  async uploadAndSave(file: File, descripcion: string = ''): Promise<any> {
-    const filePath = `${Date.now()}_${file.name}`;
-    const { data: uploadData, error: uploadError } = await this.supabase
-      .storage
-      .from('images')
-      .upload(filePath, file);
+      const { data: uploadData, error: uploadError } = await this.supabase.storage
+        .from('images')
+        .upload(filePath, file, { cacheControl: '3600', upsert: false });
 
-    if (uploadError) throw uploadError;
+      if (uploadError) throw uploadError;
 
-    // obtener url pública (si el bucket es público)
-    const { data: publicData } = this.supabase.storage.from('images').getPublicUrl(filePath);
-    const publicUrl = publicData.publicUrl;
+      // getPublicUrl no devuelve (data, error). Obtener la URL así:
+      const publicResult: any = this.supabase.storage.from('images').getPublicUrl(filePath);
+      // dependiendo de la versión puede estar en publicResult.data.publicUrl o publicResult.publicUrl
+      const publicUrl = publicResult?.data?.publicUrl ?? publicResult?.publicUrl ?? '';
 
-    // guardar metadatos en tabla 'images' (ajusta columnas)
-    const { data, error } = await this.supabase
-      .from('images')
-      .insert([{ name: file.name, path: filePath, url: publicUrl, description: descripcion, created_at: new Date() }]);
+      const { data, error } = await this.supabase
+        .from('images')
+        .insert([{
+          name: file.name,
+          path: filePath,
+          url: publicUrl,
+          description,
+          created_at: new Date().toISOString()
+        }]);
 
-    if (error) throw error;
-    return { storage: uploadData, row: data };
+      if (error) throw error;
+      return { row: data, url: publicUrl };
+    } catch (err) {
+      console.error('Supabase uploadAndSave error:', err);
+      throw err;
+    }
   }
 
-  // listar archivos (metadatos desde la tabla 'images')
-  async listImages(): Promise<any[]> {
-    const { data, error } = await this.supabase
-      .from('images')
-      .select('*')
-      .order('created_at', { ascending: false });
+  async listImages() {
+    try {
+      const { data, error } = await this.supabase
+        .from('images')
+        .select('*')
+        .order('created_at', { ascending: false });
 
-    if (error) throw error;
-    return data || [];
+      if (error) throw error;
+      return data || [];
+    } catch (err) {
+      console.error('Supabase listImages error:', err);
+      throw err;
+    }
   }
 
-  // obtener URL pública si tienes solo path
   getPublicUrl(path: string) {
-    return this.supabase.storage.from('images').getPublicUrl(path).data.publicUrl;
+    try {
+      const result: any = this.supabase.storage.from('images').getPublicUrl(path);
+      return result?.data?.publicUrl ?? result?.publicUrl ?? null;
+    } catch (err) {
+      console.error('getPublicUrl error:', err);
+      return null;
+    }
   }
 }
