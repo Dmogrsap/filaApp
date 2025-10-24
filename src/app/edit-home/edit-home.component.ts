@@ -1,7 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import Swal from 'sweetalert2';
 import { SupabaseImageService } from '../services/image.service';
-import { async, from, Observable } from 'rxjs';
 import { collectionData, collection, Firestore } from '@angular/fire/firestore';
 
 @Component({
@@ -9,7 +8,7 @@ import { collectionData, collection, Firestore } from '@angular/fire/firestore';
   templateUrl: './edit-home.component.html',
   styleUrls: ['./edit-home.component.css'],
 })
-export class EditHomeComponent {
+export class EditHomeComponent implements OnInit {
   public images: any[] = [];
   public loading = false;
 
@@ -17,23 +16,26 @@ export class EditHomeComponent {
 
   async ngOnInit() {
     await this.loadImages();
+
+     try {
+      const res = await this.supabaseImageService.testConnection();
+      console.log('Supabase testConnection OK:', res);
+    } catch (err) {
+      console.error('Supabase testConnection falló:', err);
+    }
+    
   }
 
   async loadImages() {
     try {
       this.loading = true;
       const data = await this.supabaseImageService.listImages();
-      // normaliza campos esperados por el grid
       this.images = (data || []).map((it: any) => ({
         ...it,
-        name: it.name ?? it.nombre ?? '',
-        url: it.url ?? it.public_url ?? it.path ?? '',
-        description: it.description ?? it.descripcion ?? '',
-        created_at: it.created_at
-          ? new Date(it.created_at)
-          : it.fecha
-          ? new Date(it.fecha)
-          : null,
+        nombre: it.nombre ?? it.name ?? '',
+        url: it.url ?? it.public_url ?? '',
+        tipo: it.tipo ?? it.type ?? '',
+        created_at: it.created_at ? new Date(it.created_at) : null,
       }));
     } catch (err) {
       console.error('Error loading images', err);
@@ -47,7 +49,7 @@ export class EditHomeComponent {
     if (!file) return;
     try {
       this.loading = true;
-      await this.supabaseImageService.uploadAndSave(file, '');
+      await this.supabaseImageService.uploadAndSave(file);
       await this.loadImages();
       Swal.fire('OK', 'Imagen subida y guardada', 'success');
     } catch (err: any) {
