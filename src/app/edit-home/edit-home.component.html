@@ -12,6 +12,7 @@
   [rowAlternationEnabled]="true"
   [columnAutoWidth]="true"
   height="450"
+  (onRowClick)="onRowClick($event)"
 >
   <dxi-column dataField="name" caption="Nombre"></dxi-column>
   <dxi-column dataField="description" caption="Descripción"></dxi-column>
@@ -31,3 +32,20 @@
   <dxo-paging [pageSize]="10"></dxo-paging>
   <dxo-scrolling mode="virtual"></dxo-scrolling>
 </dx-data-grid>
+
+<dx-popup
+  [visible]="popupVisible"
+  [showTitle]="true"
+  [title]="selectedImage?.name || 'Imagen'"
+  [width]="600"
+  [height]="500"
+  (onHidden)="popupVisible = false"
+>
+  <div style="text-align: center; padding: 20px;">
+    <img
+      [src]="selectedImage?.url"
+      [alt]="selectedImage?.name"
+      style="max-width: 100%; max-height: 400px; object-fit: contain;"
+    />
+  </div>
+</dx-popup>
