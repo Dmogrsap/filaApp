@@ -92,6 +92,8 @@ export class SongManagerComponent implements OnInit {
         (song) => song.usaDomingo === true
       );
       this.loadIndicatorVisible = false;
+
+  console.log('filteredSundaySongs', this.filteredSundaySongs);
     });
 
     this.userService.getUsers().subscribe((result) => {

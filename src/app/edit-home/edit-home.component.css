@@ -1,0 +1,43 @@
+/* src/app/edit-home.component.css */
+
+/* Estilos para que la celda de la imagen se vea bien */
+.img-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.img-cell img {
+  max-width: 120px;
+  max-height: 90px;
+  object-fit: cover;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+/* 🎨 Estilos para la DataGrid */
+.styled-grid {
+  /* Sombra sutil para levantar la tabla */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  overflow: hidden; /* Asegura que la sombra y borde funcionen bien */
+}
+
+/* Estilo para las cabeceras (opcional) */
+.dx-datagrid .dx-header-row {
+  background-color: #f0f0f0; /* Un gris claro */
+  color: #333;
+  font-weight: 600;
+}
+
+/* Estilo para filas alternas (striped rows) */
+.dx-datagrid-rowsview .dx-row-alt {
+    background-color: #fafafa !important;
+}
+
+/* Aumentar el padding de las celdas para que no se vea tan apretado */
+.dx-datagrid-content .dx-row td {
+    padding-top: 10px;
+    padding-bottom: 10px;
+}

@@ -10,7 +10,8 @@ import { environment } from 'src/environments/environment';
 })
 export class SupabaseImageService {
   private supabase: SupabaseClient;
-  private bucket = environment.supabaseBucket ?? 'images'; // usar env, fallback 'images'
+  // private bucket = environment.supabaseBucket || 'IMAGES'; // usar env, fallback 'IMAGES'
+  private bucket = 'IMAGES'; // usar env, fallback 'IMAGES'
   private table = environment.supabaseTable ?? 'images'; // usar env, fallback 'images'
   
   constructor() {
@@ -21,12 +22,12 @@ export class SupabaseImageService {
         auth: { persistSession: false, detectSessionInUrl: false },
       }
     );
-    (
-      // debug rápido: listar buckets y mostrar env para verificar que estás en el proyecto correcto
-      (+this.debugListBuckets().catch((err) =>
-        console.error('debugListBuckets error:', err)
-      ))
-    );
+    // (
+    //   // debug rápido: listar buckets y mostrar env para verificar que estás en el proyecto correcto
+    //   (this.debugListBuckets().catch((err) =>
+    //     console.error('debugListBuckets error:', err)
+    //   ))
+    // );
   }
 
     async testConnection() {
