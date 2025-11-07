@@ -19,12 +19,12 @@ export class EditHomeComponent implements OnInit {
   async ngOnInit() {
     await this.loadImages();
 
-     try {
-      const res = await this.supabaseImageService.testConnection();
-      //console.log('Supabase testConnection OK:', res);
-    } catch (err) {
-      console.error('Supabase testConnection falló:', err);
-    }
+    //  try {
+    //   const res = await this.supabaseImageService.testConnection();
+    //   //console.log('Supabase testConnection OK:', res);
+    // } catch (err) {
+    //   console.error('Supabase testConnection falló:', err);
+    // }
     
   }
 
