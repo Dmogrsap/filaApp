@@ -88,12 +88,13 @@ export class SongManagerComponent implements OnInit {
       this.datasourceSongs = result.sort((a, b) =>
         a.Titulo.localeCompare(b.Titulo)
       );
+      console.log('datasourceSongs', this.datasourceSongs);
       this.filteredSundaySongs = this.datasourceSongs.filter(
         (song) => song.usaDomingo === true
       );
       this.loadIndicatorVisible = false;
 
-  console.log('filteredSundaySongs', this.filteredSundaySongs);
+  //console.log('filteredSundaySongs', this.filteredSundaySongs);
     });
 
     this.userService.getUsers().subscribe((result) => {
