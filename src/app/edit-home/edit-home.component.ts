@@ -11,20 +11,21 @@ import { collectionData, collection, Firestore } from '@angular/fire/firestore';
 export class EditHomeComponent implements OnInit {
   public images: any[] = [];
   public loading = false;
-
-  public uploading = false;
-  public previewSelected: string | null = null;
+  public selectedImage: any;
+  public popupVisible = false;
 
   constructor(private supabaseImageService: SupabaseImageService) {}
 
   async ngOnInit() {
     await this.loadImages();
+
     //  try {
     //   const res = await this.supabaseImageService.testConnection();
-    //   console.log('Supabase testConnection OK:', res);
+    //   //console.log('Supabase testConnection OK:', res);
     // } catch (err) {
     //   console.error('Supabase testConnection falló:', err);
     // }
+    
   }
 
   async loadImages() {
@@ -74,5 +75,10 @@ export class EditHomeComponent implements OnInit {
       this.uploading = false;
       this.loading = false;
     }
+  }
+
+  onRowClick(event: any) {
+    this.selectedImage = event.data;
+    this.popupVisible = true;
   }
 }

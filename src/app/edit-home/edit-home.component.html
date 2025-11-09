@@ -10,61 +10,28 @@
 <div class="edit-home-container">
   <h2>Imágenes subidas</h2>
 
-  <dx-data-grid
-    [dataSource]="images"
-    [showBorders]="true"
-    [columnAutoWidth]="true"
-    height="420"
-  >
-    <dxi-column caption="Preview" width="140">
-      <ng-template let-data="data" dxTemplate="cell">
-        <div class="img-cell">
-          <img [src]="data.url" [alt]="data.nombre || 'imagen'" />
-        </div>
-      </ng-template>
-    </dxi-column>
+<dx-data-grid
+  [dataSource]="images"
+  [showBorders]="true"
+  [rowAlternationEnabled]="true"
+  [columnAutoWidth]="true"
+  height="450"
+>
+  <dxi-column dataField="name" caption="Nombre"></dxi-column>
+  <dxi-column dataField="description" caption="Descripción"></dxi-column>
+  <dxi-column dataField="created_at" caption="Fecha" dataType="date"></dxi-column>
 
-    <dxi-column dataField="nombre" caption="Nombre"></dxi-column>
+  <dxi-column caption="Imagen" cellTemplate="imageCell" [width]="180"></dxi-column>
 
-    <dxi-column caption="Tipo" dataField="tipo" width="120"></dxi-column>
+  <div *dxTemplate="let row of 'imageCell'">
+    <!-- row puede ser el objeto de fila o contener .data según versión; soporta ambos -->
+    <img
+      [src]="(row?.data?.url) ?? row?.url"
+      [alt]="(row?.data?.name) ?? row?.name"
+      style="max-width:160px; max-height:120px; display:block"
+    />
+  </div>
 
-    <dxi-column caption="Fecha" width="160">
-      <ng-template let-data="data" dxTemplate="cell">
-        <div>{{ data.created_at ? (data.created_at | date : 'short') : '' }}</div>
-      </ng-template>
-    </dxi-column>
-
-    <dxo-paging [enabled]="true" [pageSize]="10"></dxo-paging>
-<div class="edit-home-container">
-  <h2>Imágenes subidas</h2>
-
-  <dx-data-grid
-    [dataSource]="images"
-    [showBorders]="true"
-    [columnAutoWidth]="true"
-    height="420"
-    class="styled-grid" >
-    <dxi-column caption="Preview" width="140" cellTemplate="imgCellTemplate"></dxi-column> <dxi-column dataField="nombre" caption="Nombre"></dxi-column>
-
-    <dxi-column caption="Tipo" dataField="tipo" width="120"></dxi-column>
-
-    <dxi-column caption="Fecha" width="160">
-      <ng-template let-data="data" dxTemplate="cell">
-        <div>{{ data.created_at ? (data.created_at | date : 'short') : '' }}</div>
-      </ng-template>
-    </dxi-column>
-
-    <ng-template #imgCellTemplate let-data="data">
-        <div class="img-cell">
-          <img [src]="data.url" [alt]="data.nombre || 'imagen'" />
-        </div>
-    </ng-template>
-
-    <dxo-paging [enabled]="true" [pageSize]="10"></dxo-paging>
-    <dxo-scrolling mode="virtual"></dxo-scrolling>
-  </dx-data-grid>
-</div>
-    <dxo-scrolling mode="virtual"></dxo-scrolling>
-  </dx-data-grid>
-</div>
-<!-- ...existing code... -->
+  <dxo-paging [pageSize]="10"></dxo-paging>
+  <dxo-scrolling mode="virtual"></dxo-scrolling>
+</dx-data-grid>

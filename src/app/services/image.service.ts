@@ -13,7 +13,7 @@ export class SupabaseImageService {
   // private bucket = environment.supabaseBucket || 'IMAGES'; // usar env, fallback 'IMAGES'
   private bucket = 'IMAGES'; // usar env, fallback 'IMAGES'
   private table = environment.supabaseTable ?? 'images'; // usar env, fallback 'images'
-  
+
   constructor() {
     this.supabase = createClient(
       environment.supabaseUrl,
@@ -22,28 +22,44 @@ export class SupabaseImageService {
         auth: { persistSession: false, detectSessionInUrl: false },
       }
     );
+<<<<<<< HEAD
     // (
     //   // debug rápido: listar buckets y mostrar env para verificar que estás en el proyecto correcto
     //   (this.debugListBuckets().catch((err) =>
     //     console.error('debugListBuckets error:', err)
     //   ))
     // );
+=======
+
+    // debug rápido: listar buckets y mostrar env para verificar que estás en el proyecto correcto
+    this.debugListBuckets().catch((err) =>
+      console.error('debugListBuckets error:', err)
+    );
+>>>>>>> e7b15396a22778c7d062c8af4791896efdb1ea07
   }
 
-    async testConnection() {
+  async testConnection() {
     try {
-      const tableRes = await this.supabase.from(this.table).select('*').limit(1);
-      console.log('testConnection table result:', tableRes);
+      const tableRes = await this.supabase
+        .from(this.table)
+        .select('*')
+        .limit(1);
+     // console.log('testConnection table result:', tableRes);
 
       // listar buckets (si tu versión de supabase-js lo soporta)
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const anySupabase: any = this.supabase as any;
-      if (anySupabase.storage && typeof anySupabase.storage.listBuckets === 'function') {
+      if (
+        anySupabase.storage &&
+        typeof anySupabase.storage.listBuckets === 'function'
+      ) {
         const listRes = await anySupabase.storage.listBuckets();
-        console.log('Buckets visible:', listRes);
+        //console.log('Buckets visible:', listRes);
       } else {
         // fallback: intentar endpoint REST v1/bucket
-        console.warn('listBuckets no disponible, usa curl o fetch contra /storage/v1/bucket para verificar buckets');
+        console.warn(
+          'listBuckets no disponible, usa curl o fetch contra /storage/v1/bucket para verificar buckets'
+        );
       }
 
       return tableRes;
