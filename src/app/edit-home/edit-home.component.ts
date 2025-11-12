@@ -13,6 +13,8 @@ export class EditHomeComponent implements OnInit {
   public loading = false;
   public selectedImage: any;
   public popupVisible = false;
+  public previewSelected: string | null = null;
+  public uploading = false;
 
   constructor(private supabaseImageService: SupabaseImageService) {}
 

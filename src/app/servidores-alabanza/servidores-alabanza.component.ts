@@ -32,15 +32,16 @@ export class ServidoresAlabanzaComponent implements OnInit {
 
       this.datasourceServidores = [];
 
-      for (let i = 0; i < this.dataSourceUsers.length; i++) {
-        this.datasourceServidores = this.dataSourceUsers.filter((user) => {
-          // Convierte el rol a minúsculas para una comparación insensible a mayúsculas/minúsculas
-          const userRole = user.Role ? user.Role.toLowerCase() : ''; // Manejo de caso si 'Role' es undefined/null
-
-          // Verifica si el rol incluye 'alabanza'
-          return userRole.includes('alabanza');
-        });
+     for (let i = 0; i < this.dataSourceUsers.length; i++) {
+        for (let j = 0; j < this.dataSourceUsers[i].Role.length; j++) {
+          const userRole = this.dataSourceUsers[i].Role[j].toLowerCase();
+          if (userRole.includes('alabanza') || userRole.includes('Alabanza') ) {
+            this.datasourceServidores.push(this.dataSourceUsers[i]);
+            break; // Si ya encontramos un rol coincidente, no necesitamos seguir buscando
+          }
+        }
       }
+      console.log('datasourceServidores', this.datasourceServidores);
       //console.log('datasourceServidores', this.datasourceServidores);
     });
 

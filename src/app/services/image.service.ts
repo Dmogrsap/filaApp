@@ -22,20 +22,12 @@ export class SupabaseImageService {
         auth: { persistSession: false, detectSessionInUrl: false },
       }
     );
-<<<<<<< HEAD
     // (
     //   // debug rápido: listar buckets y mostrar env para verificar que estás en el proyecto correcto
     //   (this.debugListBuckets().catch((err) =>
     //     console.error('debugListBuckets error:', err)
     //   ))
     // );
-=======
-
-    // debug rápido: listar buckets y mostrar env para verificar que estás en el proyecto correcto
-    this.debugListBuckets().catch((err) =>
-      console.error('debugListBuckets error:', err)
-    );
->>>>>>> e7b15396a22778c7d062c8af4791896efdb1ea07
   }
 
   async testConnection() {

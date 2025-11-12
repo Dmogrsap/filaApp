@@ -29,20 +29,20 @@ export class LideresComponent implements OnInit {
         a.Nombre.localeCompare(b.Nombre)
       );
       this.loadIndicatorVisible = false;
-      //console.log('DataSource', this.dataSourceUsers);
+      //console.log('dataSourceUsers', this.dataSourceUsers);
 
       this.datasourceLideres = [];
 
       for (let i = 0; i < this.dataSourceUsers.length; i++) {
-        this.datasourceLideres = this.dataSourceUsers.filter((user) => {
-          // Convierte el rol a minúsculas para una comparación insensible a mayúsculas/minúsculas
-          const userRole = user.Role ? user.Role.toLowerCase() : ''; // Manejo de caso si 'Role' es undefined/null
-
-          // Verifica si el rol es 'pastor' (exacto) o si incluye 'lider'
-          return userRole === 'pastor' || userRole.includes('lider');
-        });
+        for (let j = 0; j < this.dataSourceUsers[i].Role.length; j++) {
+          const userRole = this.dataSourceUsers[i].Role[j].toLowerCase();
+          if (userRole.includes('pastor') || userRole.includes('Pastor') || userRole.includes('lider') || userRole.includes('Lider')) {
+            this.datasourceLideres.push(this.dataSourceUsers[i]);
+            break; // Si ya encontramos un rol coincidente, no necesitamos seguir buscando
+          }
+        }
       }
-      //console.log('datasourceLideres', this.datasourceLideres);
+      console.log('datasourceLideres', this.datasourceLideres);
     });
 
     this.rolesService.getRoles().subscribe((result) => {

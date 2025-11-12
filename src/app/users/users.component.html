@@ -71,13 +71,15 @@
             }"
           ></dxi-item>
 
-          <dxi-item
+        <dxi-item
             dataField="Role"
-            editorType="dxLookup"
-            [editorOptions]="{
-              dataSource: dataSourceRoles,
-              displayExpr: 'Role',
-              valueExpr: 'Role'
+            editorType="dxTagBox" [editorOptions]="{
+            dataSource: dataSourceRoles,
+            displayExpr: 'Role',
+            valueExpr: 'Role',
+            searchEnabled: true,
+            showSelectionControls: true,
+            selectionMode: 'all'  
             }"
           >
             <dxo-label text="Role"> </dxo-label>

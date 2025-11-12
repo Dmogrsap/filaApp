@@ -3,6 +3,7 @@ import { SongManagerService } from '../services/song-manager.service';
 import { DataType } from 'devextreme/common';
 import Swal from 'sweetalert2';
 import { UsersService } from '../services/usersService.service';
+import { RolesService } from '../services/rolesService.service';
 
 @Component({
   selector: 'app-song-manager',
@@ -23,72 +24,27 @@ export class SongManagerComponent implements OnInit {
 
   public dataSourceUsers: any[] = [];
   public datasourceServidores: any[] = [];
-  public datasourceRolesLider: any[] = [];
+  public dataSourceRoles: any[] = [];
+  public datasourceRolesAlabanza: any[] = [];
   public selectedMusicos: any[] = [];
   public selectedMusicosIds: any[] = [];
   public popupVisible = false;
 
   constructor(
     private songService: SongManagerService,
-    private userService: UsersService
+    private userService: UsersService,
+    private rolesService: RolesService  
   ) {}
 
   ngOnInit() {
 
     this.dataSourceMenusTab = [{ Nombre: 'Add/ Edit Canciones' }, { Nombre: 'Add/ Edit Musicos' }];
 
-
-    // this.songService.getSongs().subscribe((result) => {
-    //   this.datasourceSongs = result.sort((a, b) =>
-    //     a.Titulo.localeCompare(b.Titulo)
-    //   );
-
-    //   if (this.showOnlySunday == false || this.showOnlySunday === undefined) {
-    //     this.filteredSundaySongs = this.datasourceSongs.filter(
-    //       (song) => song.usaDomingo === true
-    //     );
-    //   } else {
-    //   }
-    //   this.loadIndicatorVisible = false;
-    // });
-
-    // this.userService.getUsers().subscribe((result) => {
-    //   this.dataSourceUsers = result.sort((a, b) =>
-    //     a.Nombre.localeCompare(b.Nombre)
-    //   );
-    //   this.loadIndicatorVisible = false;
-    //   //console.log('DataSource', this.dataSourceUsers);
-
-    //   this.datasourceServidores = [];
-
-    //   for (let i = 0; i < this.dataSourceUsers.length; i++) {
-    //     // this.datasourceServidores = this.dataSourceUsers.filter((user) => {
-    //     //   // Convierte el rol a minúsculas para una comparación insensible a mayúsculas/minúsculas
-    //     //   const userRole = user.Role ? user.Role.toLowerCase() : ''; // Manejo de caso si 'Role' es undefined/null
-
-    //     //   // Verifica si el rol incluye 'alabanza'
-    //     //   return userRole.includes('alabanza');
-    //     // });
-
-    //     this.datasourceServidores = this.dataSourceUsers
-    //       .filter((user) => {
-    //         const userRole = user.Role ? user.Role.toLowerCase() : '';
-    //         return userRole.includes('alabanza');
-    //       })
-    //       .map((user) => ({
-    //         ...user,
-    //         id: user.id || user.uid, // usa el campo correcto de tu base
-    //       }));
-    //   }
-    //   console.log('datasourceServidores', this.datasourceServidores);
-    // });
-
-    //console.log('filteredSundaySongs', this.filteredSundaySongs);
     this.songService.getSongs().subscribe((result) => {
       this.datasourceSongs = result.sort((a, b) =>
         a.Titulo.localeCompare(b.Titulo)
       );
-      console.log('datasourceSongs', this.datasourceSongs);
+      //console.log('datasourceSongs', this.datasourceSongs);
       this.filteredSundaySongs = this.datasourceSongs.filter(
         (song) => song.usaDomingo === true
       );
@@ -101,42 +57,45 @@ export class SongManagerComponent implements OnInit {
       this.dataSourceUsers = result.sort((a, b) =>
         a.Nombre.localeCompare(b.Nombre)
       );
-      // Llena una sola vez y asegura el campo 'id'
-      // this.datasourceServidores = this.dataSourceUsers
-      //   .filter((user) => {
-      //     const userRole = user.Role ? user.Role.toLowerCase() : '';
-      //     return userRole.includes('alabanza');
-      //   })
-      //   .map((user) => ({
-      //   ...user,
-      //   id: user.id || user.uid || user.ID || user.Id || Math.random().toString(36).substr(2, 9), // genera uno si no existe
-      // }))
-      //   .filter((user) => user.id); // elimina los que no tengan id
 
-      // console.log('datasourceServidores', this.datasourceServidores);
 
-      this.datasourceServidores = this.dataSourceUsers
-        .filter((user) => {
-          const userRole = user.Role ? user.Role.toLowerCase() : '';
-          return userRole.includes('alabanza');
-        })
-        .map((user) => ({
-          ...user,
-          id:
-            user.id ||
-            user.uid ||
-            user.ID ||
-            user.Id ||
-            Math.random().toString(36).substr(2, 9), // genera uno si no existe
-        }))
-        .filter((user) => user.id); // elimina los que no tengan id
+      this.datasourceServidores = [];
+
+      for (let i = 0; i < this.dataSourceUsers.length; i++) {
+        for (let j = 0; j < this.dataSourceUsers[i].Role.length; j++) {
+          const userRole = this.dataSourceUsers[i].Role[j].toLowerCase();
+          if (userRole.includes('alabanza') || userRole.includes('Alabanza') ) {
+            this.datasourceServidores.push(this.dataSourceUsers[i]);
+            break; // Si ya encontramos un rol coincidente, no necesitamos seguir buscando
+          }
+        }
+      }
+      console.log('datasourceServidores', this.datasourceServidores);
+      
+      this.rolesService.getRoles().subscribe((result) => {
+      this.dataSourceRoles = result.sort((a, b) =>
+        a.Role.localeCompare(b.Role)
+      );
+      //console.log('dataSourceRoles', this.dataSourceRoles);
+    for (let i = 0; i < this.dataSourceRoles.length; i++) {
+        this.datasourceRolesAlabanza = this.dataSourceRoles.filter((role) => {
+          // Convierte el rol a minúsculas para una comparación insensible a mayúsculas/minúsculas
+          const alabanzaRole = role.Role ? role.Role.toLowerCase() : ''; // Manejo de caso si 'Role' es undefined/null
+
+          // Verifica si el rol es 'pastor' (exacto) o si incluye 'lider'
+          //return liderRole === 'alabanza' || liderRole.includes('Lider');
+          return alabanzaRole === 'alabanza' || alabanzaRole.includes('alabanza');
+        });
+      }
+      console.log('datasourceRolesAlabanza', this.datasourceRolesAlabanza);
+    });
 
         this.filteredServidores = this.datasourceServidores.filter(
         (servidor) => servidor.tocaDomingo === true
 
         //console.log('filteredServidores', this.filteredServidores);
       );
-      console.log('filteredServidores', this.filteredServidores);
+      //console.log('filteredServidores', this.filteredServidores);
       this.loadIndicatorVisible = false;
     });
   }

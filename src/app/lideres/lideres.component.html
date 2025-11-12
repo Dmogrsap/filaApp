@@ -71,7 +71,7 @@
             }"
           ></dxi-item>
 
-          <dxi-item
+          <!-- <dxi-item
             dataField="Role"
             editorType="dxLookup"
             [editorOptions]="{
@@ -83,8 +83,24 @@
             <dxo-label text="Role"> </dxo-label>
             <dxi-validation-rule type="required" message="Role Required">
             </dxi-validation-rule>
-          </dxi-item>
+          </dxi-item> -->
 
+          <dxi-item
+            dataField="Role"
+            editorType="dxTagBox" [editorOptions]="{
+            dataSource: datasourceRolesLider,
+            displayExpr: 'Role',
+            valueExpr: 'Role',
+            searchEnabled: true,
+            showSelectionControls: true,
+            selectionMode: 'all'  
+            }"
+          >
+            <dxo-label text="Role"> </dxo-label>
+            <dxi-validation-rule type="required" message="Role Required">
+            </dxi-validation-rule>
+          </dxi-item>
+          
           <dxi-item
             dataField="isActive"
             editorType="dxSwitch"
