@@ -19,8 +19,8 @@ export class SongManagerComponent implements OnInit {
   public datasourceSongs: any[] = [];
   public filteredSundaySongs: any[] = [];
   public filteredServidores: any[] = [];
+  public filteredServidoresMusicos: any [] = [];
   public dataSourceMenusTab: any[] = [];
-  
 
   public dataSourceUsers: any[] = [];
   public datasourceServidores: any[] = [];
@@ -33,12 +33,14 @@ export class SongManagerComponent implements OnInit {
   constructor(
     private songService: SongManagerService,
     private userService: UsersService,
-    private rolesService: RolesService  
+    private rolesService: RolesService
   ) {}
 
   ngOnInit() {
-
-    this.dataSourceMenusTab = [{ Nombre: 'Add/ Edit Canciones' }, { Nombre: 'Add/ Edit Musicos' }];
+    this.dataSourceMenusTab = [
+      { Nombre: 'Add/ Edit Canciones' },
+      { Nombre: 'Add/ Edit Musicos' },
+    ];
 
     this.songService.getSongs().subscribe((result) => {
       this.datasourceSongs = result.sort((a, b) =>
@@ -50,7 +52,7 @@ export class SongManagerComponent implements OnInit {
       );
       this.loadIndicatorVisible = false;
 
-  //console.log('filteredSundaySongs', this.filteredSundaySongs);
+      //console.log('filteredSundaySongs', this.filteredSundaySongs);
     });
 
     this.userService.getUsers().subscribe((result) => {
@@ -58,39 +60,45 @@ export class SongManagerComponent implements OnInit {
         a.Nombre.localeCompare(b.Nombre)
       );
 
+      this.filteredServidoresMusicos = this.dataSourceUsers.filter(
+        (servidor) => servidor.tocaDomingo === true
+      );
+      this.loadIndicatorVisible = false;
 
       this.datasourceServidores = [];
 
       for (let i = 0; i < this.dataSourceUsers.length; i++) {
         for (let j = 0; j < this.dataSourceUsers[i].Role.length; j++) {
           const userRole = this.dataSourceUsers[i].Role[j].toLowerCase();
-          if (userRole.includes('alabanza') || userRole.includes('Alabanza') ) {
+          if (userRole.includes('alabanza') || userRole.includes('Alabanza')) {
             this.datasourceServidores.push(this.dataSourceUsers[i]);
             break; // Si ya encontramos un rol coincidente, no necesitamos seguir buscando
           }
         }
       }
       console.log('datasourceServidores', this.datasourceServidores);
-      
+
       this.rolesService.getRoles().subscribe((result) => {
-      this.dataSourceRoles = result.sort((a, b) =>
-        a.Role.localeCompare(b.Role)
-      );
-      //console.log('dataSourceRoles', this.dataSourceRoles);
-    for (let i = 0; i < this.dataSourceRoles.length; i++) {
-        this.datasourceRolesAlabanza = this.dataSourceRoles.filter((role) => {
-          // Convierte el rol a minúsculas para una comparación insensible a mayúsculas/minúsculas
-          const alabanzaRole = role.Role ? role.Role.toLowerCase() : ''; // Manejo de caso si 'Role' es undefined/null
+        this.dataSourceRoles = result.sort((a, b) =>
+          a.Role.localeCompare(b.Role)
+        );
+        //console.log('dataSourceRoles', this.dataSourceRoles);
+        for (let i = 0; i < this.dataSourceRoles.length; i++) {
+          this.datasourceRolesAlabanza = this.dataSourceRoles.filter((role) => {
+            // Convierte el rol a minúsculas para una comparación insensible a mayúsculas/minúsculas
+            const alabanzaRole = role.Role ? role.Role.toLowerCase() : ''; // Manejo de caso si 'Role' es undefined/null
 
-          // Verifica si el rol es 'pastor' (exacto) o si incluye 'lider'
-          //return liderRole === 'alabanza' || liderRole.includes('Lider');
-          return alabanzaRole === 'alabanza' || alabanzaRole.includes('alabanza');
-        });
-      }
-      console.log('datasourceRolesAlabanza', this.datasourceRolesAlabanza);
-    });
+            // Verifica si el rol es 'pastor' (exacto) o si incluye 'lider'
+            //return liderRole === 'alabanza' || liderRole.includes('Lider');
+            return (
+              alabanzaRole === 'alabanza' || alabanzaRole.includes('alabanza')
+            );
+          });
+        }
+        console.log('datasourceRolesAlabanza', this.datasourceRolesAlabanza);
+      });
 
-        this.filteredServidores = this.datasourceServidores.filter(
+      this.filteredServidores = this.datasourceServidores.filter(
         (servidor) => servidor.tocaDomingo === true
 
         //console.log('filteredServidores', this.filteredServidores);
@@ -99,7 +107,6 @@ export class SongManagerComponent implements OnInit {
       this.loadIndicatorVisible = false;
     });
   }
-
 
   onExporting(e: any) {
     // const workbook = new ExcelJS.Workbook();
@@ -188,6 +195,19 @@ export class SongManagerComponent implements OnInit {
         //   );
         // });
       });
+
+      this.userService.updateUser(change.key.id, cleanData).then(() => {
+              //console.log('Usuario actualizado');
+              Swal.fire({
+                icon: 'success',
+                title: 'success',
+                text: 'User Updated Successfully!',
+              });
+      
+              this.userService.getUsers().subscribe((result) => {
+                this.dataSourceUsers = result.sort((a, b) => a.Nombre.localeCompare(b.Nombre));;
+              });
+            });
     }
     if (change.type == 'remove') {
       const id = typeof change.key === 'string' ? change.key : change.key.id;
@@ -206,6 +226,8 @@ export class SongManagerComponent implements OnInit {
     }
   }
 
+
+
   onRowClick(e: any) {
     this.selectedSong = e.data;
     this.previewText = `Título: ${e.data.Titulo}\n \nAcordes: \n\n ${e.data.Acordes}\n \nLetra: \n\n ${e.data.Letra}`;
@@ -221,8 +243,6 @@ export class SongManagerComponent implements OnInit {
   //     ? this.datasourceSongs.filter((song) => song.isActive)
   //     : this.datasourceSongs;
   // }
-
-
 
   get previewTitulo() {
     return this.selectedSong ? this.selectedSong.Titulo : '';
