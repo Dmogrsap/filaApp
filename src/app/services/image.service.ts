@@ -1,27 +1,37 @@
 import { Injectable } from '@angular/core';
 import { Firestore, collection, addDoc } from '@angular/fire/firestore';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
-import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { getStorage, ref, uploadBytes, getDownloadURL, listAll,
+  deleteObject,
+  uploadBytesResumable, getMetadata } from 'firebase/storage';
 //import { environment } from 'src/environments/environment.development';
 import { environment } from 'src/environments/environment';
+
+import { initializeApp } from 'firebase/app';
 
 @Injectable({
   providedIn: 'root',
 })
-export class SupabaseImageService {
-  private supabase: SupabaseClient;
+export class FirebaseStorageService {
+  //private supabase: SupabaseClient;
   // private bucket = environment.supabaseBucket || 'IMAGES'; // usar env, fallback 'IMAGES'
   private bucket = 'IMAGES'; // usar env, fallback 'IMAGES'
   private table = environment.supabaseTable ?? 'images'; // usar env, fallback 'images'
 
+  private storage: any;
+
   constructor() {
-    this.supabase = createClient(
-      environment.supabaseUrl,
-      environment.supabaseKey,
-      {
-        auth: { persistSession: false, detectSessionInUrl: false },
-      }
-    );
+
+    const app = initializeApp(environment.firebase);
+    this.storage = getStorage(app);
+
+    // this.supabase = createClient(
+    //   environment.supabaseUrl,
+    //   environment.supabaseKey,
+    //   {
+    //     auth: { persistSession: false, detectSessionInUrl: false },
+    //   }
+    // );
     // (
     //   // debug rápido: listar buckets y mostrar env para verificar que estás en el proyecto correcto
     //   (this.debugListBuckets().catch((err) =>
@@ -30,185 +40,242 @@ export class SupabaseImageService {
     // );
   }
 
-  async testConnection() {
-    try {
-      const tableRes = await this.supabase
-        .from(this.table)
-        .select('*')
-        .limit(1);
-     // console.log('testConnection table result:', tableRes);
-
-      // listar buckets (si tu versión de supabase-js lo soporta)
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const anySupabase: any = this.supabase as any;
-      if (
-        anySupabase.storage &&
-        typeof anySupabase.storage.listBuckets === 'function'
-      ) {
-        const listRes = await anySupabase.storage.listBuckets();
-        //console.log('Buckets visible:', listRes);
-      } else {
-        // fallback: intentar endpoint REST v1/bucket
-        console.warn(
-          'listBuckets no disponible, usa curl o fetch contra /storage/v1/bucket para verificar buckets'
-        );
-      }
-
-      return tableRes;
-    } catch (err) {
-      console.error('testConnection error:', err);
-      throw err;
-    }
+  private sanitizeName(name: string) {
+    return name.replace(/[^a-zA-Z0-9_.-]/g, '_').slice(0, 200);
   }
 
-  private async debugListBuckets() {
-    console.log('Supabase URL:', environment.supabaseUrl);
-    console.log('Supabase Bucket (expected):', this.bucket);
-    // intenta listar buckets accesibles con la clave actual
-    try {
-      // supabase-js v2: storage.listBuckets()
-      // si tu versión no tiene listBuckets, esto fallará y lo verás en la consola
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const anySupabase: any = this.supabase as any;
-      if (
-        anySupabase.storage &&
-        typeof anySupabase.storage.listBuckets === 'function'
-      ) {
-        const { data, error } = await anySupabase.storage.listBuckets();
-        console.log('Buckets visible to current key:', data, 'error:', error);
-      } else {
-        console.warn(
-          'listBuckets not available in this supabase-js version; try fetch to /storage/v1/bucket'
-        );
-      }
-    } catch (err) {
-      console.error(
-        'Failed to list buckets (likely wrong project or key):',
-        err
+  async uploadFile(file: File, folder = 'images'): Promise<{ path: string; url: string }> {
+    const safeName = `${Date.now()}_${this.sanitizeName(file.name)}`;
+    const path = `${folder}/${safeName}`;
+    const storageRef = ref(this.storage, path);
+    const uploadTask = uploadBytesResumable(storageRef, file);
+
+    return new Promise((resolve, reject) => {
+      uploadTask.on(
+        'state_changed',
+        () => {},
+        (err: any) => reject(err),
+        async () => {
+          try {
+            const url = await getDownloadURL(storageRef);
+            resolve({ path, url });
+          } catch (e) {
+            reject(e);
+          }
+        }
       );
-    }
+    });
   }
 
-  private safeFilename(name: string) {
-    const ext = name.includes('.') ? '.' + name.split('.').pop() : '';
-    const base = name.replace(/\.[^/.]+$/, '');
-    const safe = base.replace(/[^a-zA-Z0-9_-]/g, '_').slice(0, 120);
-    return `${safe}${ext}`;
+  async listFiles(prefix = 'images'): Promise<{ path: string; url: string }[]> {
+    const listRef = ref(this.storage, prefix);
+    const res = await listAll(listRef);
+    const items = await Promise.all(
+      res.items.map(async (it: any) => {
+        const url = await getDownloadURL(it);
+        // try to read metadata (name, timeCreated) to provide richer info
+        let name = it.name ?? it.fullPath.split('/').pop();
+        let created_at: string | null = null;
+        try {
+          const meta = await getMetadata(it);
+          name = meta.name ?? name;
+          created_at = (meta.timeCreated as string) ?? null;
+        } catch (metaErr) {
+          // ignore metadata errors, still return url/path
+        }
+        return { path: it.fullPath, url, name, created_at };
+      })
+    );
+    return items;
   }
 
-  async listImages(): Promise<any[]> {
-    try {
-      const { data, error } = await this.supabase
-        .from(this.table) // asegúrate this.table === 'images'
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (error) {
-        console.error('Supabase listImages error:', error);
-        throw error;
-      }
-      return data || [];
-    } catch (err) {
-      console.error('listImages failed:', err);
-      throw err;
-    }
+  async deleteFile(path: string): Promise<void> {
+    const storageRef = ref(this.storage, path);
+    await deleteObject(storageRef);
   }
 
-  async uploadAndSave(file: File) {
-    const filename = this.safeFilename(file.name);
-    const filePath = `${Date.now()}_${filename}`;
+  // async testConnection() {
+  //   try {
+  //     const tableRes = await this.supabase
+  //       .from(this.table)
+  //       .select('*')
+  //       .limit(1);
+  //    // console.log('testConnection table result:', tableRes);
 
-    try {
-      const { data: uploadData, error: uploadError } =
-        await this.supabase.storage
-          .from(this.bucket)
-          .upload(filePath, file, { cacheControl: '3600', upsert: false });
+  //     // listar buckets (si tu versión de supabase-js lo soporta)
+  //     // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  //     const anySupabase: any = this.supabase as any;
+  //     if (
+  //       anySupabase.storage &&
+  //       typeof anySupabase.storage.listBuckets === 'function'
+  //     ) {
+  //       const listRes = await anySupabase.storage.listBuckets();
+  //       //console.log('Buckets visible:', listRes);
+  //     } else {
+  //       // fallback: intentar endpoint REST v1/bucket
+  //       console.warn(
+  //         'listBuckets no disponible, usa curl o fetch contra /storage/v1/bucket para verificar buckets'
+  //       );
+  //     }
 
-      if (uploadError) {
-        throw uploadError;
-      }
+  //     return tableRes;
+  //   } catch (err) {
+  //     console.error('testConnection error:', err);
+  //     throw err;
+  //   }
+  // }
 
-      const publicResult: any = this.supabase.storage
-        .from(this.bucket)
-        .getPublicUrl(filePath);
-      const publicUrl =
-        publicResult?.data?.publicUrl ?? publicResult?.publicUrl ?? '';
+  // private async debugListBuckets() {
+  //   console.log('Supabase URL:', environment.supabaseUrl);
+  //   console.log('Supabase Bucket (expected):', this.bucket);
+  //   // intenta listar buckets accesibles con la clave actual
+  //   try {
+  //     // supabase-js v2: storage.listBuckets()
+  //     // si tu versión no tiene listBuckets, esto fallará y lo verás en la consola
+  //     // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  //     const anySupabase: any = this.supabase as any;
+  //     if (
+  //       anySupabase.storage &&
+  //       typeof anySupabase.storage.listBuckets === 'function'
+  //     ) {
+  //       const { data, error } = await anySupabase.storage.listBuckets();
+  //       console.log('Buckets visible to current key:', data, 'error:', error);
+  //     } else {
+  //       console.warn(
+  //         'listBuckets not available in this supabase-js version; try fetch to /storage/v1/bucket'
+  //       );
+  //     }
+  //   } catch (err) {
+  //     console.error(
+  //       'Failed to list buckets (likely wrong project or key):',
+  //       err
+  //     );
+  //   }
+  // }
 
-      // INSERT guardando también 'path' (necesario para eliminar en Storage)
-      const { data, error } = await this.supabase.from(this.table).insert([
-        {
-          nombre: file.name,
-          url: publicUrl,
-          tipo: file.type || '',
-          path: filePath, // <-- nuevo campo guardado
-          created_at: new Date().toISOString(),
-        },
-      ]);
+  // private safeFilename(name: string) {
+  //   const ext = name.includes('.') ? '.' + name.split('.').pop() : '';
+  //   const base = name.replace(/\.[^/.]+$/, '');
+  //   const safe = base.replace(/[^a-zA-Z0-9_-]/g, '_').slice(0, 120);
+  //   return `${safe}${ext}`;
+  // }
 
-      if (error) {
-        throw error;
-      }
-      return { row: data, url: publicUrl };
-    } catch (err) {
-      console.error('uploadAndSave failed:', err);
-      throw err;
-    }
-  }
+  // async listImages(): Promise<any[]> {
+  //   try {
+  //     const { data, error } = await this.supabase
+  //       .from(this.table) // asegúrate this.table === 'images'
+  //       .select('*')
+  //       .order('created_at', { ascending: false });
 
-  // actualizar metadatos (nombre, tipo, url opcional)
-  async updateImage(
-    id: string,
-    changes: { nombre?: string; tipo?: string; url?: string; path?: string }
-  ) {
-    const { data, error } = await this.supabase
-      .from(this.table)
-      .update(changes)
-      .eq('id', id)
-      .select(); // devuelve la fila actualizada
+  //     if (error) {
+  //       console.error('Supabase listImages error:', error);
+  //       throw error;
+  //     }
+  //     return data || [];
+  //   } catch (err) {
+  //     console.error('listImages failed:', err);
+  //     throw err;
+  //   }
+  // }
 
-    if (error) {
-      console.error('updateImage error:', error);
-      throw error;
-    }
-    return data;
-  }
+  // async uploadAndSave(file: File) {
+  //   const filename = this.safeFilename(file.name);
+  //   const filePath = `${Date.now()}_${filename}`;
 
-  // eliminar: borrar archivo en Storage (si existe path) y luego fila en la tabla
-  async deleteImage(id: string) {
-    // obtener path guardado
-    const { data: rows, error: selectErr } = await this.supabase
-      .from(this.table)
-      .select('path')
-      .eq('id', id)
-      .limit(1)
-      .single();
+  //   try {
+  //     const { data: uploadData, error: uploadError } =
+  //       await this.supabase.storage
+  //         .from(this.bucket)
+  //         .upload(filePath, file, { cacheControl: '3600', upsert: false });
 
-    if (selectErr) {
-      console.error('deleteImage select error:', selectErr);
-      throw selectErr;
-    }
+  //     if (uploadError) {
+  //       throw uploadError;
+  //     }
 
-    const filePath = (rows as any)?.path;
-    if (filePath) {
-      const { error: removeErr } = await this.supabase.storage
-        .from(this.bucket)
-        .remove([filePath]);
-      if (removeErr) {
-        console.error('Storage remove error:', removeErr);
-        // no abortar automáticamente; opcional: throw removeErr;
-        throw removeErr;
-      }
-    }
+  //     const publicResult: any = this.supabase.storage
+  //       .from(this.bucket)
+  //       .getPublicUrl(filePath);
+  //     const publicUrl =
+  //       publicResult?.data?.publicUrl ?? publicResult?.publicUrl ?? '';
 
-    const { data, error } = await this.supabase
-      .from(this.table)
-      .delete()
-      .eq('id', id);
+  //     // INSERT guardando también 'path' (necesario para eliminar en Storage)
+  //     const { data, error } = await this.supabase.from(this.table).insert([
+  //       {
+  //         nombre: file.name,
+  //         url: publicUrl,
+  //         tipo: file.type || '',
+  //         path: filePath, // <-- nuevo campo guardado
+  //         created_at: new Date().toISOString(),
+  //       },
+  //     ]);
 
-    if (error) {
-      console.error('deleteImage db error:', error);
-      throw error;
-    }
-    return data;
-  }
+  //     if (error) {
+  //       throw error;
+  //     }
+  //     return { row: data, url: publicUrl };
+  //   } catch (err) {
+  //     console.error('uploadAndSave failed:', err);
+  //     throw err;
+  //   }
+  // }
+
+  // // actualizar metadatos (nombre, tipo, url opcional)
+  // async updateImage(
+  //   id: string,
+  //   changes: { nombre?: string; tipo?: string; url?: string; path?: string }
+  // ) {
+  //   const { data, error } = await this.supabase
+  //     .from(this.table)
+  //     .update(changes)
+  //     .eq('id', id)
+  //     .select(); // devuelve la fila actualizada
+
+  //   if (error) {
+  //     console.error('updateImage error:', error);
+  //     throw error;
+  //   }
+  //   return data;
+  // }
+
+  // // eliminar: borrar archivo en Storage (si existe path) y luego fila en la tabla
+  // async deleteImage(id: string) {
+  //   // obtener path guardado
+  //   const { data: rows, error: selectErr } = await this.supabase
+  //     .from(this.table)
+  //     .select('path')
+  //     .eq('id', id)
+  //     .limit(1)
+  //     .single();
+
+  //   if (selectErr) {
+  //     console.error('deleteImage select error:', selectErr);
+  //     throw selectErr;
+  //   }
+
+  //   const filePath = (rows as any)?.path;
+  //   if (filePath) {
+  //     const { error: removeErr } = await this.supabase.storage
+  //       .from(this.bucket)
+  //       .remove([filePath]);
+  //     if (removeErr) {
+  //       console.error('Storage remove error:', removeErr);
+  //       // no abortar automáticamente; opcional: throw removeErr;
+  //       throw removeErr;
+  //     }
+  //   }
+
+  //   const { data, error } = await this.supabase
+  //     .from(this.table)
+  //     .delete()
+  //     .eq('id', id);
+
+  //   if (error) {
+  //     console.error('deleteImage db error:', error);
+  //     throw error;
+  //   }
+  //   return data;
+  // }
+
+
+
 }

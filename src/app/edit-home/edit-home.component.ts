@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import Swal from 'sweetalert2';
-import { SupabaseImageService } from '../services/image.service';
+import { SupabaseStorageService } from '../services/supabase-storage.service';
 import { collectionData, collection, Firestore } from '@angular/fire/firestore';
 
 @Component({
@@ -16,7 +16,7 @@ export class EditHomeComponent implements OnInit {
   public previewSelected: string | null = null;
   public uploading = false;
 
-  constructor(private supabaseImageService: SupabaseImageService) {}
+  constructor(private firebaseStorage: SupabaseStorageService) {}
 
   async ngOnInit() {
     await this.loadImages();
@@ -27,24 +27,14 @@ export class EditHomeComponent implements OnInit {
     // } catch (err) {
     //   console.error('Supabase testConnection falló:', err);
     // }
-    
   }
 
   async loadImages() {
     try {
       this.loading = true;
-      const data = await this.supabaseImageService.listImages();
-      this.images = (data || []).map((it: any) => ({
-        ...it,
-        nombre: it.nombre ?? it.name ?? '',
-        url: it.url, // Ya no usa ?? it.public_url ?? ''
-        tipo: it.tipo ?? it.type ?? '',
-        created_at: it.created_at ? new Date(it.created_at) : null,
-      }));
-
-      console.log('Datos cargados de Supabase:', this.images); // <--- AÑADE ESTO
+      this.images = await this.firebaseStorage.listFiles('images');
     } catch (err) {
-      console.error('Error loading images', err);
+      console.error('Error listing files', err);
     } finally {
       this.loading = false;
     }
@@ -53,29 +43,30 @@ export class EditHomeComponent implements OnInit {
   async onFileSelected(event: any) {
     const file: File | undefined = event.target.files?.[0];
     if (!file) return;
-
-    // vista previa local inmediata
-    const reader = new FileReader();
-    reader.onload = () => {
-      this.previewSelected =
-        typeof reader.result === 'string' ? reader.result : null;
-    };
-    reader.readAsDataURL(file);
-
     try {
-      this.uploading = true;
-      await this.supabaseImageService.uploadAndSave(file);
-      await this.loadImages(); // refresca la lista con la imagen subida
-      Swal.fire('OK', 'Imagen subida y guardada', 'success');
-      // limpia input y preview tras subir
-      (event.target as HTMLInputElement).value = '';
-      setTimeout(() => (this.previewSelected = null), 2000);
+      this.loading = true;
+      const { path, url } = await this.firebaseStorage.uploadFile(
+        file,
+        'images',
+      );
+      await this.loadImages();
+      Swal.fire('OK', 'Imagen subida a Firebase Storage', 'success');
     } catch (err: any) {
       console.error('Error uploading image', err);
       Swal.fire('Error', err?.message || 'Fallo al subir imagen', 'error');
     } finally {
-      this.uploading = false;
       this.loading = false;
+    }
+  }
+
+  async onDelete(path: string) {
+    try {
+      await this.firebaseStorage.deleteFile(path);
+      await this.loadImages();
+      Swal.fire('OK', 'Archivo eliminado', 'success');
+    } catch (err) {
+      console.error('Delete error', err);
+      Swal.fire('Error', 'No se pudo eliminar', 'error');
     }
   }
 

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { SupabaseImageService } from 'src/app/services/image.service';
+import { FirebaseStorageService } from 'src/app/services/image.service';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -9,7 +9,7 @@ import Swal from 'sweetalert2';
 })
 export class HomeComponent implements OnInit {
 
-  constructor(private imageService: SupabaseImageService) { }
+  constructor(private FirebaseStorageService: FirebaseStorageService) { }
 
   ngOnInit(): void {
     Swal.fire({

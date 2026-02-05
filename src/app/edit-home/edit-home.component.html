@@ -1,10 +1,11 @@
 <input type="file" (change)="onFileSelected($event)" />
 <div *ngFor="let img of images" style="display:inline-block; margin:8px">
-  <img [src]="img.url" [alt]="img.name" style="max-width:150px; max-height:150px; display:block"/>
-  <div>{{ img.name }}</div>
+  <img [src]="img.url" [alt]="img.name || img.path" style="max-width:150px; max-height:150px; display:block"/>
+  <div>{{ img.name || img.path }}</div>
+  <div style="font-size:0.85em; color:#666">{{ img.created_at ? (img.created_at | date:'short') : '-' }}</div>
 </div>
 
-<dx-load-indicator [visible]="loading"></dx-load-indicator>
+<!-- <dx-load-indicator [visible]="loading"></dx-load-indicator> -->
 
 <!-- ...existing code... -->
 <div class="edit-home-container">
@@ -27,9 +28,12 @@
     <!-- row puede ser el objeto de fila o contener .data según versión; soporta ambos -->
     <img
       [src]="(row?.data?.url) ?? row?.url"
-      [alt]="(row?.data?.name) ?? row?.name"
+      [alt]="(row?.data?.name) ?? row?.name ?? (row?.data?.path) ?? row?.path"
       style="max-width:160px; max-height:120px; display:block"
     />
+    <div style="font-size:0.85em; color:#666">
+      {{ (row?.data?.created_at) ? (row?.data?.created_at | date:'short') : (row?.created_at ? (row.created_at | date:'short') : '-') }}
+    </div>
   </div>
 
   <dxo-paging [pageSize]="10"></dxo-paging>
