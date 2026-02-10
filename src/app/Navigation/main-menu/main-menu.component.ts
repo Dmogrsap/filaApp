@@ -16,6 +16,7 @@ import {
 } from '@angular/material/snack-bar';
 import { ActivationEnd, Router } from '@angular/router';
 import { MainMenuService } from 'src/app/services/main-menuService.service';
+import { UsersService } from 'src/app/services/usersService.service';
 
 @Component({
   selector: 'app-main-menu',
@@ -184,7 +185,7 @@ export class MainMenuComponent implements OnInit {
     .observe(Breakpoints.Handset)
     .pipe(
       map((result) => result.matches),
-      shareReplay()
+      shareReplay(),
     );
 
   goToHome() {
@@ -220,7 +221,9 @@ export class MainMenuComponent implements OnInit {
   public titleSubs$: Subscription;
   public blnFooter: boolean = false;
 
+  //public isLogin: boolean = false;
   public isLogin: boolean = true;
+  public isLoged: boolean = false;
   public canView: boolean = false;
   public permissionIt: boolean = true;
   public userName: string = '';
@@ -246,7 +249,8 @@ export class MainMenuComponent implements OnInit {
     private breakpointObserver: BreakpointObserver,
     private router: Router,
     public snackBar: MatSnackBar,
-    private mainMenu: MainMenuService
+    private mainMenu: MainMenuService,
+    private userService: UsersService,
   ) {
     this.titleSubs$ = this.getArgumentosRuta().subscribe(({ title }) => {
       this.blnFooter = title != 'Filadelfia CUU App';
@@ -259,7 +263,7 @@ export class MainMenuComponent implements OnInit {
     return this.router.events.pipe(
       filter((event) => event instanceof ActivationEnd),
       filter((event: any) => event.snapshot.firstChild === null),
-      map((event: ActivationEnd) => event.snapshot.data)
+      map((event: ActivationEnd) => event.snapshot.data),
     );
   }
 
@@ -271,7 +275,7 @@ export class MainMenuComponent implements OnInit {
 
     this.mainMenu.getMenus().subscribe((result) => {
       this.dataSourceMenus = result.sort((a, b) =>
-        a.Nombre.localeCompare(b.Nombre)
+        a.Nombre.localeCompare(b.Nombre),
       );
       this.loadIndicatorVisible = false;
       //console.log('DataSource', this.dataSourceMenus);
@@ -279,7 +283,7 @@ export class MainMenuComponent implements OnInit {
 
     this.mainMenu.getMenus().subscribe((result) => {
       this.dataSourceMenus = result.sort((a, b) =>
-        a.Nombre.localeCompare(b.Nombre)
+        a.Nombre.localeCompare(b.Nombre),
       );
       this.loadIndicatorVisible = false;
       //console.log('DataSource', this.dataSourceMenus);
@@ -293,7 +297,7 @@ export class MainMenuComponent implements OnInit {
 
           // Filtra los submenús cuyo nameMenu coincide con el Nombre del menú
           const submenusRelacionados = this.menusSub.filter(
-            (sub) => sub.nameMenu === menu.Nombre
+            (sub) => sub.nameMenu === menu.Nombre,
           );
 
           // Asigna los submenús filtrados al campo 'items' del menú
@@ -303,177 +307,6 @@ export class MainMenuComponent implements OnInit {
         //console.log('Menús con submenús:', this.dataSourceMenus);
       });
     });
-
-    // this.menuFila = [
-    //   {
-    //     idMenu: 1,
-    //     nameMenu: 'Settings',
-    //     iconMenu: 'settings',
-    //     active: true,
-    //     hasAccess: true,
-    //     idAccesses: 0,
-    //     active1: true,
-    //     items: [
-    //       {
-    //         idAccesses: 1,
-    //         description: null,
-    //         nameView: 'roles',
-    //         route: '/roles',
-    //         icons: 'settings',
-    //         idMenu: 1,
-    //         active: true,
-    //       },
-    //       {
-    //         idAccesses: 16,
-    //         description: null,
-    //         nameView: 'Menu',
-    //         route: '/activemenus',
-    //         icons: 'storage',
-    //         idMenu: 1,
-    //         active: true,
-    //       },
-    //       {
-    //         idAccesses: 16,
-    //         description: null,
-    //         nameView: 'Lideres',
-    //         route: '/activemenus',
-    //         icons: 'supervisor_account',
-    //         idMenu: 1,
-    //         active: true,
-    //       },
-    //       {
-    //         idAccesses: 21,
-    //         description: null,
-    //         nameView: 'Usuarios',
-    //         route: '/users',
-    //         icons: 'person',
-    //         idMenu: 4,
-    //         active: true,
-    //         permissions: [],
-    //       },
-    //     ],
-    //   },
-    //   {
-    //     idMenu: 1,
-    //     nameMenu: 'Alabanza',
-    //     iconMenu: null,
-    //     active: true,
-    //     hasAccess: true,
-    //     idAccesses: 0,
-    //     description: null,
-    //     nameView: null,
-    //     route: null,
-    //     icons: null,
-    //     active1: false,
-    //     canModify: null,
-    //     orderBy: null,
-    //     sectionMenuName: null,
-    //     idPermissions: 0,
-    //     idRole: 0,
-    //     hasAccess1: false,
-    //     isActive: false,
-    //     parentId: null,
-    //     canModifyPer: null,
-    //     id: null,
-    //     items: [
-    //       {
-    //         idAccesses: 2,
-    //         description: null,
-    //         nameView: 'Accesses',
-    //         route: '/accesses',
-    //         icons: 'meeting_room',
-    //         idMenu: 1,
-    //         active: true,
-    //         hasAccess: true,
-    //         canModify: true,
-    //         orderBy: 2,
-    //         nameMenu: null,
-    //         idPermissions: 0,
-    //         idRolePer: 0,
-    //         idAccessesPer: 0,
-    //         hasAccessPer: false,
-    //         canModifyPer: false,
-    //         activePer: false,
-    //         permissions: [],
-    //       },
-    //       {
-    //         "idAccesses": 16,
-    //         "description": null,
-    //         "nameView": "Menu",
-    //         "route": "/activemenus",
-    //         "icons": "storage",
-    //         "idMenu": 1,
-    //         "active": true,
-    //         "hasAccess": true,
-    //         "canModify": true,
-    //         "orderBy": 1,
-    //         "nameMenu": null,
-    //         "idPermissions": 0,
-    //         "idRolePer": 0,
-    //         "idAccessesPer": 0,
-    //         "hasAccessPer": false,
-    //         "canModifyPer": false,
-    //         "activePer": false,
-    //         "permissions": []
-    //       },
-    //     ],
-    //   },
-    //   {
-    //     idMenu: 4,
-    //     nameMenu: 'Multimedia',
-    //     iconMenu: '',
-    //     active: true,
-    //     hasAccess: true,
-    //     idAccesses: 0,
-    //     description: null,
-    //     nameView: null,
-    //     route: null,
-    //     icons: null,
-    //     active1: false,
-    //     canModify: null,
-    //     orderBy: null,
-    //     sectionMenuName: null,
-    //     idPermissions: 0,
-    //     idRole: 0,
-    //     hasAccess1: false,
-    //     isActive: false,
-    //     parentId: null,
-    //     canModifyPer: null,
-    //     id: null,
-    //     items: [
-    //       {
-    //         idAccesses: 21,
-    //         description: null,
-    //         nameView: 'Usuarios',
-    //         route: '/users',
-    //         icons: 'person',
-    //         idMenu: 4,
-    //         active: true,
-    //         permissions: [],
-    //       },
-    //       {
-    //         idAccesses: 20,
-    //         description: null,
-    //         nameView: 'Applications Catalog',
-    //         route: '/newapplications',
-    //         icons: 'apps',
-    //         idMenu: 4,
-    //         active: true,
-    //         hasAccess: true,
-    //         canModify: true,
-    //         orderBy: 10,
-    //         nameMenu: null,
-    //         idPermissions: 0,
-    //         idRolePer: 0,
-    //         idAccessesPer: 0,
-    //         hasAccessPer: false,
-    //         canModifyPer: false,
-    //         activePer: false,
-    //         permissions: [],
-    //       },
-    //     ],
-    //   },
-    // ];
 
     this.menuFila = this.menuFila;
     this.menu = this.menuFila;
@@ -494,6 +327,18 @@ export class MainMenuComponent implements OnInit {
     }
 
     //console.log("menu",this.menuCustom2);
+  }
+
+  public ingresar() {
+    this.userService.getUsers().subscribe((result) => {
+      this.datasourceusers = result.sort((a, b) =>
+        a.Nombre.localeCompare(b.Nombre),
+      );
+      this.loadIndicatorVisible = false;
+      if (this.datasourceusers.length > 0) {
+        //console.log('DataSource', this.datasourceusers);
+      }
+    });
   }
 
   toggleGroup(index: number) {
@@ -530,26 +375,5 @@ export class MainMenuComponent implements OnInit {
     }
   }
 
-  /* Este onContentReady es para mantener los objetos del menu colapsados o cerrados */
-  // onContentReady(e:any){
-  //   //console.log("onContenbt", e)
-  //   var items = this.menuCustom2;
-  //   console.log("items",items)
-  //   setTimeout(function () {
-  //               for (var i = 0; i < items.length; i++)
-  //                   e.component.collapseGroup(i);
-
-  //           }, 50);
-  // }
-
-  // onRefresh(e: any) {
-  //   // Simula una recarga de datos (puedes reemplazar esto con una llamada a tu API)
-  //   setTimeout(() => {
-  //     this.menuCustom2 = [...this.menuFila]; // o recarga desde el servidor
-  //     e.component.release(); // Esto es crucial para ocultar el mensaje de "Pull down to refresh"
-  //   }, 1000);
-  // }jaj
-
-  // ...existing code...
   sidebarOpen = false;
 }

@@ -76,7 +76,16 @@
           <mat-icon>close</mat-icon>
         </button>
     </div>
-    <ul class="sidebar-menu">
+    <ul class="sidebar-menu" *ngIf="isLoged == false"> 
+      <li>
+        <a routerLink="/login" (click)="OpenSideBar($event)">
+          <mat-icon class="submenu-icon">login</mat-icon>
+          Iniciar Sesión
+        </a>
+      </li>
+    </ul>
+   
+   <ul class="sidebar-menu" *ngIf="isLoged">
       <li *ngFor="let group of dataSourceMenus; let i = index">
         <div class="group-title" (click)="toggleGroup(i)">
           <mat-icon class="group-icon">folder</mat-icon>
