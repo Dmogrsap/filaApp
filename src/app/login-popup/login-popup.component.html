@@ -1,4 +1,4 @@
-<div class="login-backdrop">
+<!-- <div class="login-backdrop">
   <div class="login-modal">
     <button class="close-btn" (click)="onClose()">&times;</button>
     <h2>Iniciar Sesión</h2>
@@ -8,6 +8,44 @@
       <label for="password">Contraseña</label>
       <input id="password" type="password"  name="password" required autocomplete="current-password" />
       <button type="submit">Entrar</button>
+      <button routerLink="/" type="button" class="exit-btn">Salir</button>
     </form>
   </div>
-</div>
+</div> -->
+
+<form class="login-modal" action="your-action" (submit)="onFormSubmit($event)">
+  <dx-form
+    id="form"
+    (onOptionChanged)="onOptionChanged($event)"
+    [formData]="customer"
+    [readOnly]="false"
+    [showColonAfterLabel]="true"
+    [showValidationSummary]="true"
+    validationGroup="customerData"
+  >
+    <dxi-form-item itemType="group" caption="Credentials">
+      <dxi-form-item dataField="Nombre" [editorOptions]="">
+        <dxi-form-validation-rule type="required" message="Name is required">
+        </dxi-form-validation-rule>
+        <dxi-form-validation-rule
+          type="async"
+          message="Name is already registered"
+          [validationCallback]="asyncValidation"
+        >
+        </dxi-form-validation-rule>
+      </dxi-form-item>
+      <dxi-form-item
+        dataField="Password"
+        [editorOptions]="passwordEditorOptions"
+      >
+        <dxi-form-validation-rule
+          type="required"
+          message="Password is required"
+        >
+        </dxi-form-validation-rule>
+      </dxi-form-item>
+    </dxi-form-item>
+  </dx-form>
+  <button type="submit" (click)="iniciarSesion()">Entrar</button>
+  <button type="button" class="exit-btn" (click)="onExit()">Salir</button>
+</form>

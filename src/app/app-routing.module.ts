@@ -12,6 +12,7 @@ import { ServidoresAlabanzaComponent } from './servidores-alabanza/servidores-al
 import { SongManagerComponent } from './song-manager/song-manager.component';
 import { EditHomeComponent } from './edit-home/edit-home.component';
 import { ServidorMaestrosComponent } from './servidor-maestros/servidor-maestros.component';
+import { LoginPopupComponent } from './login-popup/login-popup.component';
 
 const routes: Routes = [
   { 
@@ -41,12 +42,12 @@ const routes: Routes = [
       //   data: { title: 'Activate Menus', url: 'activemenus', allowedRoles:['Administrator, Developers']}
       // },
 
-      // {
-      //   path: 'permissions',
-      //   //canLoad:[HasRoleGuard],
-      //   component: PermissionsComponent,
-      //   data: { title: 'Permissions', url: 'permissions', allowedRoles:['Administrator, Developers'] }
-      // },
+      {
+        path: 'login',
+        //canLoad:[HasRoleGuard],
+        component: LoginPopupComponent,
+        data: { title: 'Login', url: 'login', allowedRoles:['Administrator, Developers'] }
+      },
 
       {
         path: 'users',
