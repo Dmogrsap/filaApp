@@ -89,8 +89,8 @@ TextEditorOptions: any;
     this.router.navigate(['/']);
   }
 
-  onExit() {
-    this.close.emit();
-    this.router.navigate(['/']);
-  }
+  // onExit() {
+  //   this.close.emit();
+  //   this.router.navigate(['/']);
+  // }
 }
