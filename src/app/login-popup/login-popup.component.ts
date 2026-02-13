@@ -1,4 +1,8 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Output, ViewChild } from '@angular/core';
+import { Router } from '@angular/router';
+import { DxFormComponent } from 'devextreme-angular';
+import { DxFormModule, DxFormTypes } from 'devextreme-angular/ui/form';
+import { UsersService } from '../services/usersService.service';
 
 @Component({
   selector: 'app-login-popup',
@@ -6,16 +10,82 @@ import { Component, EventEmitter, Output } from '@angular/core';
   styleUrls: ['./login-popup.component.css']
 })
 export class LoginPopupComponent {
-  username = '';
-  password = '';
+  @ViewChild(DxFormComponent, { static: false }) form: DxFormComponent | undefined;
+
+  customer = { name: '', Password: '' };
   @Output() login = new EventEmitter<{ username: string; password: string }>();
   @Output() close = new EventEmitter<void>();
 
-  onLogin() {
-    this.login.emit({ username: this.username, password: this.password });
+  public datasourceusers: any[] = [];
+   public isLoged: boolean = false;
+
+  emailEditorOptions = {
+    mode: 'name'
+  };
+
+  passwordEditorOptions = {
+    mode: 'password'
+  };
+TextEditorOptions: any;
+
+  constructor(private router: Router, private userService: UsersService,) {}
+
+  onFormSubmit(e: any) {
+    this.login.emit({ username: this.customer.name, password: this.customer.Password });
+    e.preventDefault();
+    console.log('this.customer name: ', this.customer.name, 'this.customer password: ', this.customer.Password);
   }
+
+ public iniciar() {
+        this.userService.getUsers().subscribe((result) => {
+      this.datasourceusers = result.sort((a, b) =>
+        a.Nombre.localeCompare(b.Nombre),
+      );
+      //console.log('Datasource:', this.datasourceusers);
+      //this.loadIndicatorVisible = false;
+      for (let i = 0; i < this.datasourceusers.length; i++) {
+        if (this.datasourceusers[i].Nombre === this.customer.name && this.datasourceusers[i].Password == this.customer.Password) {
+          //console.log('Usuario encontrado:', this.datasourceusers[i]);
+          this.isLoged = true;
+          console.log('Usuario encontrado:', this.datasourceusers[i], "esta logueado?: ", this.isLoged);
+          // Aquí puedes agregar la lógica para redirigir al usuario o mostrar un mensaje de éxito
+          
+          return; // Salir del bucle una vez que se encuentra el usuario
+        }
+      }
+    });
+  }
+
+  onOptionChanged(e: any) {
+    // Handle option changes if needed
+  }
+
+  asyncValidation(params: any) {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve(params.value !== 'test@example.com'); // Example async validation
+      }, 1000);
+    });
+  }
+
+  onLogin(){
+    this.router.navigate(['\login']);
+  }
+
+  // iniciarSesion() {
+  //   // ... tu lógica de autenticación ...
+  //   console.log('Login exitoso');
+    
+  //   // 3. Redirigir a la página principal
+  //   //this.router.navigate(['/home']); 
+  // }
 
   onClose() {
     this.close.emit();
+  }
+
+  onExit() {
+    this.close.emit();
+    this.router.navigate(['/']);
   }
 }

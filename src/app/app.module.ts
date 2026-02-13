@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA } from '@angular/core';
 import { BrowserModule, BrowserTransferStateModule } from '@angular/platform-browser';
 
 import { MatSidenavModule } from '@angular/material/sidenav';
@@ -13,9 +13,9 @@ import { MainMenuComponent } from './Navigation/main-menu/main-menu.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatIconModule } from '@angular/material/icon';
 import { HttpClientModule } from '@angular/common/http';
-import { DxDrawerModule, DxToolbarModule, DxListModule, DxAccordionModule, DxHtmlEditorModule, DxDataGridModule, DxSelectBoxModule, DxTextBoxModule, DxNumberBoxModule, DxTextAreaModule, DxCheckBoxModule, DxSwitchModule, DxAutocompleteModule, DxTagBoxModule, DxSpeedDialActionModule, DxButtonModule, DxLookupModule, DxFilterBuilderModule, DxDropDownBoxModule, DxTabPanelModule, DxTreeViewModule, DxPopupModule, DxTemplateModule, DxScrollViewModule, DxTooltipModule, DxVectorMapModule, DxChartModule, DxLoadIndicatorModule, DxValidatorModule, DxDateBoxModule, DxDateRangeBoxModule, DxTreeListModule, DxSortableModule, DxFileManagerModule, DxLoadPanelModule, DxFileUploaderModule } from 'devextreme-angular';
+import { DxDrawerModule, DxToolbarModule, DxListModule, DxAccordionModule, DxHtmlEditorModule, DxDataGridModule, DxSelectBoxModule, DxTextBoxModule, DxNumberBoxModule, DxTextAreaModule, DxCheckBoxModule, DxSwitchModule, DxAutocompleteModule, DxTagBoxModule, DxSpeedDialActionModule, DxButtonModule, DxLookupModule, DxFilterBuilderModule, DxDropDownBoxModule, DxTabPanelModule, DxTreeViewModule, DxPopupModule, DxTemplateModule, DxScrollViewModule, DxTooltipModule, DxVectorMapModule, DxChartModule, DxLoadIndicatorModule, DxValidatorModule, DxDateBoxModule, DxDateRangeBoxModule, DxTreeListModule, DxSortableModule, DxFileManagerModule, DxLoadPanelModule, DxFileUploaderModule, DxFormComponent, DxFormModule } from 'devextreme-angular';
 import { DxoSearchEditorOptionsModule, DxoSearchPanelModule, DxoZoomAndPanModule, DxoZoomLevelModule, DxoDetailsModule } from 'devextreme-angular/ui/nested';
-import { ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatOptionModule } from '@angular/material/core';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
@@ -32,6 +32,7 @@ import { ServidoresAlabanzaComponent } from './servidores-alabanza/servidores-al
 import { SongManagerComponent } from './song-manager/song-manager.component';
 import { EditHomeComponent } from './edit-home/edit-home.component';
 import { ServidorMaestrosComponent } from './servidor-maestros/servidor-maestros.component';
+import { LoginPopupComponent } from './login-popup/login-popup.component';
 
 
 @NgModule({
@@ -48,8 +49,10 @@ import { ServidorMaestrosComponent } from './servidor-maestros/servidor-maestros
     SongManagerComponent,
     EditHomeComponent,
     ServidorMaestrosComponent,
- 
+    LoginPopupComponent,
+
   ],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   imports: [
     BrowserModule,
     provideFirebaseApp(() => initializeApp(environment.firebase)),
@@ -108,6 +111,7 @@ import { ServidorMaestrosComponent } from './servidor-maestros/servidor-maestros
     DxFileManagerModule,
     DxLoadPanelModule,
     DxFileUploaderModule,
+    DxFormModule,
 
 
     /*Angular Material*/
@@ -121,6 +125,7 @@ import { ServidorMaestrosComponent } from './servidor-maestros/servidor-maestros
     MatOptionModule,
     MatProgressBarModule,
     ReactiveFormsModule,
+    FormsModule,
     MatOptionModule,
     MatFormFieldModule,
     MatProgressSpinnerModule,
