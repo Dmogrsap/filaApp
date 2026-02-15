@@ -17,6 +17,7 @@ import {
 import { ActivationEnd, Router } from '@angular/router';
 import { MainMenuService } from 'src/app/services/main-menuService.service';
 import { UsersService } from 'src/app/services/usersService.service';
+import { AuthServiceService } from 'src/app/services/auth-service.service';
 
 @Component({
   selector: 'app-main-menu',
@@ -251,6 +252,7 @@ export class MainMenuComponent implements OnInit {
     public snackBar: MatSnackBar,
     private mainMenu: MainMenuService,
     private userService: UsersService,
+    private AuthService: AuthServiceService
   ) {
     this.titleSubs$ = this.getArgumentosRuta().subscribe(({ title }) => {
       this.blnFooter = title != 'Filadelfia CUU App';
@@ -268,6 +270,11 @@ export class MainMenuComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.AuthService.isLoged$.subscribe(status => {
+    this.isLoged = status;
+    console.log('El estado en MainMenu cambió a:', this.isLoged);
+  });
+
     this.mainMenu.getMenusWithSubmenus().subscribe((data) => {
       this.menusSub = data;
       //console.log('this.submenu', this.menusSub);

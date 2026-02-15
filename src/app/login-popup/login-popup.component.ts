@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { DxFormComponent } from 'devextreme-angular';
 import { DxFormModule, DxFormTypes } from 'devextreme-angular/ui/form';
 import { UsersService } from '../services/usersService.service';
+import { AuthServiceService} from '../services/auth-service.service';
 
 @Component({
   selector: 'app-login-popup',
@@ -28,7 +29,7 @@ export class LoginPopupComponent {
   };
 TextEditorOptions: any;
 
-  constructor(private router: Router, private userService: UsersService,) {}
+  constructor(private router: Router, private userService: UsersService, private AuthService: AuthServiceService) {}
 
   onFormSubmit(e: any) {
     this.login.emit({ username: this.customer.name, password: this.customer.Password });
@@ -54,6 +55,9 @@ TextEditorOptions: any;
         }
       }
     });
+
+    this.AuthService.setLoginStatus(true);
+    this.onExit();
   }
 
   onOptionChanged(e: any) {
@@ -72,14 +76,6 @@ TextEditorOptions: any;
     this.router.navigate(['\login']);
   }
 
-  // iniciarSesion() {
-  //   // ... tu lógica de autenticación ...
-  //   console.log('Login exitoso');
-    
-  //   // 3. Redirigir a la página principal
-  //   //this.router.navigate(['/home']); 
-  // }
-
   onClose() {
     this.close.emit();
   }
@@ -89,8 +85,4 @@ TextEditorOptions: any;
     this.router.navigate(['/']);
   }
 
-  // onExit() {
-  //   this.close.emit();
-  //   this.router.navigate(['/']);
-  // }
 }

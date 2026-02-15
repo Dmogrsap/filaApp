@@ -3,23 +3,20 @@
     <button class="close-btn" (click)="onExit()">
       <span class="close-icon">&times;</span>
     </button>
-    
+
     <div class="modal-header">
-      <div class="logo-container">
-      </div>
+      <div class="logo-container"></div>
       <h2>Iniciar Sesión</h2>
     </div>
 
     <form (ngSubmit)="onFormSubmit($event)" class="login-form">
       <div class="form-group">
-        <label for="username">
-          Usuario
-        </label>
-        <input 
-          id="username" 
-          name="username" 
-          type="text" 
-          required 
+        <label for="username"> Usuario </label>
+        <input
+          id="username"
+          name="username"
+          type="text"
+          required
           autocomplete="username"
           placeholder="Ingresa tu usuario"
           [(ngModel)]="customer.name"
@@ -31,22 +28,25 @@
           <span class="input-icon">🔒</span>
           Contraseña
         </label>
-        <input 
-          id="password" 
-          name="password" 
-          type="password" 
-          required 
+        <input
+          id="password"
+          name="password"
+          type="password"
+          required
           autocomplete="current-password"
           placeholder="Ingresa tu contraseña"
           [(ngModel)]="customer.Password"
         />
       </dxi-form-item>
-  </form>
-  <button type="submit" class="login-btn" (click)="iniciar()">Entrar</button>
-  <button type="button" class="exit-btn" (click)="onExit()">Salir</button>
+    </form>
+    <div class="form-actions">
+      <button type="submit" class="login-btn" (click)="iniciar()">
+        Entrar
+      </button>
+      <button type="button" class="exit-btn" (click)="onExit()">Salir</button>
+    </div>
 
-
-<!-- <form
+    <!-- <form
   action="your-action"
   (submit)="onFormSubmit($event)"
   style="
@@ -79,3 +79,5 @@
     </button>
   </div>
 </form> -->
+  </div>
+</div>
