@@ -4,6 +4,7 @@ import { DxFormComponent } from 'devextreme-angular';
 import { DxFormModule, DxFormTypes } from 'devextreme-angular/ui/form';
 import { UsersService } from '../services/usersService.service';
 import { AuthServiceService} from '../services/auth-service.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-login-popup',
@@ -50,6 +51,16 @@ TextEditorOptions: any;
           this.isLoged = true;
           console.log('Usuario encontrado:', this.datasourceusers[i], "esta logueado?: ", this.isLoged);
           // Aquí puedes agregar la lógica para redirigir al usuario o mostrar un mensaje de éxito
+              Swal.fire({
+                icon: 'success',
+                title: 'Login!!!',
+                text: 'User Logged',
+                draggable: true,
+                width: 600,
+                
+          
+                // imageAlt: 'Custom image',
+              });
           
           return; // Salir del bucle una vez que se encuentra el usuario
         }
@@ -72,9 +83,9 @@ TextEditorOptions: any;
     });
   }
 
-  onLogin(){
-    this.router.navigate(['\login']);
-  }
+  // onLogin(){
+  //   this.router.navigate(['\login']);
+  // }
 
   onClose() {
     this.close.emit();
