@@ -3,72 +3,107 @@ import { Router } from '@angular/router';
 import { DxFormComponent } from 'devextreme-angular';
 import { DxFormModule, DxFormTypes } from 'devextreme-angular/ui/form';
 import { UsersService } from '../services/usersService.service';
-import { AuthServiceService} from '../services/auth-service.service';
+import { AuthServiceService } from '../services/auth-service.service';
 import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-login-popup',
   templateUrl: './login-popup.component.html',
-  styleUrls: ['./login-popup.component.css']
+  styleUrls: ['./login-popup.component.css'],
 })
 export class LoginPopupComponent {
-  @ViewChild(DxFormComponent, { static: false }) form: DxFormComponent | undefined;
+  @ViewChild(DxFormComponent, { static: false }) form:
+    | DxFormComponent
+    | undefined;
 
   customer = { name: '', Password: '' };
   @Output() login = new EventEmitter<{ username: string; password: string }>();
   @Output() close = new EventEmitter<void>();
 
   public datasourceusers: any[] = [];
-   public isLoged: boolean = false;
+  public isLoged: boolean = false;
 
   emailEditorOptions = {
-    mode: 'name'
+    mode: 'name',
   };
 
   passwordEditorOptions = {
-    mode: 'password'
+    mode: 'password',
   };
-TextEditorOptions: any;
+  TextEditorOptions: any;
 
-  constructor(private router: Router, private userService: UsersService, private AuthService: AuthServiceService) {}
+  constructor(
+    private router: Router,
+    private userService: UsersService,
+    private AuthService: AuthServiceService,
+  ) {}
 
   onFormSubmit(e: any) {
-    this.login.emit({ username: this.customer.name, password: this.customer.Password });
+    this.login.emit({
+      username: this.customer.name,
+      password: this.customer.Password,
+    });
     e.preventDefault();
-    console.log('this.customer name: ', this.customer.name, 'this.customer password: ', this.customer.Password);
+    console.log(
+      'this.customer name: ',
+      this.customer.name,
+      'this.customer password: ',
+      this.customer.Password,
+    );
   }
 
- public iniciar() {
-        this.userService.getUsers().subscribe((result) => {
+  public iniciar() {
+    this.userService.getUsers().subscribe((result) => {
       this.datasourceusers = result.sort((a, b) =>
         a.Nombre.localeCompare(b.Nombre),
       );
       //console.log('Datasource:', this.datasourceusers);
       //this.loadIndicatorVisible = false;
       for (let i = 0; i < this.datasourceusers.length; i++) {
-        if (this.datasourceusers[i].Nombre === this.customer.name && this.datasourceusers[i].Password == this.customer.Password) {
+        if (
+          this.datasourceusers[i].Nombre === this.customer.name &&
+          this.datasourceusers[i].Password == this.customer.Password
+        ) {
           //console.log('Usuario encontrado:', this.datasourceusers[i]);
           this.isLoged = true;
-          console.log('Usuario encontrado:', this.datasourceusers[i], "esta logueado?: ", this.isLoged);
+          this.AuthService.setLoginStatus(true); // Cambia a true
+          console.log(
+            'Usuario encontrado:',
+            this.datasourceusers[i],
+            'esta logueado?: ',
+            this.isLoged,
+          );
           // Aquí puedes agregar la lógica para redirigir al usuario o mostrar un mensaje de éxito
-              Swal.fire({
-                icon: 'success',
-                title: 'Login!!!',
-                text: 'User Logged',
-                draggable: true,
-                width: 600,
-                
-          
-                // imageAlt: 'Custom image',
-              });
-          
+          Swal.fire({
+            icon: 'success',
+            title: 'Login!!!',
+            text: 'User Logged',
+            draggable: true,
+            width: 600,
+
+            // imageAlt: 'Custom image',
+          });
+
+          setTimeout(() => {
+            this.onExit(); // Cerramos el modal usando tu función existente
+            this.router.navigate(['/home']); // Redireccionamos a home
+          }, 2000);
+          // this.onExit(); // Cierra el modal
           return; // Salir del bucle una vez que se encuentra el usuario
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'Sorry!!!',
+            text: 'User not found',
+            draggable: true,
+            width: 600,
+
+            // imageAlt: 'Custom image',
+          });
+          this.AuthService.setLoginStatus(false);
         }
       }
     });
-
-    this.AuthService.setLoginStatus(true);
-    this.onExit();
   }
 
   onOptionChanged(e: any) {
@@ -95,5 +130,4 @@ TextEditorOptions: any;
     this.close.emit();
     this.router.navigate(['/']);
   }
-
 }
