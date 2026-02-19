@@ -19,6 +19,9 @@ export class LoginPopupComponent {
   customer = { name: '', Password: '' };
   @Output() login = new EventEmitter<{ username: string; password: string }>();
   @Output() close = new EventEmitter<void>();
+  
+  // Password visibility toggle
+  showPassword: boolean = false;
 
   public datasourceusers: any[] = [];
   public isLoged: boolean = false;
@@ -80,13 +83,11 @@ export class LoginPopupComponent {
             text: 'User Logged',
             draggable: true,
             width: 600,
-          // }).then(function () {
-          //   window.location.href = '/main-menu';
-
-            // imageAlt: 'Custom image',
           });
 
+          this.onClose();
           return; // Salir del bucle una vez que se encuentra el usuario
+          
         } else {
           Swal.fire({
             icon: 'error',
@@ -94,17 +95,18 @@ export class LoginPopupComponent {
             text: 'User not found',
             draggable: true,
             width: 600,
-          }).then(function () {
-            window.location.href = '/';
 
             // imageAlt: 'Custom image',
           });
           this.AuthService.setLoginStatus(false);
+          this.onClose();
         }
       }
 
       // this.router.navigate(['/']);
     });
+
+    this.onClose();
   }
 
   onOptionChanged(e: any) {
@@ -130,5 +132,9 @@ export class LoginPopupComponent {
   onExit() {
     this.close.emit();
     this.router.navigate(['/']);
+  }
+
+  togglePasswordVisibility(): void {
+    this.showPassword = !this.showPassword;
   }
 }

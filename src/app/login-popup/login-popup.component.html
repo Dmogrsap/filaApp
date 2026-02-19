@@ -30,15 +30,26 @@
           <span class="input-icon">🔒</span>
           Contraseña
         </label>
-        <input
-          id="password"
-          name="password"
-          type="password"
-          required
-          autocomplete="current-password"
-          placeholder="Ingresa tu contraseña"
-          [(ngModel)]="customer.Password"
-        />
+        <div class="password-input-container">
+          <input
+            id="password"
+            name="password"
+            [type]="showPassword ? 'text' : 'password'"
+            required
+            autocomplete="current-password"
+            placeholder="Ingresa tu contraseña"
+            [(ngModel)]="customer.Password"
+          />
+          <button 
+            type="button" 
+            class="password-toggle-btn" 
+            (click)="togglePasswordVisibility()"
+            [attr.aria-label]="showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+          >
+            <span *ngIf="!showPassword">👁️</span>
+            <span *ngIf="showPassword">🙈</span>
+          </button>
+        </div>
       </dxi-form-item>
     </form>
     <div class="form-actions">
