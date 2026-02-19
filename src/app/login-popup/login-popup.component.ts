@@ -94,8 +94,8 @@ export class LoginPopupComponent {
             text: 'User not found',
             draggable: true,
             width: 600,
-          // }).then(function () {
-          //   window.location.href = '/';
+          }).then(function () {
+            window.location.href = '/';
 
             // imageAlt: 'Custom image',
           });
