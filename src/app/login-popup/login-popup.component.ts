@@ -67,12 +67,12 @@ export class LoginPopupComponent {
           //console.log('Usuario encontrado:', this.datasourceusers[i]);
           this.isLoged = true;
           this.AuthService.setLoginStatus(true); // Cambia a true
-          console.log(
-            'Usuario encontrado:',
-            this.datasourceusers[i],
-            'esta logueado?: ',
-            this.isLoged,
-          );
+          // console.log(
+          //   'Usuario encontrado:',
+          //   this.datasourceusers[i],
+          //   'esta logueado?: ',
+          //   this.isLoged,
+          // );
           // Aquí puedes agregar la lógica para redirigir al usuario o mostrar un mensaje de éxito
           Swal.fire({
             icon: 'success',
@@ -80,15 +80,12 @@ export class LoginPopupComponent {
             text: 'User Logged',
             draggable: true,
             width: 600,
+          // }).then(function () {
+          //   window.location.href = '/main-menu';
 
             // imageAlt: 'Custom image',
           });
 
-          setTimeout(() => {
-            this.onExit(); // Cerramos el modal usando tu función existente
-            this.router.navigate(['/home']); // Redireccionamos a home
-          }, 2000);
-          // this.onExit(); // Cierra el modal
           return; // Salir del bucle una vez que se encuentra el usuario
         } else {
           Swal.fire({
@@ -97,12 +94,16 @@ export class LoginPopupComponent {
             text: 'User not found',
             draggable: true,
             width: 600,
+          // }).then(function () {
+          //   window.location.href = '/';
 
             // imageAlt: 'Custom image',
           });
           this.AuthService.setLoginStatus(false);
         }
       }
+
+      // this.router.navigate(['/']);
     });
   }
 
