@@ -26,21 +26,16 @@ const routes: Routes = [
       {
         path: '',
         component: HomeComponent,
-        data: { title: 'Filadelfia CUU App', url: '', allowedRoles:['']}
+        data: { title: 'Filadelfia CUU App', url: '', allowedRoles:['Administrator'] }
       },
 
       {
         path: 'access',
         // canLoad:[HasRoleGuard],
         component: AccessComponent,
-        data: { title: 'Accesos', url: 'access' }
+        data: { title: 'Accesos', url: 'access', allowedRoles:['Administrator']  }
       },
 
-      // {
-      //   path: 'activemenus',
-      //   component: ActivemenusComponent,
-      //   data: { title: 'Activate Menus', url: 'activemenus', allowedRoles:['Administrator, Developers']}
-      // },
 
       {
         path: 'login',
@@ -53,33 +48,33 @@ const routes: Routes = [
         path: 'users',
         //canLoad:[HasRoleGuard],
         component: UsersComponent,
-        data: { title: 'Usuarios', url: 'users' }
+        data: { title: 'Usuarios', url: 'users', allowedRoles:['Administrator']  }
       },
 
       {
         path: 'lideres',
         //canLoad:[HasRoleGuard],
         component: LideresComponent,
-        data: { title: 'Lideres', url: 'lideres' }
+        data: { title: 'Lideres', url: 'lideres', allowedRoles:['Administrator']  }
       },
 
       {
         path: 'roles',
         component: RolesComponent,
         //canLoad:[HasRoleGuard],
-        data: { title: 'Roles', url: 'roles',  allowedRoles:['IAdministrator, Developers'] }
+        data: { title: 'Roles', url: 'roles',  allowedRoles:['Administrator, Developers'] }
       },
 
       {
         path: 'servidores-alabanza',
         component: ServidoresAlabanzaComponent,
-        data: { title: 'Servidores Alabanza', url: '/servidores-alabanza' }
+        data: { title: 'Servidores Alabanza', url: '/servidores-alabanza',allowedRoles:['Administrator'] }
       },
 
       {
         path: 'edit-home',
         component: EditHomeComponent,
-        data: { title: 'Edicion de Portada', url: '/edit-home' }
+        data: { title: 'Edicion de Portada', url: '/edit-home', allowedRoles:['Administrator']  }
       },
 
       // {
@@ -91,7 +86,7 @@ const routes: Routes = [
       {
         path: 'song-manager',
         component: SongManagerComponent,
-        data: { title: 'Letras y Acordes', url: '/song-manager'}
+        data: { title: 'Letras y Acordes', url: '/song-manager', allowedRoles:['Administrator'] }
       },
 
       {
@@ -99,46 +94,7 @@ const routes: Routes = [
         component: ServidorMaestrosComponent,
         data: { title: 'Maestros', url: '/servidor-maestros' }
       },
-      // {
-      //   path: 'newsystems',
-      //   component: NewsystemsComponent,
-      //   data: { title: 'Systems Catalog', url: 'newsystems', allowedRoles:['Administrator, Developers']}
-      // },
-      // {
-      //   path: 'newapplications',
-      //   component: NewapplicationsComponent,
-      //   data: { title: 'Applications Catalog', url: 'newapplications', allowedRoles:['Administrator, Developers']}
-      // },
-      // {
-      //   path: 'newsqlconnections',
-      //   component: NewsqlconnectionsComponent,
-      //   data: { title: 'Add SQL Connections', url: 'newsqlconnections', allowedRoles:['Administrator, Developers']}
-      // },
-      // {
-      //   path: 'newdatabases',
-      //   component: NewdatabasesComponent,
-      //   data: { title: 'Add Databases', url: 'newdatabases', allowedRoles:['Administrator, Developers']}
-      // },
-      // {
-      //   path: 'newserver',
-      //   component: NewserverComponent,
-      //   data: { title: 'Servers Connections', url: 'newserver', allowedRoles:['Administrator, Developers']}
-      // },
-      // {
-      //   path: 'sqlservicesaccount',
-      //   component: SqlservicesaccountComponent,
-      //   data: { title: 'SQL Service Accounts', url: 'sqlservicesaccount', allowedRoles:['Administrator, Developers']}
-      // },
-      // {
-      //   path: 'files',
-      //   component: FilesComponent,
-      //   data: { title: 'Files', url: 'files', allowedRoles:['Administrator, Developers']}
-      // },
-      // {
-      //   path: 'environments',
-      //   component: NewenvironmentComponent,
-      //   data: { title: 'Environments', url: 'environments', allowedRoles:['Administrator, Developers']}
-      // },
+     
     ]
     
   },
