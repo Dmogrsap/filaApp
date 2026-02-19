@@ -32,6 +32,7 @@ export class AuthServiceService {
 
   // Método para obtener el rol actual
   getUserRole(): number | null {
+    console.log('getUserRole called, current role:', this.userRoleSource.value);
     return this.userRoleSource.value;
   }
 
