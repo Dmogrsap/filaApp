@@ -18,31 +18,41 @@ export class RoleGuard implements CanActivate {
     state: RouterStateSnapshot
   ): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
     
-    // Obtener los roles requeridos de la ruta
-    const requiredRoles = route.data['allowedRoles'] as number[];
+    const requiredRoles = route.data['allowedRoles'] as string[];
     
-    // Si no hay roles requeridos, permitir acceso
-    if (!requiredRoles || requiredRoles.length === 0) {
+    console.log('=== RoleGuard ===');
+    console.log('Ruta:', state.url);
+    console.log('Required roles:', requiredRoles);
+    console.log('Tipo de requiredRoles:', typeof requiredRoles, Array.isArray(requiredRoles));
+    
+    if (!requiredRoles || !Array.isArray(requiredRoles) || requiredRoles.length === 0 || (requiredRoles.length === 1 && (requiredRoles[0] === '' || requiredRoles[0] === undefined))) {
+      console.log('Sin roles requeridos - Permitido');
       return true;
     }
 
-    // Obtener el rol del usuario actual
-    const userRole = this.authService.getUserRole();
-
-    // Verificar si el usuario está logueado
-    if (!this.authService.isLoggedIn()) {
-      // Redirigir al login si no está logueado
+    const isLoggedIn = this.authService.isLoggedIn();
+    console.log('Usuario logueado:', isLoggedIn);
+    
+    if (!isLoggedIn) {
+      console.log('No logueado - Redirigiendo a /login');
       this.router.navigate(['/login']);
       return false;
     }
 
-    // Verificar si el usuario tiene el rol requerido
-    if (userRole !== null && requiredRoles.includes(userRole)) {
+    const userRoles = this.authService.getUserRoles();
+    console.log('Roles del usuario:', userRoles);
+    console.log('Tipo de userRoles:', typeof userRoles, Array.isArray(userRoles));
+    
+    // Usar verificación flexible
+    const hasAccess = this.authService.hasAnyRoleFlexible(requiredRoles);
+    console.log('Tiene acceso:', hasAccess);
+    
+    if (hasAccess) {
+      console.log('Acceso concedido');
       return true;
     }
 
-    // Si no tiene el rol requerido, redirigir a una página de acceso denegado
-    // o volver al inicio
+    console.log('Sin acceso - Redirigiendo a /');
     this.router.navigate(['/']);
     return false;
   }

@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, Subject } from 'rxjs';
+import { Observable, Subject, map } from 'rxjs';
 import { environment } from 'src/environments/environment.development';
 import { IResultObjectRoles } from '../Interfaces/IResultObjectRoles';
 import { IRoles } from '../Interfaces/IRoles';
@@ -12,6 +12,7 @@ import {
   doc,
   Firestore,
   updateDoc,
+  getDoc
 } from '@angular/fire/firestore';
 
 @Injectable({
@@ -30,6 +31,21 @@ export class RolesService {
   getRoles(): Observable<any[]> {
     const usersRef = collection(this.firestore, 'Roles');
     return collectionData(usersRef, { idField: 'id' });
+  }
+
+  // Nuevo método para obtener un rol específico por su idRole
+  getRoleById(idRole: number): Observable<any> {
+    const rolesRef = collection(this.firestore, 'Roles');
+    return collectionData(rolesRef, { idField: 'id' }).pipe(
+      map(roles => roles.find((role: any) => role.idRole === idRole))
+    );
+  }
+
+  // Nuevo método para obtener el nombre del rol por idRole (síncrono con map)
+  getRoleNameById(idRole: number): Observable<string> {
+    return this.getRoleById(idRole).pipe(
+      map(role => role ? role.roleName : 'Unknown')
+    );
   }
 
   addRoles(user: any): Promise<any> {
