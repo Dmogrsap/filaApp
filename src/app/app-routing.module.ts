@@ -34,7 +34,7 @@ const routes: Routes = [
       {
         path: 'access',
         component: AccessComponent,
-        data: { title: 'Accesos', url: 'access', allowedRoles: ['Admin','Pastor'] },
+        data: { title: 'Accesos', url: 'access', allowedRoles: ['Admin'] },
         canActivate: [RoleGuard]
       },
 
@@ -47,49 +47,49 @@ const routes: Routes = [
       {
         path: 'users',
         component: UsersComponent,
-        data: { title: 'Usuarios', url: 'users', allowedRoles: ['Admin','Pastor'] },
+        data: { title: 'Usuarios', url: 'users', allowedRoles: ['Admin'] },
         canActivate: [RoleGuard]
       },
 
       {
         path: 'lideres',
         component: LideresComponent,
-        data: { title: 'Lideres', url: 'lideres', allowedRoles: ['Admin','Pastor'] },
+        data: { title: 'Lideres', url: 'lideres', allowedRoles: ['Admin'] },
         canActivate: [RoleGuard]
       },
 
       {
         path: 'roles',
         component: RolesComponent,
-        data: { title: 'Roles', url: 'roles', allowedRoles: ['Admin','Pastor'] },
+        data: { title: 'Roles', url: 'roles', allowedRoles: ['Admin'] },
         canActivate: [RoleGuard]
       },
 
       {
         path: 'servidores-alabanza',
         component: ServidoresAlabanzaComponent,
-        data: { title: 'Servidores Alabanza', url: '/servidores-alabanza', allowedRoles: ['Admin', 'Lider Alabanza', 'Pastor'] },
+        data: { title: 'Servidores Alabanza', url: '/servidores-alabanza', allowedRoles: ['Admin', 'Musico Alabanza', 'Lider Alabanza'] },
         canActivate: [RoleGuard]
       },
 
       {
         path: 'edit-home',
         component: EditHomeComponent,
-        data: { title: 'Edicion de Portada', url: '/edit-home', allowedRoles: ['Admin','Pastor'] },
+        data: { title: 'Edicion de Portada', url: '/edit-home', allowedRoles: ['Admin'] },
         canActivate: [RoleGuard]
       },
 
       {
         path: 'song-manager',
         component: SongManagerComponent,
-        data: { title: 'Letras y Acordes', url: '/song-manager', allowedRoles: ['Admin','Pastor', 'Lider Alabanza', 'Musico Alabanza','Cantante alabanza'] },
+        data: { title: 'Letras y Acordes', url: '/song-manager', allowedRoles: ['Admin', 'Musico Alabanza', 'Lider Alabanza', 'Cantante alabanza'] },
         canActivate: [RoleGuard]
       },
 
       {
         path: 'servidor-maestros',
         component: ServidorMaestrosComponent,
-        data: { title: 'Maestros', url: '/servidor-maestros', allowedRoles: ['Admin','Pastor', 'Maestra', 'Maestro', 'Lider Maestras', 'Lider Maestros','Servidor Maestro'] },
+        data: { title: 'Maestros', url: '/servidor-maestros', allowedRoles: ['Admin', 'Maestra', 'Maestro', 'Lider Maestras', 'Lider Maestros'] },
         canActivate: [RoleGuard]
       },
      

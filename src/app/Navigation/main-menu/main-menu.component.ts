@@ -14,10 +14,22 @@ import {
   MatSnackBarVerticalPosition,
   MatSnackBar,
 } from '@angular/material/snack-bar';
-import { ActivationEnd, Router } from '@angular/router';
+import { ActivationEnd, Router, Routes } from '@angular/router';
 import { MainMenuService } from 'src/app/services/main-menuService.service';
 import { UsersService } from 'src/app/services/usersService.service';
 import { AuthServiceService } from 'src/app/services/auth-service.service';
+
+// Definición de rutas con TODOS los roles (debe coincidir con app-routing.module.ts)
+const ROUTE_ROLES: { [key: string]: string[] } = {
+  '/access': ['Admin'],
+  '/users': ['Admin'],
+  '/lideres': ['Admin'],
+  '/roles': ['Admin'],
+  '/servidores-alabanza': ['Admin', 'Musico Alabanza', 'Lider Alabanza', 'Cantante alabanza'],
+  '/edit-home': ['Admin'],
+  '/song-manager': ['Admin', 'Musico Alabanza', 'Lider Alabanza', 'Cantante alabanza'],
+  '/servidor-maestros': ['Admin', 'Maestra', 'Maestro', 'Lider Maestras', 'Lider Maestros'],
+};
 
 @Component({
   selector: 'app-main-menu',
@@ -32,148 +44,15 @@ export class MainMenuComponent implements OnInit {
   public datasourceusers: any[] = [];
   public datasourceroles: any[] = [];
   public dataSourceMenus: any[] = [];
+  public dataSourceMenusFiltered: any[] = [];
   public masterRoutes: any[] = [];
-  // public masterRoutes2: any []= [];
   public menu: any[] = [];
   public menuFila: any[] = [];
-  // public menuFila: any [] = [
-  //    {
-  //   "idMenu": 1,
-  //   "nameMenu": "Alabanza",
-  //   "iconMenu": null,
-  //   "active": true,
-  //   "hasAccess": true,
-  //   "idAccesses": 0,
-  //   "description": null,
-  //   "nameView": null,
-  //   "route": null,
-  //   "icons": null,
-  //   "active1": false,
-  //   "canModify": null,
-  //   "orderBy": null,
-  //   "sectionMenuName": null,
-  //   "idPermissions": 0,
-  //   "idRole": 0,
-  //   "hasAccess1": false,
-  //   "isActive": false,
-  //   "parentId": null,
-  //   "canModifyPer": null,
-  //   "id": null,
-  //   "items": [
-  //     {
-  //       "idAccesses": 2,
-  //       "description": null,
-  //       "nameView": "Accesses",
-  //       "route": "/accesses",
-  //       "icons": "meeting_room",
-  //       "idMenu": 1,
-  //       "active": true,
-  //       "hasAccess": true,
-  //       "canModify": true,
-  //       "orderBy": 2,
-  //       "nameMenu": null,
-  //       "idPermissions": 0,
-  //       "idRolePer": 0,
-  //       "idAccessesPer": 0,
-  //       "hasAccessPer": false,
-  //       "canModifyPer": false,
-  //       "activePer": false,
-  //       "permissions": []
-  //     },
-  //     {
-  //       "idAccesses": 16,
-  //       "description": null,
-  //       "nameView": "Menu",
-  //       "route": "/activemenus",
-  //       "icons": "storage",
-  //       "idMenu": 1,
-  //       "active": true,
-  //       "hasAccess": true,
-  //       "canModify": true,
-  //       "orderBy": 1,
-  //       "nameMenu": null,
-  //       "idPermissions": 0,
-  //       "idRolePer": 0,
-  //       "idAccessesPer": 0,
-  //       "hasAccessPer": false,
-  //       "canModifyPer": false,
-  //       "activePer": false,
-  //       "permissions": []
-  //     },
-  //   ]
-  //   },
-  //   {
-  //     "idMenu": 4,
-  //     "nameMenu": "Multimedia",
-  //     "iconMenu": "",
-  //     "active": true,
-  //     "hasAccess": true,
-  //     "idAccesses": 0,
-  //     "description": null,
-  //     "nameView": null,
-  //     "route": null,
-  //     "icons": null,
-  //     "active1": false,
-  //     "canModify": null,
-  //     "orderBy": null,
-  //     "sectionMenuName": null,
-  //     "idPermissions": 0,
-  //     "idRole": 0,
-  //     "hasAccess1": false,
-  //     "isActive": false,
-  //     "parentId": null,
-  //     "canModifyPer": null,
-  //     "id": null,
-  //     // "items": [
-  //     //   {
-  //     //     "idAccesses": 21,
-  //     //     "description": null,
-  //     //     "nameView": "Add SQL Connection",
-  //     //     "route": "/newsqlconnections",
-  //     //     "icons": "cloud",
-  //     //     "idMenu": 4,
-  //     //     "active": true,
-  //     //     "hasAccess": true,
-  //     //     "canModify": true,
-  //     //     "orderBy": 12,
-  //     //     "nameMenu": null,
-  //     //     "idPermissions": 0,
-  //     //     "idRolePer": 0,
-  //     //     "idAccessesPer": 0,
-  //     //     "hasAccessPer": false,
-  //     //     "canModifyPer": false,
-  //     //     "activePer": false,
-  //     //     "permissions": []
-  //     //   },
-  //     //   {
-  //     //     "idAccesses": 20,
-  //     //     "description": null,
-  //     //     "nameView": "Applications Catalog",
-  //     //     "route": "/newapplications",
-  //     //     "icons": "apps",
-  //     //     "idMenu": 4,
-  //     //     "active": true,
-  //     //     "hasAccess": true,
-  //     //     "canModify": true,
-  //     //     "orderBy": 10,
-  //     //     "nameMenu": null,
-  //     //     "idPermissions": 0,
-  //     //     "idRolePer": 0,
-  //     //     "idAccessesPer": 0,
-  //     //     "hasAccessPer": false,
-  //     //     "canModifyPer": false,
-  //     //     "activePer": false,
-  //     //     "permissions": []
-  //     //   }
-  //     // ]
-  //   }
-  // ];
   public menu2: any[] = [];
   public menuCustom: any[] = [];
   public menuCustom2: any[] = [];
   public menuCustom3: any[] = [];
   public submenu: any[] = [];
-
   public getMenu: any[] = [];
 
   events: string[] = [];
@@ -190,39 +69,25 @@ export class MainMenuComponent implements OnInit {
     );
 
   goToHome() {
-    //this.router.navigate('');
     this.router.navigate(['']);
   }
-
-  // menu: Menu[] | undefined;
 
   @ViewChild(DxDrawerComponent, { static: false }) drawer:
     | DxDrawerComponent
     | undefined;
-  //  @Output()OpenSideBar: EventEmitter<any> = new EventEmitter<any>();
-  // navigation: List[];
 
   showSubmenuModes: string[] = ['slide', 'expand'];
-
   positionModes: string[] = ['left', 'right'];
-
   showModes: string[] = ['push', 'shrink', 'overlap'];
-
   selectedOpenMode = 'push';
-
   selectedPosition = 'right';
-
   selectedRevealMode = 'slide';
-
   public isDrawerOpen = true;
-
   elementAttr: any;
-
   public title = '';
   public titleSubs$: Subscription;
   public blnFooter: boolean = false;
 
-  //public isLogin: boolean = false;
   public isLogin: boolean = true;
   public isLoged: boolean = false;
   public canView: boolean = false;
@@ -243,8 +108,7 @@ export class MainMenuComponent implements OnInit {
   public openGroupIndex: number | null = null;
 
   public menusSub: any[] = [];
-  // public title: any;
-  // public titleSubs$: Subscription
+  public userRoles: string[] = [];
 
   constructor(
     private breakpointObserver: BreakpointObserver,
@@ -257,7 +121,6 @@ export class MainMenuComponent implements OnInit {
     this.titleSubs$ = this.getArgumentosRuta().subscribe(({ title }) => {
       this.blnFooter = title != 'Filadelfia CUU App';
       this.title = title;
-      //console.log("title", this.title)
     });
   }
 
@@ -269,15 +132,66 @@ export class MainMenuComponent implements OnInit {
     );
   }
 
-  ngOnInit(): void {
-    this.AuthService.isLoged$.subscribe(status => {
-    this.isLoged = status;
-    console.log('El estado en MainMenu cambió a:', this.isLoged);
-  });
+  // Método para verificar si el usuario tiene acceso a una ruta
+  hasAccessToRoute(route: string): boolean {
+    const requiredRoles = ROUTE_ROLES[route];
+    
+    // Si no hay roles requeridos, permitir acceso
+    if (!requiredRoles || requiredRoles.length === 0) {
+      return true;
+    }
+    
+    // Si el usuario no está logueado, no tiene acceso
+    if (!this.AuthService.isLoggedIn()) {
+      return false;
+    }
+    
+    // Si el usuario no tiene roles asignados, denegar
+    if (!this.userRoles || this.userRoles.length === 0) {
+      return false;
+    }
+    
+    // Verificar si el usuario tiene algún rol requerido
+    return this.AuthService.hasAnyRoleFlexible(requiredRoles);
+  }
 
+  // Método para filtrar los menús según los roles del usuario
+  filterMenusByRole() {
+    if (!this.dataSourceMenus || this.dataSourceMenus.length === 0) {
+      return;
+    }
+    
+    this.dataSourceMenusFiltered = this.dataSourceMenus.map(group => {
+      const filteredItems = group.items ? group.items.filter((item: any) => {
+        return this.hasAccessToRoute(item.route);
+      }) : [];
+      
+      return {
+        ...group,
+        items: filteredItems
+      };
+    }).filter(group => {
+      return group.items && group.items.length > 0;
+    });
+  }
+
+  ngOnInit(): void {
+    // Suscribirse al estado de login
+    this.AuthService.isLoged$.subscribe(status => {
+      this.isLoged = status;
+    });
+
+    // Suscribirse a los roles del usuario
+    this.AuthService.userRoles$.subscribe(roles => {
+      this.userRoles = roles;
+      if (this.dataSourceMenus.length > 0) {
+        this.filterMenusByRole();
+      }
+    });
+
+    // Cargar menus
     this.mainMenu.getMenusWithSubmenus().subscribe((data) => {
       this.menusSub = data;
-      //console.log('this.submenu', this.menusSub);
     });
 
     this.mainMenu.getMenus().subscribe((result) => {
@@ -285,33 +199,23 @@ export class MainMenuComponent implements OnInit {
         a.Nombre.localeCompare(b.Nombre),
       );
       this.loadIndicatorVisible = false;
-      //console.log('DataSource', this.dataSourceMenus);
-    });
-
-    this.mainMenu.getMenus().subscribe((result) => {
-      this.dataSourceMenus = result.sort((a, b) =>
-        a.Nombre.localeCompare(b.Nombre),
-      );
-      this.loadIndicatorVisible = false;
-      //console.log('DataSource', this.dataSourceMenus);
 
       this.mainMenu.getsubMenus().subscribe((data) => {
         this.menusSub = data;
-        // 💡 Asociar submenús a cada menú
         this.dataSourceMenus.forEach((menu) => {
-          // Inicializa el arreglo 'items' si no existe
           menu.items = [];
-
-          // Filtra los submenús cuyo nameMenu coincide con el Nombre del menú
           const submenusRelacionados = this.menusSub.filter(
             (sub) => sub.nameMenu === menu.Nombre,
           );
-
-          // Asigna los submenús filtrados al campo 'items' del menú
           menu.items.push(...submenusRelacionados);
         });
 
-        //console.log('Menús con submenús:', this.dataSourceMenus);
+        // Si el usuario tiene roles, filtrar; si no, mostrar todos
+        if (this.userRoles && this.userRoles.length > 0) {
+          this.filterMenusByRole();
+        } else {
+          this.dataSourceMenusFiltered = [...this.dataSourceMenus];
+        }
       });
     });
 
@@ -319,21 +223,14 @@ export class MainMenuComponent implements OnInit {
     this.menu = this.menuFila;
 
     for (let i = 0; i < this.menu.length; i++) {
-      // if(this.menu[i].hasAccess == true){
       this.menuCustom.push(this.menu[i]);
       this.menuCustom2.push(this.menu[i]);
-
-      // }
-    } // Oculta el indicador de carga cuando los datos estén listos
-
-    //console.log("menuCustom",this.menuCustom2);
+    }
 
     if (this.menuCustom2.length > 0) {
       this.loadIndicatorVisible = false;
       this.loading = false;
     }
-
-    //console.log("menu",this.menuCustom2);
   }
 
   public ingresar() {
@@ -342,9 +239,6 @@ export class MainMenuComponent implements OnInit {
         a.Nombre.localeCompare(b.Nombre),
       );
       this.loadIndicatorVisible = false;
-      if (this.datasourceusers.length > 0) {
-        //console.log('DataSource', this.datasourceusers);
-      }
     });
   }
 
@@ -357,21 +251,19 @@ export class MainMenuComponent implements OnInit {
   }
 
   OpenSideBar(event: any) {
-    //console.log("document",event)
     var sidebar = document.getElementById('sidebar');
     var main = document.getElementById('main');
 
     sidebar?.classList.toggle('active');
     main?.classList.toggle('active');
 
-    event.stopPropagation(); // Evita que el clic propague al documento
+    event.stopPropagation();
     this.sidebarOpen = !this.sidebarOpen;
   }
 
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent) {
     const sidebar = document.getElementById('sidebar');
-    // Si el sidebar está abierto y el clic fue fuera del sidebar y fuera del botón de hamburguesa
     if (
       this.sidebarOpen &&
       sidebar &&

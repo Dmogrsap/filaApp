@@ -76,6 +76,8 @@
           <mat-icon>close</mat-icon>
         </button>
     </div>
+    
+    <!-- Menú cuando NO está logueado -->
     <ul class="sidebar-menu" *ngIf="isLoged == false"> 
       <li>
         <a routerLink="/login" (click)="OpenSideBar($event)">
@@ -85,8 +87,9 @@
       </li>
     </ul>
    
-   <ul class="sidebar-menu" *ngIf="isLoged">
-      <li *ngFor="let group of dataSourceMenus; let i = index">
+    <!-- Menú cuando está logueado - usando menus filtrados por rol -->
+    <ul class="sidebar-menu" *ngIf="isLoged && dataSourceMenusFiltered.length > 0">
+      <li *ngFor="let group of dataSourceMenusFiltered; let i = index">
         <div class="group-title" (click)="toggleGroup(i)">
           <mat-icon class="group-icon">folder</mat-icon>
           {{ group.Nombre }}
@@ -104,9 +107,15 @@
         </ul>
       </li>
     </ul>
+    
+    <!-- Mensaje si no hay menús disponibles -->
+    <div *ngIf="isLoged && dataSourceMenusFiltered.length === 0" class="no-access-message">
+      <p>No tienes acceso a ningún menú</p>
+    </div>
+    
     <div class="sidebar-user">
       <mat-icon>account_circle</mat-icon>
-        Daniel Ortega
+        {{ userName || 'Usuario' }}
     </div>
   </div>
  
