@@ -134,25 +134,56 @@ export class MainMenuComponent implements OnInit {
 
   // Método para verificar si el usuario tiene acceso a una ruta
   hasAccessToRoute(route: string): boolean {
-    const requiredRoles = ROUTE_ROLES[route];
-    
-    // Si no hay roles requeridos, permitir acceso
-    if (!requiredRoles || requiredRoles.length === 0) {
+    if (!route) return false;
+
+    // Normalizar ruta: quitar query params, fragment y asegurar barra inicial
+    let normalized = route.split('?')[0].split('#')[0].trim();
+    if (!normalized.startsWith('/')) normalized = '/' + normalized;
+    if (normalized.endsWith('/')) normalized = normalized.replace(/\/$/, '');
+
+    // Buscar una key en ROUTE_ROLES que coincida exactamente o por prefijo
+    const routeKeys = Object.keys(ROUTE_ROLES);
+    const matchingKey = routeKeys.find((k) => {
+      if (!k) return false;
+      let keyNorm = k.split('?')[0].split('#')[0].trim();
+      if (!keyNorm.startsWith('/')) keyNorm = '/' + keyNorm;
+      if (keyNorm.endsWith('/')) keyNorm = keyNorm.replace(/\/$/, '');
+
+      return (
+        normalized === keyNorm ||
+        normalized.startsWith(keyNorm + '/') ||
+        keyNorm.startsWith(normalized + '/')
+      );
+    });
+
+    const requiredRoles = matchingKey ? ROUTE_ROLES[matchingKey] : undefined;
+
+    // Si no hay un mapeo en ROUTE_ROLES para esta ruta, denegar acceso por seguridad
+    if (!requiredRoles) {
+      console.debug('hasAccessToRoute: no mapping found for', normalized, '- denying access');
+      return false;
+    }
+
+    // Si el mapeo existe pero la lista está vacía, permitir acceso público
+    if (requiredRoles.length === 0) {
+      console.debug('hasAccessToRoute: mapping for', normalized, 'is empty - allowing access');
       return true;
     }
-    
+
     // Si el usuario no está logueado, no tiene acceso
     if (!this.AuthService.isLoggedIn()) {
       return false;
     }
-    
+
     // Si el usuario no tiene roles asignados, denegar
     if (!this.userRoles || this.userRoles.length === 0) {
       return false;
     }
-    
-    // Verificar si el usuario tiene algún rol requerido
-    return this.AuthService.hasAnyRoleFlexible(requiredRoles);
+
+    // Verificar si el usuario tiene algún rol requerido (comprobación flexible)
+    const allowed = this.AuthService.hasAnyRoleFlexible(requiredRoles);
+    console.debug('hasAccessToRoute:', normalized, 'requiredRoles=', requiredRoles, 'allowed=', allowed, 'userRoles=', this.userRoles);
+    return allowed;
   }
 
   // Método para filtrar los menús según los roles del usuario
@@ -160,19 +191,28 @@ export class MainMenuComponent implements OnInit {
     if (!this.dataSourceMenus || this.dataSourceMenus.length === 0) {
       return;
     }
-    
+    console.debug('filterMenusByRole: userRoles=', this.userRoles);
+
     this.dataSourceMenusFiltered = this.dataSourceMenus.map(group => {
       const filteredItems = group.items ? group.items.filter((item: any) => {
-        return this.hasAccessToRoute(item.route);
+        // Algunos items pueden usar propiedades distintas para la ruta
+        const route = item.route || item.Route || item.ruta || item.path || item.Nombre || '';
+        const allowed = this.hasAccessToRoute(route);
+        console.debug('filterMenusByRole: group=', group.Nombre, 'item=', item.Nombre || item.name || item, 'route=', route, 'allowed=', allowed);
+        return allowed;
       }) : [];
-      
+
       return {
         ...group,
         items: filteredItems
       };
     }).filter(group => {
-      return group.items && group.items.length > 0;
+      const keep = group.items && group.items.length > 0;
+      if (!keep) console.debug('filterMenusByRole: removing empty group', group.Nombre);
+      return keep;
     });
+
+    console.debug('filterMenusByRole: filtered result=', this.dataSourceMenusFiltered);
   }
 
   ngOnInit(): void {
