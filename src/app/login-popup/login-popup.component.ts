@@ -132,7 +132,7 @@ export class LoginPopupComponent {
       Swal.fire({
         icon: 'success',
         title: 'Login!!!',
-        text: 'User Logged (Sin roles)',
+        text: 'User Logged',
         draggable: true,
         width: 600,
       });

@@ -69,7 +69,7 @@ const routes: Routes = [
         path: 'servidores-alabanza',
         component: ServidoresAlabanzaComponent,
         data: { title: 'Servidores Alabanza', url: '/servidores-alabanza', allowedRoles: ['Admin', 'Musico Alabanza', 'Lider Alabanza'] },
-        canActivate: [RoleGuard]
+        canActivate: [RoleGuard],
       },
 
       {
