@@ -90,7 +90,10 @@ export class LoginPopupComponent {
     
     // Establecer estado de login
     this.AuthService.setLoginStatus(true);
-    this.AuthService.setUserName(this.customer.name);
+    
+    // Guardar nombre y apellido del usuario
+    this.AuthService.currentUser = { nombre: user.Nombre, apellido: user.Apellido };
+    this.AuthService.setUserName(user.Nombre + ' ' + (user.Apellido || ''));
     
     // Procesar el rol del usuario
     let roleNames: string[] = [];
@@ -118,17 +121,8 @@ export class LoginPopupComponent {
       this.AuthService.setUserRoles(roleNames);
       console.log('AuthService.setUserRoles llamado con:', roleNames);
       console.log('Roles guardados en AuthService:', this.AuthService.getUserRoles());
-      
-      Swal.fire({
-        icon: 'success',
-        title: 'Login!!!',
-        text: 'User Logged: ' + roleNames.join(', '),
-        draggable: true,
-        width: 600,
-      });
-    } else {
-      console.warn('No se encontró ningún rol para el usuario');
-      
+      // this.AuthService.currentUser = { nombre: user.Nombre, apellido: user.Apellido }; // Ajusta según tu modelo de usuario
+      // console.log('Usuario actual en AuthService:', this.AuthService.currentUser);
       Swal.fire({
         icon: 'success',
         title: 'Login!!!',
@@ -136,6 +130,16 @@ export class LoginPopupComponent {
         draggable: true,
         width: 600,
       });
+    } else {
+      console.warn('No se encontró ningún rol para el usuario');
+      
+      // Swal.fire({
+      //   icon: 'success',
+      //   title: 'Login!!!',
+      //   text: 'User Logged',
+      //   draggable: true,
+      //   width: 600,
+      // });
     }
     
     // Verificar que se guardó

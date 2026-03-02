@@ -115,7 +115,18 @@
     
     <div class="sidebar-user">
       <mat-icon>account_circle</mat-icon>
-        {{ userName || 'Usuario' }}
+      <br> <br>
+      <div *ngIf="isLoged ==false" >{{'Usuario' }}</div>
+      <div *ngIf="isLoged">{{'Bienvenido: '+ userName }}</div>
+
+         <!-- Botón de salir -->
+      <div class="logout-container" *ngIf="isLoged">
+        <button class="logout-btn" (click)="logout()">
+          <mat-icon class="submenu-icon">logout</mat-icon>
+          Salir
+        </button>
+      </div>
+
     </div>
   </div>
  

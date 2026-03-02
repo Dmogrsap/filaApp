@@ -93,6 +93,7 @@ export class MainMenuComponent implements OnInit {
   public canView: boolean = false;
   public permissionIt: boolean = true;
   public userName: string = '';
+   public userLastName: string = '';
   public userBadge: string = '';
   public currentViewSelected: string = '';
 
@@ -216,9 +217,17 @@ export class MainMenuComponent implements OnInit {
   }
 
   ngOnInit(): void {
+   
     // Suscribirse al estado de login
     this.AuthService.isLoged$.subscribe(status => {
       this.isLoged = status;
+    });
+
+    // Suscribirse al nombre del usuario
+    this.AuthService.userName$.subscribe(name => {
+      if (name) {
+        this.userName = name;
+      }
     });
 
     // Suscribirse a los roles del usuario
@@ -280,6 +289,11 @@ export class MainMenuComponent implements OnInit {
       );
       this.loadIndicatorVisible = false;
     });
+  }
+
+  logout() {
+    this.isLoged = false;
+    this.router.navigate(['/']);
   }
 
   toggleGroup(index: number) {

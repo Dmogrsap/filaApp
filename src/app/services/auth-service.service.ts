@@ -18,6 +18,8 @@ export class AuthServiceService {
   userIdRole$ = this.userIdRoleSource.asObservable();
   userIdRoles$ = this.userIdRolesSource.asObservable();
 
+  public currentUser: { nombre: string; apellido: string } | null = null;
+
   setLoginStatus(status: boolean) {
     this.isLogedSource.next(status);
   }
@@ -108,6 +110,12 @@ export class AuthServiceService {
   isLoggedIn(): boolean {
     return this.isLogedSource.value;
   }
+
+  // login(username: string, password: string) {
+  //   // ...lógica de login...
+  //   // Supón que obtienes los datos del usuario:
+  //   this.currentUser = { nombre: 'Juan', apellido: 'Pérez' };
+  // }
 
   logout() {
     this.isLogedSource.next(false);
