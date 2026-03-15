@@ -14,6 +14,7 @@ import { EditHomeComponent } from './edit-home/edit-home.component';
 import { ServidorMaestrosComponent } from './servidor-maestros/servidor-maestros.component';
 import { LoginPopupComponent } from './login-popup/login-popup.component';
 import { RoleGuard } from './guards/role.guard';
+import { CalendarioMaterialesComponent } from './calendario-materiales/calendario-materiales.component';
 
 const routes: Routes = [
   { 
@@ -90,6 +91,13 @@ const routes: Routes = [
         path: 'servidor-maestros',
         component: ServidorMaestrosComponent,
         data: { title: 'Maestros', url: '/servidor-maestros', allowedRoles: ['Admin', 'Maestra', 'Maestro', 'Lider Maestras', 'Lider Maestros'] },
+        canActivate: [RoleGuard]
+      },
+
+      {
+        path: 'calendario-materiales',
+        component: CalendarioMaterialesComponent,
+        data: { title: 'Calendario y Materiales', url: '/calendario-materiales', allowedRoles: ['Admin', 'Maestra', 'Maestro', 'Lider Maestras', 'Lider Maestros'] },
         canActivate: [RoleGuard]
       },
      

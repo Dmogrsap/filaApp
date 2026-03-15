@@ -72,7 +72,7 @@ export class LoginPopupComponent {
             Swal.fire({
               icon: 'error',
               title: 'Sorry!!!',
-              text: 'User not found',
+              text: 'User o password incorrect try again',
               draggable: true,
               width: 600,
             });

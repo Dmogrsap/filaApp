@@ -33,6 +33,7 @@ import { SongManagerComponent } from './song-manager/song-manager.component';
 import { EditHomeComponent } from './edit-home/edit-home.component';
 import { ServidorMaestrosComponent } from './servidor-maestros/servidor-maestros.component';
 import { LoginPopupComponent } from './login-popup/login-popup.component';
+import { CalendarioMaterialesComponent } from './calendario-materiales/calendario-materiales.component';
 
 
 @NgModule({
@@ -50,6 +51,7 @@ import { LoginPopupComponent } from './login-popup/login-popup.component';
     EditHomeComponent,
     ServidorMaestrosComponent,
     LoginPopupComponent,
+    CalendarioMaterialesComponent,
 
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],

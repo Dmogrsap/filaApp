@@ -18,6 +18,7 @@ import { ActivationEnd, Router, Routes } from '@angular/router';
 import { MainMenuService } from 'src/app/services/main-menuService.service';
 import { UsersService } from 'src/app/services/usersService.service';
 import { AuthServiceService } from 'src/app/services/auth-service.service';
+import Swal from 'sweetalert2';
 
 // Definición de rutas con TODOS los roles (debe coincidir con app-routing.module.ts)
 const ROUTE_ROLES: { [key: string]: string[] } = {
@@ -93,7 +94,7 @@ export class MainMenuComponent implements OnInit {
   public canView: boolean = false;
   public permissionIt: boolean = true;
   public userName: string = '';
-   public userLastName: string = '';
+  public userLastName: string = '';
   public userBadge: string = '';
   public currentViewSelected: string = '';
 
@@ -293,6 +294,13 @@ export class MainMenuComponent implements OnInit {
 
   logout() {
     this.isLoged = false;
+   Swal.fire({
+           icon: 'warning',
+           title: 'Signed out!!!',
+           text: 'User signed out successfully',
+           draggable: true,
+           width: 600,
+         });
     this.router.navigate(['/']);
   }
 
