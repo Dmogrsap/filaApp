@@ -265,6 +265,7 @@ export class MainMenuComponent implements OnInit {
           this.filterMenusByRole();
         } else {
           this.dataSourceMenusFiltered = [...this.dataSourceMenus];
+          console.log(this.dataSourceMenusFiltered, "dataSourceMenusFiltered");
         }
       });
     });
