@@ -4,6 +4,7 @@ import { DataType } from 'devextreme/common';
 import Swal from 'sweetalert2';
 import { UsersService } from '../services/usersService.service';
 import { RolesService } from '../services/rolesService.service';
+import { AuthServiceService } from '../services/auth-service.service';
 
 @Component({
   selector: 'app-song-manager',
@@ -33,7 +34,8 @@ export class SongManagerComponent implements OnInit {
   constructor(
     private songService: SongManagerService,
     private userService: UsersService,
-    private rolesService: RolesService
+    private rolesService: RolesService,
+    private authService: AuthServiceService
   ) {}
 
   ngOnInit() {
@@ -147,13 +149,14 @@ export class SongManagerComponent implements OnInit {
     }
   }
 
-  onSaving(e: any) {
+
+  // Guardar cambios en canciones
+  onSavingSongs(e: any) {
     const change = e.changes[0];
     if (change) {
       e.cancel = false;
     }
     if (change.type == 'insert') {
-      // Limpia los campos no válidos
       const cleanData = { ...change.data };
       Object.keys(cleanData).forEach((key) => {
         if (/^__.*__$/.test(key)) {
@@ -161,7 +164,6 @@ export class SongManagerComponent implements OnInit {
         }
       });
       this.songService.addSongs(cleanData).then((docRef) => {
-        //console.log('Usuario agregado con ID:', docRef.id);
         Swal.fire({
           icon: 'success',
           title: 'success',
@@ -175,7 +177,6 @@ export class SongManagerComponent implements OnInit {
       });
     }
     if (change.type == 'update') {
-      // Limpia los campos no válidos
       const cleanData = { ...change.data };
       Object.keys(cleanData).forEach((key) => {
         if (/^__.*__$/.test(key)) {
@@ -183,31 +184,12 @@ export class SongManagerComponent implements OnInit {
         }
       });
       this.songService.updateSongs(change.key.id, cleanData).then(() => {
-        //console.log('Usuario actualizado');
         Swal.fire({
           icon: 'success',
           title: 'success',
           text: 'Song Updated Successfully!',
         });
-        // this.songService.getSongs().subscribe((result) => {
-        //   this.datasourceSongs = result.sort((a, b) =>
-        //     a.Nombre.localeCompare(b.Nombre)
-        //   );
-        // });
       });
-
-      this.userService.updateUser(change.key.id, cleanData).then(() => {
-              //console.log('Usuario actualizado');
-              Swal.fire({
-                icon: 'success',
-                title: 'success',
-                text: 'User Updated Successfully!',
-              });
-      
-              this.userService.getUsers().subscribe((result) => {
-                this.dataSourceUsers = result.sort((a, b) => a.Nombre.localeCompare(b.Nombre));;
-              });
-            });
     }
     if (change.type == 'remove') {
       const id = typeof change.key === 'string' ? change.key : change.key.id;
@@ -221,6 +203,79 @@ export class SongManagerComponent implements OnInit {
           this.datasourceSongs = result.sort((a, b) =>
             a.Nombre.localeCompare(b.Nombre)
           );
+        });
+      });
+    }
+  }
+
+  // Guardar cambios en músicos/servidores
+  onSavingServidores(e: any) {
+    const change = e.changes[0];
+    if (change) {
+      e.cancel = false;
+    }
+    if (change.type == 'insert') {
+      const cleanData = { ...change.data };
+      Object.keys(cleanData).forEach((key) => {
+        if (/^__.*__$/.test(key)) {
+          delete cleanData[key];
+        }
+      });
+      this.userService.addUser(cleanData).then(() => {
+        Swal.fire({
+          icon: 'success',
+          title: 'success',
+          text: 'Músico agregado exitosamente!',
+        });
+        this.userService.getUsers().subscribe((result) => {
+          this.dataSourceUsers = result.sort((a, b) => a.Nombre.localeCompare(b.Nombre));
+        });
+      });
+    }
+    if (change.type == 'update') {
+      const cleanData = { ...change.data };
+      Object.keys(cleanData).forEach((key) => {
+        if (/^__.*__$/.test(key)) {
+          delete cleanData[key];
+        }
+      });
+      this.userService.updateUser(change.key.id, cleanData).then(() => {
+        Swal.fire({
+          icon: 'success',
+          title: 'success',
+          text: 'Músico actualizado exitosamente!',
+        });
+        // Proteger el estado del usuario logueado
+        const currentUserName = this.authService.currentUser?.nombre;
+        if (currentUserName && cleanData.Nombre === currentUserName) {
+          // Si se editó el usuario logueado, actualizar roles si cambiaron
+          if (cleanData.Role) {
+            let roleNames: string[] = [];
+            if (typeof cleanData.Role === 'string') {
+              roleNames = cleanData.Role.split(',').map((r: string) => r.trim()).filter((r: string) => r);
+            } else if (Array.isArray(cleanData.Role)) {
+              roleNames = cleanData.Role.filter((r: any) => typeof r === 'string');
+            } else if (typeof cleanData.Role === 'object') {
+              roleNames = [cleanData.Role.roleName || cleanData.Role.name || cleanData.Role.Nombre].filter((r: any) => r);
+            }
+            this.authService.setUserRoles(roleNames);
+          }
+        }
+        this.userService.getUsers().subscribe((result) => {
+          this.dataSourceUsers = result.sort((a, b) => a.Nombre.localeCompare(b.Nombre));
+        });
+      });
+    }
+    if (change.type == 'remove') {
+      const id = typeof change.key === 'string' ? change.key : change.key.id;
+      this.userService.deleteUser(id).then(() => {
+        Swal.fire({
+          icon: 'success',
+          title: 'success',
+          text: 'Músico eliminado',
+        });
+        this.userService.getUsers().subscribe((result) => {
+          this.dataSourceUsers = result.sort((a, b) => a.Nombre.localeCompare(b.Nombre));
         });
       });
     }

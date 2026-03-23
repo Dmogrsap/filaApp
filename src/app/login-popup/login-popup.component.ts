@@ -26,6 +26,7 @@ export class LoginPopupComponent {
 
   public datasourceusers: any[] = [];
   public isLoged: boolean = false;
+  public nullPassword: boolean = false;
 
   emailEditorOptions = {
     mode: 'name',
@@ -67,7 +68,12 @@ export class LoginPopupComponent {
           console.log('Usuario encontrado:', user);
           this.loginUser(user);
           return;
-        } else {
+        }
+        if(user.Nombre === this.customer.name ) {
+          this.nullPassword = true;
+          console.log('Usuario encontrado:', user, "pero sin contraseña");
+        }
+        else {
           if (i === this.datasourceusers.length - 1) {
             Swal.fire({
               icon: 'error',
