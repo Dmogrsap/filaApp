@@ -29,14 +29,14 @@ export class ServidorMaestrosComponent implements OnInit {
           a.Nombre.localeCompare(b.Nombre)
         );
         this.loadIndicatorVisible = false;
-        //console.log('DataSource', this.dataSourceUsers);
+        console.log('DataSource', this.dataSourceUsers);
   
         this.datasourceServidores = [];
   
        for (let i = 0; i < this.dataSourceUsers.length; i++) {
           for (let j = 0; j < this.dataSourceUsers[i].Role.length; j++) {
             const userRole = this.dataSourceUsers[i].Role[j].toLowerCase();
-            if (userRole.includes('Maestra (o)') || userRole.includes('Maestro') ) {
+            if (userRole.includes('maestra (o)') || userRole.includes('maestro' ) || userRole.includes('lider maestras (os)') ) {
               this.datasourceServidores.push(this.dataSourceUsers[i]);
               break; // Si ya encontramos un rol coincidente, no necesitamos seguir buscando
             }
@@ -58,7 +58,7 @@ export class ServidorMaestrosComponent implements OnInit {
   
             // Verifica si el rol es 'Lider Alabanzaor' (exacto) o si incluye 'Musico'
             return (
-              liderRole === 'Lider Maestras (os)' || liderRole.includes('Maestra (o)') 
+              liderRole === 'Lider Maestras (os)' || liderRole.includes('maestra (o)') || liderRole.includes('maestro') || liderRole.includes('lider maestras (os)')
             );
           });
         }

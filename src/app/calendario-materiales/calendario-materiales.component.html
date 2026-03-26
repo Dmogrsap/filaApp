@@ -1,1 +1,40 @@
-<p>calendario-materiales works!</p>
+<div class="calendario-container">
+	<h2>Calendario de Participación de Maestros/Maestras</h2>
+	<div style="margin-bottom: 16px;">
+		<input [(ngModel)]="nuevaFecha" type="date" />
+		<button (click)="agregarFecha()">Agregar Fecha</button>
+	</div>
+	<dx-data-grid
+		[dataSource]="calendario"
+		[showBorders]="true"
+		[columnAutoWidth]="true"
+		[editing]="{ mode: 'cell', allowUpdating: true }"
+	>
+		<dxi-column dataField="fecha" caption="Fecha" [allowEditing]="false"></dxi-column>
+		<dxi-column
+			dataField="participantes"
+			caption="Participantes"
+			[allowEditing]="true"
+			[lookup]="{ dataSource: datasourceServidores, valueExpr: 'Nombre', displayExpr: 'Nombre', allowClearing: true, multiSelect: true }"
+			cellTemplate="participantesTemplate"
+			editCellTemplate="participantesEditTemplate"
+		></dxi-column>
+
+		<ng-template #participantesTemplate let-data="data">
+			<span *ngIf="data.value && data.value.length > 0">{{ data.value.join(', ') }}</span>
+			<span *ngIf="!data.value || data.value.length === 0">Sin asignar</span>
+		</ng-template>
+		<ng-template #participantesEditTemplate let-cellInfo="cellInfo">
+			<dx-tag-box
+				[items]="datasourceServidores"
+				displayExpr="Nombre"
+				valueExpr="Nombre"
+				[(value)]="cellInfo.data.participantes"
+				(onValueChanged)="asignarParticipantes($event, cellInfo.data)"
+				[showSelectionControls]="true"
+				[multiline]="false"
+				placeholder="Selecciona participantes"
+			></dx-tag-box>
+		</ng-template>
+	</dx-data-grid>
+</div>

@@ -65,13 +65,13 @@ export class LoginPopupComponent {
           user.Nombre === this.customer.name &&
           user.Password == this.customer.Password
         ) {
-          console.log('Usuario encontrado:', user);
+          //console.log('Usuario encontrado:', user);
           this.loginUser(user);
           return;
         }
         if(user.Nombre === this.customer.name ) {
           this.nullPassword = true;
-          console.log('Usuario encontrado:', user, "pero sin contraseña");
+          //console.log('Usuario encontrado:', user, "pero sin contraseña");
         }
         else {
           if (i === this.datasourceusers.length - 1) {
@@ -90,9 +90,9 @@ export class LoginPopupComponent {
   }
 
   private loginUser(user: any): void {
-    console.log('Procesando login para usuario:', user);
-    console.log('Campo Role:', user.Role);
-    console.log('Tipo de Role:', typeof user.Role);
+    // console.log('Procesando login para usuario:', user);
+    // console.log('Campo Role:', user.Role);
+    // console.log('Tipo de Role:', typeof user.Role);
     
     // Establecer estado de login
     this.AuthService.setLoginStatus(true);
@@ -109,24 +109,24 @@ export class LoginPopupComponent {
       if (typeof user.Role === 'string') {
         // Es un string, puede ser "Admin" o "Admin, Lider"
         roleNames = user.Role.split(',').map((r: string) => r.trim()).filter((r: string) => r);
-        console.log('Role como string dividido:', roleNames);
+       // console.log('Role como string dividido:', roleNames);
       } else if (Array.isArray(user.Role)) {
         // Es un array
         roleNames = user.Role.filter((r: any) => typeof r === 'string');
-        console.log('Role como array:', roleNames);
+      //  console.log('Role como array:', roleNames);
       } else if (typeof user.Role === 'object') {
         // Es un objeto, puede tener roleName
         roleNames = [user.Role.roleName || user.Role.name || user.Role.Nombre].filter((r: any) => r);
-        console.log('Role como objeto:', roleNames);
+       // console.log('Role como objeto:', roleNames);
       }
     }
     
-    console.log('Roles a guardar:', roleNames);
+  //  console.log('Roles a guardar:', roleNames);
     
     if (roleNames.length > 0) {
       this.AuthService.setUserRoles(roleNames);
-      console.log('AuthService.setUserRoles llamado con:', roleNames);
-      console.log('Roles guardados en AuthService:', this.AuthService.getUserRoles());
+     // console.log('AuthService.setUserRoles llamado con:', roleNames);
+     // console.log('Roles guardados en AuthService:', this.AuthService.getUserRoles());
       // this.AuthService.currentUser = { nombre: user.Nombre, apellido: user.Apellido }; // Ajusta según tu modelo de usuario
       // console.log('Usuario actual en AuthService:', this.AuthService.currentUser);
       Swal.fire({
@@ -149,7 +149,7 @@ export class LoginPopupComponent {
     }
     
     // Verificar que se guardó
-    console.log('Verificación - Roles actuales en AuthService:', this.AuthService.getUserRoles());
+   // console.log('Verificación - Roles actuales en AuthService:', this.AuthService.getUserRoles());
     
     setTimeout(() => {
       this.router.navigate(['/']);

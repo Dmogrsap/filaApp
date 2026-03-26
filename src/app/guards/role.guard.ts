@@ -20,39 +20,39 @@ export class RoleGuard implements CanActivate {
     
     const requiredRoles = route.data['allowedRoles'] as string[];
     
-    console.log('=== RoleGuard ===');
-    console.log('Ruta:', state.url);
-    console.log('Required roles:', requiredRoles);
-    console.log('Tipo de requiredRoles:', typeof requiredRoles, Array.isArray(requiredRoles));
+    // console.log('=== RoleGuard ===');
+    // console.log('Ruta:', state.url);
+    // console.log('Required roles:', requiredRoles);
+    // console.log('Tipo de requiredRoles:', typeof requiredRoles, Array.isArray(requiredRoles));
     
     if (!requiredRoles || !Array.isArray(requiredRoles) || requiredRoles.length === 0 || (requiredRoles.length === 1 && (requiredRoles[0] === '' || requiredRoles[0] === undefined))) {
-      console.log('Sin roles requeridos - Permitido');
+      //console.log('Sin roles requeridos - Permitido');
       return true;
     }
 
     const isLoggedIn = this.authService.isLoggedIn();
-    console.log('Usuario logueado:', isLoggedIn);
+    //console.log('Usuario logueado:', isLoggedIn);
     
     if (!isLoggedIn) {
-      console.log('No logueado - Redirigiendo a /login');
+      //console.log('No logueado - Redirigiendo a /login');
       this.router.navigate(['/login']);
       return false;
     }
 
     const userRoles = this.authService.getUserRoles();
-    console.log('Roles del usuario:', userRoles);
-    console.log('Tipo de userRoles:', typeof userRoles, Array.isArray(userRoles));
+    // console.log('Roles del usuario:', userRoles);
+    // console.log('Tipo de userRoles:', typeof userRoles, Array.isArray(userRoles));
     
     // Usar verificación flexible
     const hasAccess = this.authService.hasAnyRoleFlexible(requiredRoles);
-    console.log('Tiene acceso:', hasAccess);
+    //console.log('Tiene acceso:', hasAccess);
     
     if (hasAccess) {
-      console.log('Acceso concedido');
+      //console.log('Acceso concedido');
       return true;
     }
 
-    console.log('Sin acceso - Redirigiendo a /');
+    //console.log('Sin acceso - Redirigiendo a /');
     this.router.navigate(['/']);
     return false;
   }

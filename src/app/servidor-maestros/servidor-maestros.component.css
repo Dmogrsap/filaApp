@@ -1,0 +1,9 @@
+  ::ng-deep .dx-field > .dx-lookup {
+    flex: 1;
+    color: black;
+  }
+
+  ::ng-deep .dx-icon-trash::before {
+    content: "\f03e";
+    color: red;
+}

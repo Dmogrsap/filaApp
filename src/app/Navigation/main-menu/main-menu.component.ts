@@ -30,6 +30,7 @@ const ROUTE_ROLES: { [key: string]: string[] } = {
   '/edit-home': ['Admin'],
   '/song-manager': ['Admin', 'Musico Alabanza', 'Lider Alabanza', 'Cantante alabanza'],
   '/servidor-maestros': ['Admin', 'Maestra', 'Maestro', 'Lider Maestras', 'Lider Maestros'],
+  '/calendario-materiales': ['Admin', 'Maestra', 'Maestro', 'Lider Maestras', 'Lider Maestros'],
 };
 
 @Component({
@@ -265,7 +266,7 @@ export class MainMenuComponent implements OnInit {
           this.filterMenusByRole();
         } else {
           this.dataSourceMenusFiltered = [...this.dataSourceMenus];
-          console.log(this.dataSourceMenusFiltered, "dataSourceMenusFiltered");
+          //console.log(this.dataSourceMenusFiltered, "dataSourceMenusFiltered");
         }
       });
     });
