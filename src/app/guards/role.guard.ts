@@ -53,6 +53,14 @@ export class RoleGuard implements CanActivate {
     }
 
     //console.log('Sin acceso - Redirigiendo a /');
+    // Si el usuario acaba de actualizar sus propios roles, evitar redirección inmediata
+    if (this.authService.skipNextGuardRedirect) {
+      this.authService.skipNextGuardRedirect = false;
+      // Aquí puedes mostrar un mensaje, recargar la sesión, o simplemente permitir la navegación
+      // Por ejemplo, mostrar un alert:
+      alert('Tus permisos han cambiado. Por favor, vuelve a iniciar sesión o recarga la página.');
+      return false;
+    }
     this.router.navigate(['/']);
     return false;
   }

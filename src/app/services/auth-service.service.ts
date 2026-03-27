@@ -6,6 +6,14 @@ import { BehaviorSubject } from 'rxjs';
 })
 export class AuthServiceService {
 
+  // Flag para evitar redirección inmediata tras update propio
+  public skipNextGuardRedirect = false;
+
+
+@Injectable({
+  providedIn: 'root'
+})
+
   private isLogedSource = new BehaviorSubject<boolean>(false);
   private userRolesSource = new BehaviorSubject<string[]>([]);
   private userNameSource = new BehaviorSubject<string | null>(null);

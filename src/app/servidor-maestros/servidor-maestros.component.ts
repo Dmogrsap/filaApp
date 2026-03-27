@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import Swal from 'sweetalert2';
 import { RolesService } from '../services/rolesService.service';
+import { AuthServiceService } from '../services/auth-service.service';
 import { ServidoresAlabanzaService } from '../services/servidores-alabanza.service';
 import { UsersService } from '../services/usersService.service';
 
@@ -20,7 +21,8 @@ export class ServidorMaestrosComponent implements OnInit {
     constructor(
       private servidoresAlabanzaService: ServidoresAlabanzaService,
       private userService: UsersService,
-      private rolesService: RolesService
+      private rolesService: RolesService,
+      private authService: AuthServiceService
     ) {}
 
   ngOnInit(): void {
@@ -124,7 +126,7 @@ export class ServidorMaestrosComponent implements OnInit {
             delete cleanData[key];
           }
         });
-  
+
         this.userService.updateUser(change.key.id, cleanData).then(() => {
           //console.log('Usuario actualizado');
           Swal.fire({
@@ -132,7 +134,30 @@ export class ServidorMaestrosComponent implements OnInit {
             title: 'success',
             text: 'Servidor Updated Successfully!',
           });
-  
+
+          // Proteger el estado del usuario logueado
+          // Suponiendo que tienes acceso a authService como en song-manager
+          // Si no, inyecta AuthServiceService en el constructor
+          const currentUserName = this.authService?.currentUser?.nombre;
+          if (currentUserName && cleanData.Nombre === currentUserName) {
+            // Si se editó el usuario logueado, actualizar roles si cambiaron
+            if (cleanData.Role) {
+              let roleNames: string[] = [];
+              if (typeof cleanData.Role === 'string') {
+                roleNames = cleanData.Role.split(',').map((r: string) => r.trim()).filter((r: string) => r);
+              } else if (Array.isArray(cleanData.Role)) {
+                roleNames = cleanData.Role.filter((r: any) => typeof r === 'string');
+              } else if (typeof cleanData.Role === 'object') {
+                roleNames = [cleanData.Role.roleName || cleanData.Role.name || cleanData.Role.Nombre].filter((r: any) => r);
+              }
+              this.authService.setUserRoles(roleNames);
+              // Mantener el estado de login tras update propio
+              this.authService.setLoginStatus(true);
+              // Evitar redirección inmediata en el guard
+              this.authService.skipNextGuardRedirect = true;
+            }
+          }
+
           this.userService.getUsers().subscribe((result) => {
             this.dataSourceUsers = result.sort((a, b) =>
               a.Nombre.localeCompare(b.Nombre)
