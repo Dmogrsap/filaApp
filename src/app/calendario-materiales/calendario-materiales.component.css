@@ -1,0 +1,27 @@
+/* Hacer que el tab-panel y su contenido abarquen toda la pantalla */
+:host {
+	display: flex;
+	flex-direction: column;
+	height: 100vh;
+}
+
+dx-tab-panel {
+	flex: 1 1 auto;
+	height: 100%;
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+}
+
+.calendario-container, .file-viewer-container {
+	flex: 1 1 auto;
+	height: 100%;
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+}
+
+dx-data-grid, dx-file-uploader {
+	flex: 1 1 auto;
+	min-height: 0;
+}

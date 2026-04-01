@@ -1,40 +1,156 @@
-<div class="calendario-container">
-	<h2>Calendario de Participación de Maestros/Maestras</h2>
-	<div style="margin-bottom: 16px;">
-		<input [(ngModel)]="nuevaFecha" type="date" />
-		<button (click)="agregarFecha()">Agregar Fecha</button>
-	</div>
-	<dx-data-grid
-		[dataSource]="calendario"
-		[showBorders]="true"
-		[columnAutoWidth]="true"
-		[editing]="{ mode: 'cell', allowUpdating: true }"
-	>
-		<dxi-column dataField="fecha" caption="Fecha" [allowEditing]="false"></dxi-column>
-		<dxi-column
-			dataField="participantes"
-			caption="Participantes"
-			[allowEditing]="true"
-			[lookup]="{ dataSource: datasourceServidores, valueExpr: 'Nombre', displayExpr: 'Nombre', allowClearing: true, multiSelect: true }"
-			cellTemplate="participantesTemplate"
-			editCellTemplate="participantesEditTemplate"
-		></dxi-column>
+<dx-tab-panel
+  width="100%"
+  height="100%"
+  [dataSource]="tabs"
+  [selectedIndex]="0"
+  [loop]="false"
+  [animationEnabled]="true"
+  [swipeEnabled]="true"
+  [scrollingEnabled]="true"
+>
+  <div *dxTemplate="let titulo of 'text'">
+    <span id="titles">{{ titulo.text }}</span>
+  </div>
 
-		<ng-template #participantesTemplate let-data="data">
-			<span *ngIf="data.value && data.value.length > 0">{{ data.value.join(', ') }}</span>
-			<span *ngIf="!data.value || data.value.length === 0">Sin asignar</span>
-		</ng-template>
-		<ng-template #participantesEditTemplate let-cellInfo="cellInfo">
-			<dx-tag-box
-				[items]="datasourceServidores"
-				displayExpr="Nombre"
-				valueExpr="Nombre"
-				[(value)]="cellInfo.data.participantes"
-				(onValueChanged)="asignarParticipantes($event, cellInfo.data)"
-				[showSelectionControls]="true"
-				[multiline]="false"
-				placeholder="Selecciona participantes"
-			></dx-tag-box>
-		</ng-template>
-	</dx-data-grid>
-</div>
+  <div *dxTemplate="let titulo of 'title'">
+    <span id="titles">{{ titulo.text }}</span>
+  </div>
+  <div *dxTemplate="let items of 'item'">
+    <div class="tabpanel-item">
+      <div *ngIf="items.text == 'Calendario'" class="container-fluid">
+        <div style="margin-bottom: 16px; display: flex; gap: 8px; align-items: center;">
+          <input [(ngModel)]="nuevaFecha" type="date" />
+          <button (click)="agregarFecha()">Agregar Fecha</button>
+        </div>
+        <dx-data-grid
+          [dataSource]="calendario"
+          [showBorders]="true"
+          [columnAutoWidth]="true"
+          [editing]="{ mode: 'cell', allowUpdating: true }"
+        >
+          <dxi-column
+            dataField="fecha"
+            caption="Fecha"
+            [allowEditing]="false"
+          ></dxi-column>
+          <dxi-column
+            dataField="participantes"
+            caption="Participantes"
+            [allowEditing]="true"
+            [lookup]="{
+              dataSource: datasourceServidores,
+              valueExpr: 'Nombre',
+              displayExpr: 'Nombre',
+              allowClearing: true,
+              multiSelect: true,
+            }"
+            cellTemplate="participantesTemplate"
+            editCellTemplate="participantesEditTemplate"
+          ></dxi-column>
+
+          <ng-template #participantesTemplate let-data="data">
+            <span *ngIf="data.value && data.value.length > 0">{{
+              data.value.join(", ")
+            }}</span>
+            <span *ngIf="!data.value || data.value.length === 0"
+              >Sin asignar</span
+            >
+          </ng-template>
+          <ng-template #participantesEditTemplate let-cellInfo="cellInfo">
+            <dx-tag-box
+              [items]="datasourceServidores"
+              displayExpr="Nombre"
+              valueExpr="Nombre"
+              [(value)]="cellInfo.data.participantes"
+              (onValueChanged)="asignarParticipantes($event, cellInfo.data)"
+              [showSelectionControls]="true"
+              [multiline]="false"
+              placeholder="Selecciona participantes"
+            ></dx-tag-box>
+          </ng-template>
+        </dx-data-grid>
+      </div>
+      <ng-container
+        *ngIf="items.text == 'Visor de Archivos'"
+        class="container-fluid"
+      >
+        <div class="file-viewer-container">
+          <h2>Visor y Cargador de Archivos</h2>
+          <dx-file-uploader
+            [multiple]="false"
+            [accept]="'.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,image/*'"
+            (onValueChanged)="onFileSelected($event)"
+            [showFileList]="true"
+            [uploadMode]="'useForm'"
+          ></dx-file-uploader>
+          <button
+            (click)="subirArchivo()"
+            [disabled]="!selectedFile || subiendoArchivo"
+            style="margin-top: 10px"
+          >
+            {{ subiendoArchivo ? "Subiendo..." : "Subir a Supabase" }}
+          </button>
+          <div *ngIf="archivoUrlSupabase">
+            <ng-container [ngSwitch]="archivoTipoSupabase">
+              <iframe
+                *ngSwitchCase="'pdf'"
+                [src]="archivoUrlSupabase"
+                width="100%"
+                height="600px"
+              ></iframe>
+              <img
+                *ngSwitchCase="'image'"
+                [src]="archivoUrlSupabase"
+                style="max-width: 100%; max-height: 600px"
+              />
+              <iframe
+                *ngSwitchCase="'office'"
+                [src]="officeViewerUrlSupabase"
+                width="100%"
+                height="600px"
+              ></iframe>
+              <div *ngSwitchDefault>
+                Tipo de archivo no soportado para previsualización.
+              </div>
+            </ng-container>
+            <div style="margin-top: 8px">
+              <a [href]="archivoUrlSupabase" target="_blank"
+                >Abrir archivo en nueva pestaña</a
+              >
+            </div>
+          </div>
+
+          <div style="margin-top: 32px">
+            <h3>Historial de archivos subidos</h3>
+            <div *ngIf="archivosSubidos.length === 0">
+              No hay archivos subidos.
+            </div>
+            <ul
+              *ngIf="archivosSubidos.length > 0"
+              style="list-style: none; padding: 0"
+            >
+              <li
+                *ngFor="let archivo of archivosSubidos"
+                style="margin-bottom: 10px"
+              >
+                <span>{{ archivo.name }}</span>
+                <button
+                  (click)="verArchivoSubido(archivo)"
+                  style="margin-left: 10px"
+                >
+                  Ver
+                </button>
+                <a
+                  [href]="archivo.url"
+                  target="_blank"
+                  style="margin-left: 10px"
+                  >Descargar</a
+                >
+              </li>
+            </ul>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+</dx-tab-panel>
