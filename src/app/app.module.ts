@@ -34,6 +34,7 @@ import { EditHomeComponent } from './edit-home/edit-home.component';
 import { ServidorMaestrosComponent } from './servidor-maestros/servidor-maestros.component';
 import { LoginPopupComponent } from './login-popup/login-popup.component';
 import { CalendarioMaterialesComponent } from './calendario-materiales/calendario-materiales.component';
+import { ChangePassComponent } from './change-pass/change-pass.component';
 
 
 @NgModule({
@@ -52,6 +53,7 @@ import { CalendarioMaterialesComponent } from './calendario-materiales/calendari
     ServidorMaestrosComponent,
     LoginPopupComponent,
     CalendarioMaterialesComponent,
+    ChangePassComponent,
 
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],

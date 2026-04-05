@@ -173,7 +173,7 @@ export class UsersComponent implements OnInit {
   }
 
   onExporting(e: any) {
-    const workbook = new ExcelJS.Workbook();
+    /*const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet('Main sheet');
     exportDataGrid({
       component: e.component,
@@ -190,6 +190,6 @@ export class UsersComponent implements OnInit {
         );
       });
     });
-    e.cancel = true;
+    e.cancel = true;*/
   }
 }

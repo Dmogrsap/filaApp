@@ -31,6 +31,7 @@ const ROUTE_ROLES: { [key: string]: string[] } = {
   '/song-manager': ['Admin', 'Musico Alabanza', 'Lider Alabanza', 'Cantante alabanza'],
   '/servidor-maestros': ['Admin', 'Maestra', 'Maestro', 'Lider Maestras', 'Lider Maestros'],
   '/calendario-materiales': ['Admin', 'Maestra', 'Maestro', 'Lider Maestras', 'Lider Maestros'],
+  '/change-pass': [''], // Ruta pública, sin roles requeridos
 };
 
 @Component({

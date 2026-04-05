@@ -15,100 +15,145 @@ import { ServidorMaestrosComponent } from './servidor-maestros/servidor-maestros
 import { LoginPopupComponent } from './login-popup/login-popup.component';
 import { RoleGuard } from './guards/role.guard';
 import { CalendarioMaterialesComponent } from './calendario-materiales/calendario-materiales.component';
+import { ChangePassComponent } from './change-pass/change-pass.component';
 
 const routes: Routes = [
-  { 
-
+  {
     path: '',
-    
-     component: MainMenuComponent,
-     data: { title: 'Menu', url: '', allowedRoles: []},
-     children: [
 
+    component: MainMenuComponent,
+    data: { title: 'Menu', url: '', allowedRoles: [] },
+    children: [
       {
         path: '',
         component: HomeComponent,
         data: { title: 'Filadelfia CUU App', url: '', allowedRoles: [] },
-        
       },
 
       {
         path: 'access',
         component: AccessComponent,
         data: { title: 'Accesos', url: 'access', allowedRoles: ['Admin'] },
-        canActivate: [RoleGuard]
+        canActivate: [RoleGuard],
       },
 
       {
         path: 'login',
         component: LoginPopupComponent,
-        data: { title: 'Login', url: 'login', allowedRoles: [] }
+        data: { title: 'Login', url: 'login', allowedRoles: [] },
       },
 
       {
         path: 'users',
         component: UsersComponent,
         data: { title: 'Usuarios', url: 'users', allowedRoles: ['Admin'] },
-        canActivate: [RoleGuard]
+        canActivate: [RoleGuard],
       },
 
       {
         path: 'lideres',
         component: LideresComponent,
         data: { title: 'Lideres', url: 'lideres', allowedRoles: ['Admin'] },
-        canActivate: [RoleGuard]
+        canActivate: [RoleGuard],
       },
 
       {
         path: 'roles',
         component: RolesComponent,
         data: { title: 'Roles', url: 'roles', allowedRoles: ['Admin'] },
-        canActivate: [RoleGuard]
+        canActivate: [RoleGuard],
       },
 
       {
         path: 'servidores-alabanza',
         component: ServidoresAlabanzaComponent,
-        data: { title: 'Servidores Alabanza', url: '/servidores-alabanza', allowedRoles: ['Admin', 'Musico Alabanza', 'Lider Alabanza'] },
+        data: {
+          title: 'Servidores Alabanza',
+          url: '/servidores-alabanza',
+          allowedRoles: ['Admin', 'Musico Alabanza', 'Lider Alabanza'],
+        },
         canActivate: [RoleGuard],
       },
 
       {
         path: 'edit-home',
         component: EditHomeComponent,
-        data: { title: 'Edicion de Portada', url: '/edit-home', allowedRoles: ['Admin'] },
-        canActivate: [RoleGuard]
+        data: {
+          title: 'Edicion de Portada',
+          url: '/edit-home',
+          allowedRoles: ['Admin'],
+        },
+        canActivate: [RoleGuard],
       },
 
       {
         path: 'song-manager',
         component: SongManagerComponent,
-        data: { title: 'Letras y Acordes', url: '/song-manager', allowedRoles: ['Admin', 'Musico Alabanza', 'Lider Alabanza', 'Cantante alabanza'] },
-        canActivate: [RoleGuard]
+        data: {
+          title: 'Letras y Acordes',
+          url: '/song-manager',
+          allowedRoles: [
+            'Admin',
+            'Musico Alabanza',
+            'Lider Alabanza',
+            'Cantante alabanza',
+          ],
+        },
+        canActivate: [RoleGuard],
       },
 
       {
         path: 'servidor-maestros',
         component: ServidorMaestrosComponent,
-        data: { title: 'Maestros', url: '/servidor-maestros', allowedRoles: ['Admin', 'Maestra', 'Maestro', 'Lider Maestras', 'Lider Maestros'] },
-        canActivate: [RoleGuard]
+        data: {
+          title: 'Maestros',
+          url: '/servidor-maestros',
+          allowedRoles: [
+            'Admin',
+            'Maestra',
+            'Maestro',
+            'Lider Maestras',
+            'Lider Maestros',
+          ],
+        },
+        canActivate: [RoleGuard],
       },
 
       {
         path: 'calendario-materiales',
         component: CalendarioMaterialesComponent,
-        data: { title: 'Calendario y Materiales', url: '/calendario-materiales', allowedRoles: ['Admin', 'Maestra', 'Maestro', 'Lider Maestras', 'Lider Maestros'] },
-        canActivate: [RoleGuard]
+        data: {
+          title: 'Calendario y Materiales',
+          url: '/calendario-materiales',
+          allowedRoles: [
+            'Admin',
+            'Maestra',
+            'Maestro',
+            'Lider Maestras',
+            'Lider Maestros',
+          ],
+        },
+        canActivate: [RoleGuard],
       },
+
+      {
+        path: 'change-pass',
+        component: ChangePassComponent,
+        data: {
+          title: 'Cambiar Contraseña',
+          url: '/change-pass',
+          allowedRoles: [
      
-    ]
-    
+          ],
+        },
+        canActivate: [RoleGuard],
+      },
+    ],
   },
-      
 ];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}
