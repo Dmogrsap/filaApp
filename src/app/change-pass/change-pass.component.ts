@@ -83,11 +83,13 @@ export class ChangePassComponent implements OnInit {
           (user) => user.Nombre.toLowerCase() === this.customer.name.toLowerCase()
         );
         this.userExists = !!foundUser;
+        this.nullPassword = foundUser ? !foundUser.Password : false;
         this.userCheckInProgress = false;
       },
       (error) => {
         console.error('Error al verificar usuario:', error);
         this.userExists = false;
+        this.nullPassword = false;
         this.userCheckInProgress = false;
       }
     );
