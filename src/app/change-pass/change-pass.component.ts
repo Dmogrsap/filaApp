@@ -43,7 +43,7 @@ export class ChangePassComponent implements OnInit {
   private loadCurrentUser() {
     this.AuthService.userName$.subscribe((userName) => {
       if (userName) {
-        this.customer.name = userName.split(' ')[0]; // Obtiene el primer nombre
+        this.customer.name = userName.trim();
         this.checkUserExists();
       }
     });
@@ -75,13 +75,29 @@ export class ChangePassComponent implements OnInit {
   /**
    * Busca si el usuario existe en la BD
    */
+  private normalizeName(name: string): string {
+    return (name || '').toLowerCase().trim();
+  }
+
+  private findUserByName(name: string) {
+    const normalizedCustomerName = this.normalizeName(name);
+
+    return this.datasourceusers.find((user) => {
+      const firstName = this.normalizeName(user.Nombre);
+      const fullName = this.normalizeName(`${user.Nombre || ''} ${user.Apellido || ''}`);
+      return (
+        firstName === normalizedCustomerName ||
+        fullName === normalizedCustomerName ||
+        normalizedCustomerName === fullName.split(' ')[0]
+      );
+    });
+  }
+
   private checkUserExists() {
     this.userService.getUsers().subscribe(
       (result) => {
         this.datasourceusers = result;
-        const foundUser = this.datasourceusers.find(
-          (user) => user.Nombre.toLowerCase() === this.customer.name.toLowerCase()
-        );
+        const foundUser = this.findUserByName(this.customer.name);
         this.userExists = !!foundUser;
         this.nullPassword = foundUser ? !foundUser.Password : false;
         this.userCheckInProgress = false;
@@ -98,7 +114,7 @@ export class ChangePassComponent implements OnInit {
   /**
    * Verifica la contraseña actual y cambia la contraseña del usuario
    */
-  public CambiarPass() {
+  public async CambiarPass() {
     // Validaciones iniciales
     if (!this.customer.name) {
       Swal.fire({
@@ -158,11 +174,9 @@ export class ChangePassComponent implements OnInit {
 
     // Obtener todos los usuarios
     this.userService.getUsers().subscribe(
-      (result) => {
+      async (result) => {
         this.datasourceusers = result;
-        const foundUser = this.datasourceusers.find(
-          (user) => user.Nombre.toLowerCase() === this.customer.name.toLowerCase()
-        );
+        const foundUser = this.findUserByName(this.customer.name);
 
         if (!foundUser) {
           Swal.fire({
@@ -174,7 +188,7 @@ export class ChangePassComponent implements OnInit {
           return;
         }
 
-        this.currentUserId = foundUser.id || '';
+        this.currentUserId = foundUser.id ?? '';
 
         if (!this.currentUserId) {
           Swal.fire({
@@ -186,9 +200,9 @@ export class ChangePassComponent implements OnInit {
           return;
         }
 
-        const passwordIsValid =
-          !foundUser.Password || // Si no tiene contraseña (nula)
-          foundUser.Password === this.customer.currentPassword;
+        const storedPassword = foundUser.Password == null ? '' : foundUser.Password.toString().trim();
+        const enteredPassword = this.customer.currentPassword == null ? '' : this.customer.currentPassword.toString().trim();
+        const passwordIsValid = storedPassword.length === 0 || storedPassword === enteredPassword;
 
         if (!passwordIsValid) {
           Swal.fire({
@@ -202,7 +216,7 @@ export class ChangePassComponent implements OnInit {
 
         this.updateUserPassword();
       },
-      (error) => {
+      async (error) => {
         console.error('Error al obtener usuarios:', error);
         Swal.fire({
           icon: 'error',
@@ -217,7 +231,7 @@ export class ChangePassComponent implements OnInit {
   /**
    * Actualiza la contraseña del usuario en la base de datos
    */
-  private updateUserPassword() {
+  private async updateUserPassword() {
     if (!this.currentUserId) {
       Swal.fire({
         icon: 'error',
@@ -232,34 +246,30 @@ export class ChangePassComponent implements OnInit {
       Password: this.customer.newPassword,
     };
 
-    this.userService.updateUser(this.currentUserId, updatedData).then(
-      () => {
-        Swal.fire({
-          icon: 'success',
-          title: '¡Éxito!',
-          text: 'Tu contraseña ha sido actualizada correctamente',
-        });
+    try {
+      await this.userService.updateUser(this.currentUserId, updatedData);
 
-        // Limpiar formulario
-        this.customer = { name: '', currentPassword: '', newPassword: '', confirmPassword: '' };
-        this.nullPassword = false;
-        this.isLoading = false;
+      await Swal.fire({
+        icon: 'success',
+        title: '¡Éxito!',
+        text: 'Tu contraseña ha sido actualizada correctamente',
+      });
 
-        // Ir a home después de 1.5 segundos
-        setTimeout(() => {
-          this.router.navigate(['/']);
-        }, 1500);
-      },
-      (error) => {
-        console.error('Error al actualizar contraseña:', error);
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: 'Error al actualizar la contraseña. Intenta de nuevo.',
-        });
-        this.isLoading = false;
-      }
-    );
+      // Limpiar formulario
+      this.customer = { name: '', currentPassword: '', newPassword: '', confirmPassword: '' };
+      this.nullPassword = false;
+      this.isLoading = false;
+
+      this.router.navigate(['/']);
+    } catch (error) {
+      console.error('Error al actualizar contraseña:', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Error al actualizar la contraseña. Intenta de nuevo.',
+      });
+      this.isLoading = false;
+    }
   }
 
   /**
@@ -281,6 +291,17 @@ export class ChangePassComponent implements OnInit {
    */
   public toggleConfirmPasswordVisibility() {
     this.showConfirmPassword = !this.showConfirmPassword;
+  }
+
+  private showError(message: string) {
+    return Swal.fire({
+      icon: 'error',
+      title: 'Error',
+      text: message,
+      confirmButtonText: 'Cerrar',
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+    });
   }
 
   /**
