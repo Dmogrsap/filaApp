@@ -1,6 +1,7 @@
-import { Component, OnInit, EventEmitter, Output } from '@angular/core';
+import { Component, OnInit, OnDestroy, EventEmitter, Output } from '@angular/core';
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
+import { firstValueFrom, Subscription } from 'rxjs';
 import { AuthServiceService } from '../services/auth-service.service';
 import { UsersService } from '../services/usersService.service';
 
@@ -9,7 +10,7 @@ import { UsersService } from '../services/usersService.service';
   templateUrl: './change-pass.component.html',
   styleUrls: ['./change-pass.component.css'],
 })
-export class ChangePassComponent implements OnInit {
+export class ChangePassComponent implements OnInit, OnDestroy {
   constructor(
     private router: Router,
     private userService: UsersService,
@@ -32,6 +33,7 @@ export class ChangePassComponent implements OnInit {
   public userCheckInProgress: boolean = false;
   private currentUserId: string = '';
   private checkUserTimeout: any = null;
+  private subscriptions: Subscription = new Subscription();
 
   ngOnInit() {
     this.loadCurrentUser();
@@ -41,12 +43,16 @@ export class ChangePassComponent implements OnInit {
    * Carga el usuario actual desde el servicio de autenticación
    */
   private loadCurrentUser() {
-    this.AuthService.userName$.subscribe((userName) => {
+    const userNameSubscription = this.AuthService.userName$.subscribe((userName) => {
       if (userName) {
         this.customer.name = userName.trim();
         this.checkUserExists();
+      } else {
+        this.resetForm();
       }
     });
+
+    this.subscriptions.add(userNameSubscription);
   }
 
   /**
@@ -172,60 +178,58 @@ export class ChangePassComponent implements OnInit {
 
     this.isLoading = true;
 
-    // Obtener todos los usuarios
-    this.userService.getUsers().subscribe(
-      async (result) => {
-        this.datasourceusers = result;
-        const foundUser = this.findUserByName(this.customer.name);
+    try {
+      const result = await firstValueFrom(this.userService.getUsers());
+      this.datasourceusers = result;
+      const foundUser = this.findUserByName(this.customer.name);
 
-        if (!foundUser) {
-          Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'Usuario no encontrado',
-          });
-          this.isLoading = false;
-          return;
-        }
-
-        this.currentUserId = foundUser.id ?? '';
-
-        if (!this.currentUserId) {
-          Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'No se pudo obtener el ID del usuario',
-          });
-          this.isLoading = false;
-          return;
-        }
-
-        const storedPassword = foundUser.Password == null ? '' : foundUser.Password.toString().trim();
-        const enteredPassword = this.customer.currentPassword == null ? '' : this.customer.currentPassword.toString().trim();
-        const passwordIsValid = storedPassword.length === 0 || storedPassword === enteredPassword;
-
-        if (!passwordIsValid) {
-          Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'La contraseña actual es incorrecta',
-          });
-          this.isLoading = false;
-          return;
-        }
-
-        this.updateUserPassword();
-      },
-      async (error) => {
-        console.error('Error al obtener usuarios:', error);
+      if (foundUser === undefined || foundUser === null) {
         Swal.fire({
           icon: 'error',
           title: 'Error',
-          text: 'Error al procesar la solicitud',
+          text: 'Usuario no encontrado',
         });
         this.isLoading = false;
+        return;
       }
-    );
+
+      this.currentUserId = foundUser.id ?? '';
+
+      if (!this.currentUserId) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'No se pudo obtener el ID del usuario',
+        });
+        this.isLoading = false;
+        return;
+      }
+
+      const storedPassword = foundUser.Password == null ? '' : foundUser.Password.toString().trim();
+      const enteredPassword = this.customer.currentPassword == null ? '' : this.customer.currentPassword.toString().trim();
+      const passwordIsValid = storedPassword.length === 0 || storedPassword === enteredPassword;
+
+      if (passwordIsValid === false) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'La contraseña actual es incorrecta',
+        });
+        this.isLoading = false;
+        return;
+      }
+
+      await this.updateUserPassword();
+      return;
+    } catch (error) {
+      console.error('Error al obtener usuarios:', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Error al procesar la solicitud',
+      });
+      this.isLoading = false;
+    }
   }
 
   /**
@@ -255,12 +259,14 @@ export class ChangePassComponent implements OnInit {
         text: 'Tu contraseña ha sido actualizada correctamente',
       });
 
-      // Limpiar formulario
-      this.customer = { name: '', currentPassword: '', newPassword: '', confirmPassword: '' };
-      this.nullPassword = false;
-      this.isLoading = false;
+      // Cerrar sesión para eliminar el usuario actual de la sesión
+      this.AuthService.logout();
 
-      this.router.navigate(['/']);
+      // Limpiar formulario
+      this.resetForm();
+      this.isLoading = false;
+      return;
+      //this.router.navigate(['/']);
     } catch (error) {
       console.error('Error al actualizar contraseña:', error);
       Swal.fire({
@@ -269,6 +275,7 @@ export class ChangePassComponent implements OnInit {
         text: 'Error al actualizar la contraseña. Intenta de nuevo.',
       });
       this.isLoading = false;
+      return
     }
   }
 
@@ -310,5 +317,18 @@ export class ChangePassComponent implements OnInit {
   public onExit() {
     this.close.emit();
     this.router.navigate(['/']);
+  }
+
+  private resetForm() {
+    this.customer = { name: '', currentPassword: '', newPassword: '', confirmPassword: '' };
+    this.userExists = false;
+    this.nullPassword = false;
+    this.isLoading = false;
+    this.currentUserId = '';
+    this.datasourceusers = [];
+  }
+
+  ngOnDestroy() {
+    this.subscriptions.unsubscribe();
   }
 }

@@ -296,14 +296,15 @@ export class MainMenuComponent implements OnInit {
   }
 
   logout() {
+    this.AuthService.logout();
     this.isLoged = false;
-   Swal.fire({
-           icon: 'warning',
-           title: 'Signed out!!!',
-           text: 'User signed out successfully',
-           draggable: true,
-           width: 600,
-         });
+    Swal.fire({
+      icon: 'warning',
+      title: 'Signed out!!!',
+      text: 'User signed out successfully',
+      draggable: true,
+      width: 600,
+    });
     this.router.navigate(['/']);
   }
 
