@@ -16,6 +16,7 @@ import { LoginPopupComponent } from './login-popup/login-popup.component';
 import { RoleGuard } from './guards/role.guard';
 import { CalendarioMaterialesComponent } from './calendario-materiales/calendario-materiales.component';
 import { ChangePassComponent } from './change-pass/change-pass.component';
+import { FilastoreComponent } from './filastore/filastore.component';
 
 const routes: Routes = [
   {
@@ -144,6 +145,19 @@ const routes: Routes = [
           url: '/change-pass',
           allowedRoles: [
      
+          ],
+        },
+        canActivate: [RoleGuard],
+      },
+      {
+        path: 'filastore',
+        component: FilastoreComponent,
+        data: {
+          title: 'Fila Store',
+          url: '/filastore',
+          allowedRoles: [
+            'Admin',
+            'Lider Fila Store'
           ],
         },
         canActivate: [RoleGuard],

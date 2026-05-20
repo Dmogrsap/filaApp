@@ -35,6 +35,7 @@ import { ServidorMaestrosComponent } from './servidor-maestros/servidor-maestros
 import { LoginPopupComponent } from './login-popup/login-popup.component';
 import { CalendarioMaterialesComponent } from './calendario-materiales/calendario-materiales.component';
 import { ChangePassComponent } from './change-pass/change-pass.component';
+import { FilastoreComponent } from './filastore/filastore.component';
 
 
 @NgModule({
@@ -54,6 +55,7 @@ import { ChangePassComponent } from './change-pass/change-pass.component';
     LoginPopupComponent,
     CalendarioMaterialesComponent,
     ChangePassComponent,
+    FilastoreComponent,
 
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
