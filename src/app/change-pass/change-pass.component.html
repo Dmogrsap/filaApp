@@ -68,6 +68,9 @@
             <span *ngIf="showPassword">🙈</span>
           </button>
         </div>
+        <div *ngIf="nullPassword && !customer.currentPassword" class="null-password-note">
+          No tienes contraseña anterior registrada. Solo ingresa tu nueva contraseña.
+        </div>
       </div>
 
       <!-- Campo Nueva Contraseña -->

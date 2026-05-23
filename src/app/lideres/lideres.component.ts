@@ -42,7 +42,7 @@ export class LideresComponent implements OnInit {
           }
         }
       }
-      console.log('datasourceLideres', this.datasourceLideres);
+      //console.log('datasourceLideres', this.datasourceLideres);
     });
 
     this.rolesService.getRoles().subscribe((result) => {

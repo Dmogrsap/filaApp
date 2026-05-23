@@ -1,0 +1,33 @@
+    <dx-tab-panel
+      width="100%"
+      [dataSource]="dataSourceMenusTab"
+      [selectedIndex]="0"
+      [loop]="false"
+      [animationEnabled]="true"
+      [swipeEnabled]="true"
+      [scrollingEnabled]="true"
+    >
+      <dxo-scrolling mode="virtual"></dxo-scrolling>
+
+      <div *dxTemplate="let titulo of 'title'">
+        <span id="titles">{{ titulo.Nombre }}</span>
+      </div>
+      <div *dxTemplate="let items of 'item'">
+        <div class="tabpanel-item">
+          <div
+            *ngIf="items.Nombre == 'Fila Store'"
+            class="container-fluid"
+          >
+
+
+            <br />
+          </div>
+
+          <div
+            *ngIf="items.Nombre == 'Fila Coffee'"
+            class="container-fluid"
+          >
+          </div>
+        </div>
+      </div>
+    </dx-tab-panel>

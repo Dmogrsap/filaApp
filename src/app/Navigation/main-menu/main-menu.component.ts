@@ -29,6 +29,7 @@ const ROUTE_ROLES: { [key: string]: string[] } = {
   '/servidores-alabanza': ['Admin', 'Musico Alabanza', 'Lider Alabanza', 'Cantante alabanza'],
   '/edit-home': ['Admin'],
   '/song-manager': ['Admin', 'Musico Alabanza', 'Lider Alabanza', 'Cantante alabanza'],
+  '/filastore': ['Admin','Lider Fila Store'],
   '/servidor-maestros': ['Admin', 'Maestra', 'Maestro', 'Lider Maestras', 'Lider Maestros'],
   '/calendario-materiales': ['Admin', 'Maestra', 'Maestro', 'Lider Maestras', 'Lider Maestros'],
   '/change-pass': [''], // Ruta pública, sin roles requeridos
@@ -296,14 +297,15 @@ export class MainMenuComponent implements OnInit {
   }
 
   logout() {
+    this.AuthService.logout();
     this.isLoged = false;
-   Swal.fire({
-           icon: 'warning',
-           title: 'Signed out!!!',
-           text: 'User signed out successfully',
-           draggable: true,
-           width: 600,
-         });
+    Swal.fire({
+      icon: 'warning',
+      title: 'Signed out!!!',
+      text: 'User signed out successfully',
+      draggable: true,
+      width: 600,
+    });
     this.router.navigate(['/']);
   }
 

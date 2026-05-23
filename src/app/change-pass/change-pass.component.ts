@@ -1,6 +1,7 @@
-import { Component, OnInit, EventEmitter, Output } from '@angular/core';
+import { Component, OnInit, OnDestroy, EventEmitter, Output } from '@angular/core';
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
+import { firstValueFrom, Subscription } from 'rxjs';
 import { AuthServiceService } from '../services/auth-service.service';
 import { UsersService } from '../services/usersService.service';
 
@@ -9,7 +10,7 @@ import { UsersService } from '../services/usersService.service';
   templateUrl: './change-pass.component.html',
   styleUrls: ['./change-pass.component.css'],
 })
-export class ChangePassComponent implements OnInit {
+export class ChangePassComponent implements OnInit, OnDestroy {
   constructor(
     private router: Router,
     private userService: UsersService,
@@ -32,6 +33,7 @@ export class ChangePassComponent implements OnInit {
   public userCheckInProgress: boolean = false;
   private currentUserId: string = '';
   private checkUserTimeout: any = null;
+  private subscriptions: Subscription = new Subscription();
 
   ngOnInit() {
     this.loadCurrentUser();
@@ -41,12 +43,17 @@ export class ChangePassComponent implements OnInit {
    * Carga el usuario actual desde el servicio de autenticación
    */
   private loadCurrentUser() {
-    this.AuthService.userName$.subscribe((userName) => {
+    const userNameSubscription = this.AuthService.userName$.subscribe((userName) => {
       if (userName) {
         this.customer.name = userName; // Usa el nombre completo
+        this.customer.name = userName.trim();
         this.checkUserExists();
+      } else {
+        this.resetForm();
       }
     });
+
+    this.subscriptions.add(userNameSubscription);
   }
 
   /**
@@ -75,6 +82,24 @@ export class ChangePassComponent implements OnInit {
   /**
    * Busca si el usuario existe en la BD
    */
+  private normalizeName(name: string): string {
+    return (name || '').toLowerCase().trim();
+  }
+
+  private findUserByName(name: string) {
+    const normalizedCustomerName = this.normalizeName(name);
+
+    return this.datasourceusers.find((user) => {
+      const firstName = this.normalizeName(user.Nombre);
+      const fullName = this.normalizeName(`${user.Nombre || ''} ${user.Apellido || ''}`);
+      return (
+        firstName === normalizedCustomerName ||
+        fullName === normalizedCustomerName ||
+        normalizedCustomerName === fullName.split(' ')[0]
+      );
+    });
+  }
+
   private checkUserExists() {
     this.userService.getUsers().subscribe(
       (result) => {
@@ -82,12 +107,15 @@ export class ChangePassComponent implements OnInit {
         const foundUser = this.datasourceusers.find(
           (user) => user.Nombre.toLowerCase().trim() === this.customer.name.toLowerCase().trim()
         );
+        const foundUser = this.findUserByName(this.customer.name);
         this.userExists = !!foundUser;
+        this.nullPassword = foundUser ? !foundUser.Password : false;
         this.userCheckInProgress = false;
       },
       (error) => {
         console.error('Error al verificar usuario:', error);
         this.userExists = false;
+        this.nullPassword = false;
         this.userCheckInProgress = false;
       }
     );
@@ -96,7 +124,7 @@ export class ChangePassComponent implements OnInit {
   /**
    * Verifica la contraseña actual y cambia la contraseña del usuario
    */
-  public CambiarPass() {
+  public async CambiarPass() {
     // Validaciones iniciales
     if (!this.customer.name) {
       Swal.fire({
@@ -161,61 +189,64 @@ export class ChangePassComponent implements OnInit {
         const foundUser = this.datasourceusers.find(
           (user) => user.Nombre.toLowerCase().trim() === this.customer.name.toLowerCase().trim()
         );
+    try {
+      const result = await firstValueFrom(this.userService.getUsers());
+      this.datasourceusers = result;
+      const foundUser = this.findUserByName(this.customer.name);
 
-        if (!foundUser) {
-          Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'Usuario no encontrado',
-          });
-          this.isLoading = false;
-          return;
-        }
-
-        this.currentUserId = foundUser.id || '';
-
-        if (!this.currentUserId) {
-          Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'No se pudo obtener el ID del usuario',
-          });
-          this.isLoading = false;
-          return;
-        }
-
-        const passwordIsValid =
-          !foundUser.Password || // Si no tiene contraseña (nula)
-          foundUser.Password === this.customer.currentPassword;
-
-        if (!passwordIsValid) {
-          Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'La contraseña actual es incorrecta',
-          });
-          this.isLoading = false;
-          return;
-        }
-
-        this.updateUserPassword();
-      },
-      (error) => {
-        console.error('Error al obtener usuarios:', error);
+      if (foundUser === undefined || foundUser === null) {
         Swal.fire({
           icon: 'error',
           title: 'Error',
-          text: 'Error al procesar la solicitud',
+          text: 'Usuario no encontrado',
         });
         this.isLoading = false;
+        return;
       }
-    );
+
+      this.currentUserId = foundUser.id ?? '';
+
+      if (!this.currentUserId) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'No se pudo obtener el ID del usuario',
+        });
+        this.isLoading = false;
+        return;
+      }
+
+      const storedPassword = foundUser.Password == null ? '' : foundUser.Password.toString().trim();
+      const enteredPassword = this.customer.currentPassword == null ? '' : this.customer.currentPassword.toString().trim();
+      const passwordIsValid = storedPassword.length === 0 || storedPassword === enteredPassword;
+
+      if (passwordIsValid === false) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'La contraseña actual es incorrecta',
+        });
+        this.isLoading = false;
+        return;
+      }
+
+      await this.updateUserPassword();
+      return;
+    } catch (error) {
+      console.error('Error al obtener usuarios:', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Error al procesar la solicitud',
+      });
+      this.isLoading = false;
+    }
   }
 
   /**
    * Actualiza la contraseña del usuario en la base de datos
    */
-  private updateUserPassword() {
+  private async updateUserPassword() {
     if (!this.currentUserId) {
       Swal.fire({
         icon: 'error',
@@ -230,34 +261,33 @@ export class ChangePassComponent implements OnInit {
       Password: this.customer.newPassword,
     };
 
-    this.userService.updateUser(this.currentUserId, updatedData).then(
-      () => {
-        Swal.fire({
-          icon: 'success',
-          title: '¡Éxito!',
-          text: 'Tu contraseña ha sido actualizada correctamente',
-        });
+    try {
+      await this.userService.updateUser(this.currentUserId, updatedData);
 
-        // Limpiar formulario
-        this.customer = { name: '', currentPassword: '', newPassword: '', confirmPassword: '' };
-        this.nullPassword = false;
-        this.isLoading = false;
+      await Swal.fire({
+        icon: 'success',
+        title: '¡Éxito!',
+        text: 'Tu contraseña ha sido actualizada correctamente',
+      });
 
-        // Ir a home después de 1.5 segundos
-        setTimeout(() => {
-          this.router.navigate(['/']);
-        }, 1500);
-      },
-      (error) => {
-        console.error('Error al actualizar contraseña:', error);
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: 'Error al actualizar la contraseña. Intenta de nuevo.',
-        });
-        this.isLoading = false;
-      }
-    );
+      // Cerrar sesión para eliminar el usuario actual de la sesión
+      this.AuthService.logout();
+
+      // Limpiar formulario
+      this.resetForm();
+      this.isLoading = false;
+      return;
+      //this.router.navigate(['/']);
+    } catch (error) {
+      console.error('Error al actualizar contraseña:', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Error al actualizar la contraseña. Intenta de nuevo.',
+      });
+      this.isLoading = false;
+      return
+    }
   }
 
   /**
@@ -281,11 +311,35 @@ export class ChangePassComponent implements OnInit {
     this.showConfirmPassword = !this.showConfirmPassword;
   }
 
+  private showError(message: string) {
+    return Swal.fire({
+      icon: 'error',
+      title: 'Error',
+      text: message,
+      confirmButtonText: 'Cerrar',
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+    });
+  }
+
   /**
    * Cierra el modal
    */
   public onExit() {
     this.close.emit();
     this.router.navigate(['/']);
+  }
+
+  private resetForm() {
+    this.customer = { name: '', currentPassword: '', newPassword: '', confirmPassword: '' };
+    this.userExists = false;
+    this.nullPassword = false;
+    this.isLoading = false;
+    this.currentUserId = '';
+    this.datasourceusers = [];
+  }
+
+  ngOnDestroy() {
+    this.subscriptions.unsubscribe();
   }
 }
