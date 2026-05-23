@@ -43,7 +43,7 @@ export class ChangePassComponent implements OnInit {
   private loadCurrentUser() {
     this.AuthService.userName$.subscribe((userName) => {
       if (userName) {
-        this.customer.name = userName.split(' ')[0]; // Obtiene el primer nombre
+        this.customer.name = userName; // Usa el nombre completo
         this.checkUserExists();
       }
     });
@@ -80,7 +80,7 @@ export class ChangePassComponent implements OnInit {
       (result) => {
         this.datasourceusers = result;
         const foundUser = this.datasourceusers.find(
-          (user) => user.Nombre.toLowerCase() === this.customer.name.toLowerCase()
+          (user) => user.Nombre.toLowerCase().trim() === this.customer.name.toLowerCase().trim()
         );
         this.userExists = !!foundUser;
         this.userCheckInProgress = false;
@@ -159,7 +159,7 @@ export class ChangePassComponent implements OnInit {
       (result) => {
         this.datasourceusers = result;
         const foundUser = this.datasourceusers.find(
-          (user) => user.Nombre.toLowerCase() === this.customer.name.toLowerCase()
+          (user) => user.Nombre.toLowerCase().trim() === this.customer.name.toLowerCase().trim()
         );
 
         if (!foundUser) {

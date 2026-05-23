@@ -30,6 +30,7 @@
             placeholder="Ingresa tu usuario"
             [(ngModel)]="customer.name"
             (ngModelChange)="onUserNameChange()"
+         
           />
           <div class="user-status-indicator">
             <span *ngIf="userCheckInProgress" class="status-checking">⏳ Verificando...</span>
