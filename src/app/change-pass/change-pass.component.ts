@@ -104,9 +104,6 @@ export class ChangePassComponent implements OnInit, OnDestroy {
     this.userService.getUsers().subscribe(
       (result) => {
         this.datasourceusers = result;
-        const foundUser = this.datasourceusers.find(
-          (user) => user.Nombre.toLowerCase().trim() === this.customer.name.toLowerCase().trim()
-        );
         const foundUser = this.findUserByName(this.customer.name);
         this.userExists = !!foundUser;
         this.nullPassword = foundUser ? !foundUser.Password : false;
@@ -182,19 +179,12 @@ export class ChangePassComponent implements OnInit, OnDestroy {
 
     this.isLoading = true;
 
-    // Obtener todos los usuarios
-    this.userService.getUsers().subscribe(
-      (result) => {
-        this.datasourceusers = result;
-        const foundUser = this.datasourceusers.find(
-          (user) => user.Nombre.toLowerCase().trim() === this.customer.name.toLowerCase().trim()
-        );
     try {
       const result = await firstValueFrom(this.userService.getUsers());
       this.datasourceusers = result;
       const foundUser = this.findUserByName(this.customer.name);
 
-      if (foundUser === undefined || foundUser === null) {
+      if (!foundUser) {
         Swal.fire({
           icon: 'error',
           title: 'Error',
@@ -205,7 +195,6 @@ export class ChangePassComponent implements OnInit, OnDestroy {
       }
 
       this.currentUserId = foundUser.id ?? '';
-
       if (!this.currentUserId) {
         Swal.fire({
           icon: 'error',
@@ -220,7 +209,7 @@ export class ChangePassComponent implements OnInit, OnDestroy {
       const enteredPassword = this.customer.currentPassword == null ? '' : this.customer.currentPassword.toString().trim();
       const passwordIsValid = storedPassword.length === 0 || storedPassword === enteredPassword;
 
-      if (passwordIsValid === false) {
+      if (!passwordIsValid) {
         Swal.fire({
           icon: 'error',
           title: 'Error',
@@ -231,7 +220,6 @@ export class ChangePassComponent implements OnInit, OnDestroy {
       }
 
       await this.updateUserPassword();
-      return;
     } catch (error) {
       console.error('Error al obtener usuarios:', error);
       Swal.fire({
@@ -343,3 +331,4 @@ export class ChangePassComponent implements OnInit, OnDestroy {
     this.subscriptions.unsubscribe();
   }
 }
+

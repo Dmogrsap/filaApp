@@ -36,6 +36,7 @@ import { LoginPopupComponent } from './login-popup/login-popup.component';
 import { CalendarioMaterialesComponent } from './calendario-materiales/calendario-materiales.component';
 import { ChangePassComponent } from './change-pass/change-pass.component';
 import { FilastoreComponent } from './filastore/filastore.component';
+import { FilastoreclienteComponent } from './filastorecliente/filastorecliente.component';
 
 
 @NgModule({
@@ -56,6 +57,7 @@ import { FilastoreComponent } from './filastore/filastore.component';
     CalendarioMaterialesComponent,
     ChangePassComponent,
     FilastoreComponent,
+    FilastoreclienteComponent,
 
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],

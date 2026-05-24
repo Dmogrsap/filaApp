@@ -1,33 +1,75 @@
-    <dx-tab-panel
-      width="100%"
-      [dataSource]="dataSourceMenusTab"
-      [selectedIndex]="0"
-      [loop]="false"
-      [animationEnabled]="true"
-      [swipeEnabled]="true"
-      [scrollingEnabled]="true"
-    >
-      <dxo-scrolling mode="virtual"></dxo-scrolling>
+<dx-tab-panel
+  width="100%"
+  [dataSource]="dataSourceMenusTab"
+  [selectedIndex]="0"
+  [loop]="false"
+  [animationEnabled]="true"
+  [swipeEnabled]="true"
+  [scrollingEnabled]="true"
+>
+  <dxo-scrolling mode="virtual"></dxo-scrolling>
 
-      <div *dxTemplate="let titulo of 'title'">
-        <span id="titles">{{ titulo.Nombre }}</span>
+  <div *dxTemplate="let titulo of 'title'">
+    <span id="titles">{{ titulo.Nombre }}</span>
+  </div>
+  <div *dxTemplate="let items of 'item'">
+    <div class="tabpanel-item">
+      <div *ngIf="items.Nombre == 'Fila Store'" class="container-fluid">
+        <br />
       </div>
-      <div *dxTemplate="let items of 'item'">
-        <div class="tabpanel-item">
-          <div
-            *ngIf="items.Nombre == 'Fila Store'"
-            class="container-fluid"
+
+      <div *ngIf="items.Nombre == 'Fila Coffee'" class="container-fluid">
+        <div class="dashboard-container" style="padding: 20px">
+          <h2>Dashboard de Pedidos de Café (Tiempo Real)</h2>
+
+          <dx-data-grid
+            [dataSource]="pedidos"
+            keyExpr="id"
+            [showBorders]="true"
+            [rowAlternationEnabled]="true"
+            (onRowUpdating)="onRowUpdating($event)"
           >
+            <dxo-editing mode="cell" [allowUpdating]="true"> </dxo-editing>
 
+            <dxo-filter-row [visible]="true"></dxo-filter-row>
+            <dxo-header-filter [visible]="true"></dxo-header-filter>
 
-            <br />
-          </div>
+            <dxi-column
+              dataField="cliente"
+              caption="Cliente"
+              [allowEditing]="false"
+            ></dxi-column>
+            <dxi-column
+              dataField="producto"
+              caption="Café / Producto"
+              [allowEditing]="false"
+            ></dxi-column>
+            <dxi-column
+              dataField="cantidad"
+              caption="Cant."
+              [allowEditing]="false"
+              alignment="center"
+            ></dxi-column>
 
-          <div
-            *ngIf="items.Nombre == 'Fila Coffee'"
-            class="container-fluid"
-          >
-          </div>
+            <dxi-column
+              dataField="estado"
+              caption="Estado del Pedido"
+              alignment="center"
+            >
+              <dxo-lookup [dataSource]="['pendiente', 'entregado']">
+              </dxo-lookup>
+            </dxi-column>
+
+            <dxi-column
+              dataField="fecha"
+              caption="Hora"
+              dataType="datetime"
+              [allowEditing]="false"
+              format="shortTime"
+            ></dxi-column>
+          </dx-data-grid>
         </div>
       </div>
-    </dx-tab-panel>
+    </div>
+  </div>
+</dx-tab-panel>

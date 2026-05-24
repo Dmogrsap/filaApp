@@ -17,6 +17,7 @@ import { RoleGuard } from './guards/role.guard';
 import { CalendarioMaterialesComponent } from './calendario-materiales/calendario-materiales.component';
 import { ChangePassComponent } from './change-pass/change-pass.component';
 import { FilastoreComponent } from './filastore/filastore.component';
+import { FilastoreclienteComponent } from './filastorecliente/filastorecliente.component';
 
 const routes: Routes = [
   {
@@ -158,6 +159,17 @@ const routes: Routes = [
           allowedRoles: [
             'Admin',
             'Lider Fila Store'
+          ],
+        },
+        canActivate: [RoleGuard],
+      },
+      {
+        path: 'filastorecliente',
+        component: FilastoreclienteComponent,
+        data: {
+          title: 'Haz tu pedido',
+          url: '/filastorecliente',
+          allowedRoles: ['Admin', 'Lider Fila Store', 'Cliente'
           ],
         },
         canActivate: [RoleGuard],

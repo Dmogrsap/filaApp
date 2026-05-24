@@ -1,0 +1,34 @@
+<div class="cliente-container" style="max-width: 500px; margin: 40px auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px;">
+  <h2 style="text-align: center;">☕ Pide tu Café Aquí</h2>
+  <p style="text-align: center; color: #666;">Tu orden llegará al instante a la barra de preparación.</p>
+  
+  <form (submit)="enviarPedido($event)">
+    <dx-form [formData]="pedidos" [readOnly]="false" [showColonAfterLabel]="true" [showValidationSummary]="true">
+      
+      <dxi-item dataField="cliente" editorType="dxTextBox" [editorOptions]="{ placeholder: 'Escribe tu nombre' }">
+        <dxo-label text="Nombre del Cliente"></dxo-label>
+        <dxi-validation-rule type="required" message="El nombre es obligatorio"></dxi-validation-rule>
+      </dxi-item>
+
+      <dxi-item dataField="producto" editorType="dxSelectBox" [editorOptions]="{ items: listaCafes, placeholder: 'Selecciona tu café' }">
+        <dxo-label text="¿Qué café deseas?"></dxo-label>
+        <dxi-validation-rule type="required" message="Debes seleccionar una bebida"></dxi-validation-rule>
+      </dxi-item>
+
+      <dxi-item dataField="cantidad" editorType="dxNumberBox" [editorOptions]="{ min: 1, max: 10, showSpinButtons: true }">
+        <dxo-label text="Cantidad"></dxo-label>
+        <dxi-validation-rule type="required" message="La cantidad es obligatoria"></dxi-validation-rule>
+      </dxi-item>
+
+    </dx-form>
+
+    <div style="margin-top: 20px; text-align: center;">
+      <dx-button
+        text="Enviar Pedido a la Barra"
+        type="success"
+        icon="cart"
+        [useSubmitBehavior]="true">
+      </dx-button>
+    </div>
+  </form>
+</div>
