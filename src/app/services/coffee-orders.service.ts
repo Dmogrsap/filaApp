@@ -31,7 +31,7 @@ export class CoffeeOrdersService {
   }
 
   getCafes(): Observable<any[]> {
-    const ref = collection(this.firestore, 'coffeOrders');
+    const ref = collection(this.firestore, 'coffeeOrders');
     return collectionData(ref, { idField: 'id' });
   }
 

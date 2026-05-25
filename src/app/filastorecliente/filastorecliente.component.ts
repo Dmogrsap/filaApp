@@ -8,14 +8,21 @@ import { CoffeeOrdersService } from '../services/coffee-orders.service';
 })
 export class FilastoreclienteComponent implements OnInit {
   pedidos = { cliente: '', producto: '', cantidad: 1 };
-  listaCafes: any[] = [];
+  public listaCafes: any[] = [];
   
   constructor(private cafeService: CoffeeOrdersService) {}
 
   ngOnInit(): void {
+
+
+
     this.cafeService.getCafes().subscribe((result) => {
       this.listaCafes = result;
+
+      console.log('Lista de cafés:', this.listaCafes);
     });
+
+    
   }
 
   enviarPedido(e: SubmitEvent) {
