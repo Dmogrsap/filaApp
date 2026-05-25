@@ -33,7 +33,7 @@ const ROUTE_ROLES: { [key: string]: string[] } = {
   '/servidor-maestros': ['Admin', 'Maestra', 'Maestro', 'Lider Maestras', 'Lider Maestros'],
   '/calendario-materiales': ['Admin', 'Maestra', 'Maestro', 'Lider Maestras', 'Lider Maestros'],
   '/change-pass': [''], // Ruta pública, sin roles requeridos
-  '/filastorecliente': [''], // Ruta pública, sin roles requeridos
+  '/filastorecliente': ['Admin','Lider Fila Store', 'Cliente'], // Ruta pública, sin roles requeridos
 };
 
 @Component({
