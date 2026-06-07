@@ -197,8 +197,9 @@
         class="checkout-input" 
         [(ngModel)]="pedidos.cliente"
         name="cliente"
-        placeholder="Tu nombre"
-        maxlength="50">
+        placeholder="Agrega Tu nombre"
+        maxlength="50"
+        type="required">
       <button class="btn-checkout" (click)="enviarPedido($event)">
         Confirmar Pedido
       </button>
