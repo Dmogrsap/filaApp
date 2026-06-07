@@ -153,6 +153,20 @@ body, html {
   margin: 0;
 }
 
+.category-section {
+  margin-bottom: 48px;
+}
+
+.category-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--primary-color);
+  margin: 0 0 24px 0;
+  padding-bottom: 12px;
+  border-bottom: 3px solid var(--accent-color);
+  display: inline-block;
+}
+
 .products-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
@@ -314,9 +328,9 @@ body, html {
 .btn-add-to-cart {
   flex: 1;
   min-width: 80px;
-  padding: 8px 12px;
+  padding: 10px 12px;
   background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-  color: white;
+  color: green;
   border: none;
   border-radius: 6px;
   font-size: 13px;
@@ -326,6 +340,10 @@ body, html {
   box-shadow: 0 2px 6px rgba(111, 78, 55, 0.2);
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
 }
 
 .btn-add-to-cart:hover {
@@ -335,6 +353,11 @@ body, html {
 
 .btn-add-to-cart:active {
   transform: translateY(0);
+}
+
+.btn-icon {
+  font-size: 14px;
+  display: inline-block;
 }
 
 /* ==================== CARRITO SIDEBAR ==================== */
@@ -534,7 +557,7 @@ body, html {
   width: 100%;
   padding: 14px;
   background: linear-gradient(135deg, var(--success-color) 0%, #229954 100%);
-  color: white;
+  color: green;
   border: none;
   border-radius: 8px;
   font-size: 14px;
@@ -544,6 +567,10 @@ body, html {
   letter-spacing: 0.5px;
   transition: all 0.3s ease;
   box-shadow: 0 4px 12px rgba(39, 174, 96, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
 }
 
 .btn-checkout:hover {
@@ -595,6 +622,11 @@ body, html {
     font-size: 14px;
   }
 
+  .category-title {
+    font-size: 20px;
+    margin-bottom: 16px;
+  }
+
   .product-image {
     height: 160px;
   }
@@ -628,6 +660,11 @@ body, html {
 
   .products-header p {
     font-size: 12px;
+  }
+
+  .category-title {
+    font-size: 18px;
+    margin-bottom: 12px;
   }
 
   .product-image {

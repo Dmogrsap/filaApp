@@ -20,6 +20,8 @@ interface CartItem {
 export class FilastoreclienteComponent implements OnInit {
   pedidos = { cliente: '', producto: [] as string[], cantidad: 1 };
   public listaCafes: any[] = [];
+  public cafesCalienes: any[] = [];
+  public cafesFrios: any[] = [];
   public carrito: CartItem[] = [];
   public cantidadProducto: number[] = [];
   public mostrarCarrito = false;
@@ -34,10 +36,22 @@ export class FilastoreclienteComponent implements OnInit {
           item.Nombre || item.nombre || item.name || item.producto || item.title || 'Café',
       }));
 
+      // Separar cafés en calientes y fríos
+      this.cafesCalienes = this.listaCafes.filter((cafe: any) => {
+        const tipo = (cafe['Tipo de Cafe'] || cafe.tipo || cafe.Tipo || '').toLowerCase();
+        return !tipo.includes('frio') && !tipo.includes('frío') && !tipo.includes('ice') && !tipo.includes('helado');
+      });
+
+      this.cafesFrios = this.listaCafes.filter((cafe: any) => {
+        const tipo = (cafe['Tipo de Cafe'] || cafe.tipo || cafe.Tipo || '').toLowerCase();
+        return tipo.includes('frio') || tipo.includes('frío') || tipo.includes('ice') || tipo.includes('helado');
+      });
+
       // Inicializar cantidades a 1 para cada producto
       this.cantidadProducto = new Array(this.listaCafes.length).fill(1);
 
-      console.log('Lista de cafés:', this.listaCafes);
+      console.log('Cafés calientes:', this.cafesCalienes);
+      console.log('Cafés fríos:', this.cafesFrios);
     });
   }
 

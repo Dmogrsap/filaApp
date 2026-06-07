@@ -58,6 +58,24 @@
               [allowEditing]="false"
               alignment="center"
             ></dxi-column>
+            <dxi-column
+              dataField="desglose"
+              caption="Desglose de Café"
+              [allowEditing]="false"
+              [allowFiltering]="false"
+              [allowHeaderFiltering]="false"
+              width="350"
+            ></dxi-column>
+            <dxi-column
+              dataField="totalAPagar"
+              caption="Total a Pagar"
+              [allowEditing]="false"
+              alignment="center"
+              [allowFiltering]="false"
+              [allowHeaderFiltering]="false"
+            >
+              <dxo-format type="currency" precision="2"></dxo-format>
+            </dxi-column>
 
             <dxi-column
               dataField="estado"

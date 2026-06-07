@@ -4,7 +4,7 @@
     <div class="header-content">
       <div class="store-logo">
         <span class="logo-icon">☕</span>
-        <span class="logo-text">CoffeeShop</span>
+        <span class="logo-text">Fila Coffe</span>
       </div>
       <div class="header-cart">
         <button class="cart-button" (click)="toggleCart()">
@@ -24,58 +24,123 @@
         <p>Selecciona tus favoritos y agrégalos al carrito</p>
       </div>
 
-      <div class="products-grid">
-        <div class="product-card" *ngFor="let cafe of listaCafes; let i = index">
-          <!-- Imagen del Producto -->
-          <div class="product-image">
-            <img 
-              *ngIf="cafe.imagen || cafe.Imagen" 
-              [src]="cafe.imagen || cafe.Imagen" 
-              [alt]="cafe.Nombre"
-              class="product-img">
-            <div *ngIf="!(cafe.imagen || cafe.Imagen)" class="product-img-placeholder">
-              <span>☕</span>
+      <!-- CAFÉS CALIENTES -->
+      <div class="category-section" *ngIf="cafesCalienes.length > 0">
+        <h2 class="category-title">☕ Cafés Calientes</h2>
+        <div class="products-grid">
+          <div class="product-card" *ngFor="let cafe of cafesCalienes; let i = index">
+            <!-- Imagen del Producto -->
+            <div class="product-image">
+              <img 
+                *ngIf="cafe.imagen || cafe.Imagen" 
+                [src]="cafe.imagen || cafe.Imagen" 
+                [alt]="cafe.Nombre"
+                class="product-img">
+              <div *ngIf="!(cafe.imagen || cafe.Imagen)" class="product-img-placeholder">
+                <span>☕</span>
+              </div>
+              <div class="product-badge">{{ cafe['Tipo de Cafe'] || cafe.tipo || 'Café' }}</div>
             </div>
-            <div class="product-badge">{{ cafe['Tipo de Cafe'] || cafe.tipo || 'Café' }}</div>
-          </div>
 
-          <!-- Información del Producto -->
-          <div class="product-info">
-            <h3 class="product-name">{{ cafe.Nombre }}</h3>
-            <p class="product-description">{{ cafe.Descripcion || cafe.descripcion || 'Café de calidad premium' }}</p>
-            <div class="product-footer">
-              <span class="product-price">${{ cafe.Precio || 0 }}</span>
-              
-              <!-- Selector de cantidad -->
-              <div class="quantity-control">
+            <!-- Información del Producto -->
+            <div class="product-info">
+              <h3 class="product-name">{{ cafe.Nombre }}</h3>
+              <p class="product-description">{{ cafe.Descripcion || cafe.descripcion || 'Café de calidad premium' }}</p>
+              <div class="product-footer">
+                <span class="product-price">${{ cafe.Precio || 0 }}</span>
+                
+                <!-- Selector de cantidad -->
+                <div class="quantity-control">
+                  <button 
+                    class="qty-decrease" 
+                    (click)="decreaseQty(i)"
+                    [disabled]="cantidadProducto[i] <= 1">
+                    −
+                  </button>
+                  <input 
+                    type="number" 
+                    class="qty-input" 
+                    [(ngModel)]="cantidadProducto[i]"
+                    name="qty_{{ i }}"
+                    min="1"
+                    max="10"
+                    readonly>
+                  <button 
+                    class="qty-increase" 
+                    (click)="increaseQty(i)"
+                    [disabled]="cantidadProducto[i] >= 10">
+                    +
+                  </button>
+                </div>
+
+                <!-- Botón Agregar -->
                 <button 
-                  class="qty-decrease" 
-                  (click)="decreaseQty(i)"
-                  [disabled]="cantidadProducto[i] <= 1">
-                  −
-                </button>
-                <input 
-                  type="number" 
-                  class="qty-input" 
-                  [(ngModel)]="cantidadProducto[i]"
-                  name="qty_{{ i }}"
-                  min="1"
-                  max="10"
-                  readonly>
-                <button 
-                  class="qty-increase" 
-                  (click)="increaseQty(i)"
-                  [disabled]="cantidadProducto[i] >= 10">
-                  +
+                  class="btn-add-to-cart"
+                  (click)="agregarAlCarrito(cafe, i)">
+                  <span class="btn-icon">🛒</span> Agregar
                 </button>
               </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
-              <!-- Botón Agregar -->
-              <button 
-                class="btn-add-to-cart"
-                (click)="agregarAlCarrito(cafe, i)">
-                Agregar
-              </button>
+      <!-- CAFÉS FRÍOS -->
+      <div class="category-section" *ngIf="cafesFrios.length > 0">
+        <h2 class="category-title">🧊 Cafés Fríos</h2>
+        <div class="products-grid">
+          <div class="product-card" *ngFor="let cafe of cafesFrios; let i = index">
+            <!-- Imagen del Producto -->
+            <div class="product-image">
+              <img 
+                *ngIf="cafe.imagen || cafe.Imagen" 
+                [src]="cafe.imagen || cafe.Imagen" 
+                [alt]="cafe.Nombre"
+                class="product-img">
+              <div *ngIf="!(cafe.imagen || cafe.Imagen)" class="product-img-placeholder">
+                <span>🧊</span>
+              </div>
+              <div class="product-badge">{{ cafe['Tipo de Cafe'] || cafe.tipo || 'Café' }}</div>
+            </div>
+
+            <!-- Información del Producto -->
+            <div class="product-info">
+              <h3 class="product-name">{{ cafe.Nombre }}</h3>
+              <p class="product-description">{{ cafe.Descripcion || cafe.descripcion || 'Café de calidad premium' }}</p>
+              <div class="product-footer">
+                <span class="product-price">${{ cafe.Precio || 0 }}</span>
+                
+                <!-- Selector de cantidad -->
+                <div class="quantity-control">
+                  <button 
+                    class="qty-decrease" 
+                    (click)="decreaseQty(i)"
+                    [disabled]="cantidadProducto[i] <= 1">
+                    −
+                  </button>
+                  <input 
+                    type="number" 
+                    class="qty-input" 
+                    [(ngModel)]="cantidadProducto[i]"
+                    name="qty_{{ i }}"
+                    min="1"
+                    max="10"
+                    readonly>
+                  <button 
+                    class="qty-increase" 
+                    (click)="increaseQty(i)"
+                    [disabled]="cantidadProducto[i] >= 10">
+                    +
+                  </button>
+                </div>
+
+                <!-- Botón Agregar -->
+                <button 
+                  class="btn-add-to-cart"
+                  (click)="agregarAlCarrito(cafe, i)">
+                  <span class="btn-icon">🛒</span> Agregar
+                </button>
+              </div>
             </div>
           </div>
         </div>

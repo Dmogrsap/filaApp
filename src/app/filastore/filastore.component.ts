@@ -33,6 +33,8 @@ export class FilastoreComponent implements OnInit {
         .map((item: any) => ({
           ...item,
           fecha: item.fecha && item.fecha.toDate ? item.fecha.toDate() : item.fecha,
+          desglose: this.generarDesglose(item.detalles),
+          totalAPagar: this.calcularTotal(item.detalles),
         }))
         .sort((a: any, b: any) => {
           const dateA = new Date(a.fecha).getTime();
@@ -40,6 +42,20 @@ export class FilastoreComponent implements OnInit {
           return dateB - dateA;
         });
     });
+  }
+
+  // Genera desglose de productos (ej: "2x Espresso, 1x Americano")
+  generarDesglose(detalles: any[]): string {
+    if (!detalles || detalles.length === 0) return '-';
+    return detalles
+      .map((d) => `${d.cantidad}x ${d.nombre}`)
+      .join(', ');
+  }
+
+  // Calcula el total a pagar sumando cantidad * precio de cada detalle
+  calcularTotal(detalles: any[]): number {
+    if (!detalles || detalles.length === 0) return 0;
+    return detalles.reduce((total, d) => total + (d.cantidad * d.precio), 0);
   }
 
   // Captura el cambio de estado directamente desde el Grid de DevExtreme
