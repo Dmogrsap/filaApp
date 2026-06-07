@@ -28,8 +28,16 @@
             [showBorders]="true"
             [rowAlternationEnabled]="true"
             (onRowUpdating)="onRowUpdating($event)"
+            (onRowRemoving)="onRowRemoving($event)"
+            
           >
-            <dxo-editing mode="cell" [allowUpdating]="true"> </dxo-editing>
+            <dxo-editing
+              mode="cell"
+              [allowUpdating]="true"
+              [allowDeleting]="true"
+              [useIcons]="true"
+            >
+            </dxo-editing>
 
             <dxo-filter-row [visible]="true"></dxo-filter-row>
             <dxo-header-filter [visible]="true"></dxo-header-filter>
@@ -55,18 +63,29 @@
               dataField="estado"
               caption="Estado del Pedido"
               alignment="center"
+              filterValue="pendiente"
+              [allowHeaderFiltering]="true"
+              [filterOperations]="['=', '<>']"
             >
               <dxo-lookup [dataSource]="['pendiente', 'entregado']">
               </dxo-lookup>
+              <dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>
             </dxi-column>
 
             <dxi-column
               dataField="fecha"
-              caption="Hora"
+              caption="Fecha"
               dataType="datetime"
               [allowEditing]="false"
-              format="shortTime"
+              format="HH:mm dd/MM/yyyy"
+              sortOrder="asc"
+              [allowHeaderFiltering]="false"
+              [allowFiltering]="false"
             ></dxi-column>
+            <dxi-column type="buttons" width="120">
+              <dxi-button name="edit"></dxi-button>
+              <dxi-button name="delete"></dxi-button>
+            </dxi-column>
           </dx-data-grid>
         </div>
       </div>

@@ -10,17 +10,52 @@
         <dxi-validation-rule type="required" message="El nombre es obligatorio"></dxi-validation-rule>
       </dxi-item>
 
-      <dxi-item dataField="producto" editorType="dxSelectBox" [editorOptions]="{ items: listaCafes, placeholder: 'Selecciona tu café' }">
-        <dxo-label text="¿Qué café deseas?"></dxo-label>
-        <dxi-validation-rule type="required" message="Debes seleccionar una bebida"></dxi-validation-rule>
-      </dxi-item>
-
       <dxi-item dataField="cantidad" editorType="dxNumberBox" [editorOptions]="{ min: 1, max: 10, showSpinButtons: true }">
         <dxo-label text="Cantidad"></dxo-label>
         <dxi-validation-rule type="required" message="La cantidad es obligatoria"></dxi-validation-rule>
       </dxi-item>
 
     </dx-form>
+
+    <div style="margin: 20px 0;">
+      <label style="display: block; margin-bottom: 8px; font-weight: 600;">¿Qué café deseas?</label>
+
+        <dx-drop-down-box
+          [(value)]="pedidos.producto"
+          [dataSource]="listaCafes"
+          displayExpr="Nombre"
+          valueExpr="Nombre"
+          placeholder="Selecciona tus cafés"
+          contentTemplate="coffeeTemplate"
+          [dropDownOptions]="{ width: 900, height: 420 }"
+       
+        >
+          <div *dxTemplate="let e of 'coffeeTemplate'">
+            <div style="overflow-x:auto;">
+              <dx-data-grid
+                [dataSource]="listaCafes"
+                [height]="360"
+                [keyExpr]="'Nombre'"
+                [selectedRowKeys]="pedidos.producto"
+                [focusedRowEnabled]="true"
+                [hoverStateEnabled]="true"
+                (onSelectionChanged)="onCoffeeSelectionChanged($event.selectedRowKeys, e.component)"
+                [columnAutoWidth]="false"
+                [allowColumnResizing]="true"
+              >
+                <dxo-search-panel [visible]="true" [searchVisibleColumnsOnly]="true"></dxo-search-panel>
+                <dxo-filter-row [visible]="true"></dxo-filter-row>
+                <dxo-header-filter [visible]="true"></dxo-header-filter>
+                <dxi-column dataField="Nombre" caption="Café" [width]="250"></dxi-column>
+                <dxi-column dataField="Tipo de Cafe" caption="Tipo" [width]="180"></dxi-column>
+                <dxi-column dataField="Precio" caption="Precio" [width]="120"></dxi-column>
+                <dxi-column dataField="Descripcion" caption="Descripción" [width]="350"></dxi-column>
+                <dxo-selection mode="multiple"></dxo-selection>
+              </dx-data-grid>
+            </div>
+          </div>
+        </dx-drop-down-box>
+    </div>
 
     <div style="margin-top: 20px; text-align: center;">
       <dx-button

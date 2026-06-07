@@ -1,13 +1,21 @@
 /* You can add global styles to this file, and also import other style files */
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
-
-.dx-datagrid-headers {
-    background-color: #585858 !important;
-    color: white;
-    font-family: 'Segoe UI light'
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
+.dx-datagrid-headers {
+  background-color: #585858 !important;
+  color: white;
+  font-family: "Segoe UI light";
+}
 
-
+::ng-deep .dx-icon-trash::before {
+  content: "\f03e";
+  color: red;
+}

@@ -29,7 +29,16 @@ export class FilastoreComponent implements OnInit {
 
     // Escucha en tiempo real de Firestore
     this.sub = this.cafeService.getOrders().subscribe((result) => {
-      this.pedidos = result;
+      this.pedidos = result
+        .map((item: any) => ({
+          ...item,
+          fecha: item.fecha && item.fecha.toDate ? item.fecha.toDate() : item.fecha,
+        }))
+        .sort((a: any, b: any) => {
+          const dateA = new Date(a.fecha).getTime();
+          const dateB = new Date(b.fecha).getTime();
+          return dateB - dateA;
+        });
     });
   }
 
@@ -42,6 +51,15 @@ export class FilastoreComponent implements OnInit {
         .then(() => console.log('Estado actualizado en Firestore'))
         .catch((err: any) => console.error('Error al actualizar:', err));
     }
+  }
+
+  onRowRemoving(e: any) {
+    const id = e.key;
+    if (!id) return;
+    this.cafeService
+      .deleteOrder(id)
+      .then(() => console.log('Pedido eliminado en Firestore'))
+      .catch((err: any) => console.error('Error al eliminar pedido:', err));
   }
 
   ngOnDestroy(): void {
