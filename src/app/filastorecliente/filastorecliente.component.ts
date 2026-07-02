@@ -10,6 +10,8 @@ interface CartItem {
   imagen?: string;
   Imagen?: string;
   cantidadCarrito: number;
+  leche?: string;
+  azucar?: string;
 }
 
 @Component({
@@ -23,7 +25,6 @@ export class FilastoreclienteComponent implements OnInit {
   public cafesCalienes: any[] = [];
   public cafesFrios: any[] = [];
   public carrito: CartItem[] = [];
-  public cantidadProducto: number[] = [];
   public mostrarCarrito = false;
   
   constructor(private cafeService: CoffeeOrdersService) {}
@@ -34,6 +35,9 @@ export class FilastoreclienteComponent implements OnInit {
         ...item,
         Nombre:
           item.Nombre || item.nombre || item.name || item.producto || item.title || 'Café',
+        leche: 'normal',
+        azucar: 'normal',
+        cantidad: 1,
       }));
 
       // Separar cafés en calientes y fríos
@@ -47,9 +51,6 @@ export class FilastoreclienteComponent implements OnInit {
         return tipo.includes('frio') || tipo.includes('frío') || tipo.includes('ice') || tipo.includes('helado');
       });
 
-      // Inicializar cantidades a 1 para cada producto
-      this.cantidadProducto = new Array(this.listaCafes.length).fill(1);
-
       console.log('Cafés calientes:', this.cafesCalienes);
       console.log('Cafés fríos:', this.cafesFrios);
     });
@@ -58,35 +59,40 @@ export class FilastoreclienteComponent implements OnInit {
   /**
    * Incrementar cantidad de un producto
    */
-  increaseQty(index: number): void {
-    if (this.cantidadProducto[index] < 10) {
-      this.cantidadProducto[index]++;
+  increaseQty(cafe: any): void {
+    if (cafe.cantidad < 10) {
+      cafe.cantidad++;
     }
   }
 
   /**
    * Decrementar cantidad de un producto
    */
-  decreaseQty(index: number): void {
-    if (this.cantidadProducto[index] > 1) {
-      this.cantidadProducto[index]--;
+  decreaseQty(cafe: any): void {
+    if (cafe.cantidad > 1) {
+      cafe.cantidad--;
     }
   }
 
   /**
    * Agregar café al carrito
    */
-  agregarAlCarrito(cafe: any, index: number): void {
-    const cantidad = this.cantidadProducto[index];
-    
-    // Buscar si ya existe en el carrito
-    const existeEnCarrito = this.carrito.findIndex(item => item.Nombre === cafe.Nombre);
-    
+  agregarAlCarrito(cafe: any): void {
+    const cantidad = cafe.cantidad;
+    const seleccionadoLeche = cafe.leche || 'normal';
+    const seleccionadoAzucar = cafe.azucar || 'normal';
+
+    // Buscar si ya existe en el carrito con las mismas opciones
+    const existeEnCarrito = this.carrito.findIndex(
+      item =>
+        item.Nombre === cafe.Nombre &&
+        item.leche === seleccionadoLeche &&
+        item.azucar === seleccionadoAzucar
+    );
+
     if (existeEnCarrito > -1) {
-      // Si ya existe, incrementar la cantidad
       this.carrito[existeEnCarrito].cantidadCarrito += cantidad;
     } else {
-      // Si no existe, agregarlo
       this.carrito.push({
         Nombre: cafe.Nombre,
         Precio: cafe.Precio,
@@ -94,13 +100,15 @@ export class FilastoreclienteComponent implements OnInit {
         'Tipo de Cafe': cafe['Tipo de Cafe'],
         imagen: cafe.imagen,
         Imagen: cafe.Imagen,
-        cantidadCarrito: cantidad
+        cantidadCarrito: cantidad,
+        leche: seleccionadoLeche,
+        azucar: seleccionadoAzucar,
       });
     }
 
-    // Resetear cantidad
-    this.cantidadProducto[index] = 1;
-    
+    // Resetear cantidad, pero mantener la selección de leche y azúcar
+    cafe.cantidad = 1;
+
     notify('✓ Café agregado al carrito', 'success', 2000);
   }
 
@@ -152,11 +160,13 @@ export class FilastoreclienteComponent implements OnInit {
       return;
     }
 
-    // Construir array de productos con cantidades
+    // Construir array de productos con cantidades y opciones
     const productosConCantidad = this.carrito.map(item => ({
       nombre: item.Nombre,
       cantidad: item.cantidadCarrito,
-      precio: item.Precio
+      precio: item.Precio,
+      leche: item.leche || 'normal',
+      azucar: item.azucar || 'normal',
     }));
 
     // Calcular cantidad total
@@ -168,7 +178,7 @@ export class FilastoreclienteComponent implements OnInit {
       cantidad: cantidadTotal,
       estado: 'pendiente',
       fecha: new Date(),
-      detalles: productosConCantidad // Guardar detalles completos
+      detalles: productosConCantidad // Guardar detalles completos con opciones
     };
 
     this.cafeService

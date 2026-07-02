@@ -64,8 +64,13 @@
               [allowEditing]="false"
               [allowFiltering]="false"
               [allowHeaderFiltering]="false"
-              width="350"
-            ></dxi-column>
+              [wordWrapEnabled]="true"
+              width="250"
+            >
+              <ng-template dxTemplate="cell" let-data="data">
+                <div class="desglose-cell">{{ data.value }}</div>
+              </ng-template>
+            </dxi-column>
             <dxi-column
               dataField="totalAPagar"
               caption="Total a Pagar"

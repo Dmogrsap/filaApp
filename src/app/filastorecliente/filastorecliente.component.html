@@ -46,6 +46,22 @@
             <div class="product-info">
               <h3 class="product-name">{{ cafe.Nombre }}</h3>
               <p class="product-description">{{ cafe.Descripcion || cafe.descripcion || 'Café de calidad premium' }}</p>
+              <div class="product-options">
+                <div class="option-group">
+                  <label>Leche</label>
+                  <select [(ngModel)]="cafe.leche" name="leche_{{ i }}">
+                    <option value="normal">Normal</option>
+                    <option value="deslactosada">Deslactosada</option>
+                  </select>
+                </div>
+                <div class="option-group">
+                  <label>Azúcar</label>
+                  <select [(ngModel)]="cafe.azucar" name="azucar_{{ i }}">
+                    <option value="normal">Normal</option>
+                    <option value="splenda">Splenda</option>
+                  </select>
+                </div>
+              </div>
               <div class="product-footer">
                 <span class="product-price">${{ cafe.Precio || 0 }}</span>
                 
@@ -53,22 +69,22 @@
                 <div class="quantity-control">
                   <button 
                     class="qty-decrease" 
-                    (click)="decreaseQty(i)"
-                    [disabled]="cantidadProducto[i] <= 1">
+                    (click)="decreaseQty(cafe)"
+                    [disabled]="cafe.cantidad <= 1">
                     −
                   </button>
                   <input 
                     type="number" 
                     class="qty-input" 
-                    [(ngModel)]="cantidadProducto[i]"
+                    [(ngModel)]="cafe.cantidad"
                     name="qty_{{ i }}"
                     min="1"
                     max="10"
                     readonly>
                   <button 
                     class="qty-increase" 
-                    (click)="increaseQty(i)"
-                    [disabled]="cantidadProducto[i] >= 10">
+                    (click)="increaseQty(cafe)"
+                    [disabled]="cafe.cantidad >= 10">
                     +
                   </button>
                 </div>
@@ -76,8 +92,8 @@
                 <!-- Botón Agregar -->
                 <button 
                   class="btn-add-to-cart"
-                  (click)="agregarAlCarrito(cafe, i)">
-                  <span class="btn-icon">🛒</span> Agregar
+                  (click)="agregarAlCarrito(cafe)">
+                  <span class="btn-icon">🛒</span>Agregar
                 </button>
               </div>
             </div>
@@ -107,6 +123,22 @@
             <div class="product-info">
               <h3 class="product-name">{{ cafe.Nombre }}</h3>
               <p class="product-description">{{ cafe.Descripcion || cafe.descripcion || 'Café de calidad premium' }}</p>
+              <div class="product-options">
+                <div class="option-group">
+                  <label>Leche</label>
+                  <select [(ngModel)]="cafe.leche" name="leche_{{ i }}">
+                    <option value="normal">Normal</option>
+                    <option value="deslactosada">Deslactosada</option>
+                  </select>
+                </div>
+                <div class="option-group">
+                  <label>Azúcar</label>
+                  <select [(ngModel)]="cafe.azucar" name="azucar_{{ i }}">
+                    <option value="normal">Normal</option>
+                    <option value="splenda">Splenda</option>
+                  </select>
+                </div>
+              </div>
               <div class="product-footer">
                 <span class="product-price">${{ cafe.Precio || 0 }}</span>
                 
@@ -114,22 +146,22 @@
                 <div class="quantity-control">
                   <button 
                     class="qty-decrease" 
-                    (click)="decreaseQty(i)"
-                    [disabled]="cantidadProducto[i] <= 1">
+                    (click)="decreaseQty(cafe)"
+                    [disabled]="cafe.cantidad <= 1">
                     −
                   </button>
                   <input 
                     type="number" 
                     class="qty-input" 
-                    [(ngModel)]="cantidadProducto[i]"
+                    [(ngModel)]="cafe.cantidad"
                     name="qty_{{ i }}"
                     min="1"
                     max="10"
                     readonly>
                   <button 
                     class="qty-increase" 
-                    (click)="increaseQty(i)"
-                    [disabled]="cantidadProducto[i] >= 10">
+                    (click)="increaseQty(cafe)"
+                    [disabled]="cafe.cantidad >= 10">
                     +
                   </button>
                 </div>
@@ -137,7 +169,7 @@
                 <!-- Botón Agregar -->
                 <button 
                   class="btn-add-to-cart"
-                  (click)="agregarAlCarrito(cafe, i)">
+                  (click)="agregarAlCarrito(cafe)">
                   <span class="btn-icon">🛒</span> Agregar
                 </button>
               </div>
@@ -163,6 +195,7 @@
           <div class="item-info">
             <h4>{{ item.Nombre }}</h4>
             <p class="item-qty">Cantidad: {{ item.cantidadCarrito }}</p>
+            <p class="item-options">Leche: {{ item.leche || 'normal' }} · Azúcar: {{ item.azucar || 'normal' }}</p>
           </div>
           <div class="item-price">${{ (item.Precio * item.cantidadCarrito).toFixed(2) }}</div>
           <button class="item-remove" (click)="removerDelCarrito(i)">🗑</button>

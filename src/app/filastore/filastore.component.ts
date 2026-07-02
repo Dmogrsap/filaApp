@@ -48,8 +48,11 @@ export class FilastoreComponent implements OnInit {
   generarDesglose(detalles: any[]): string {
     if (!detalles || detalles.length === 0) return '-';
     return detalles
-      .map((d) => `${d.cantidad}x ${d.nombre}`)
-      .join(', ');
+      .map(
+        (d) =>
+          `${d.cantidad}x ${d.nombre} (${d.leche || 'normal'} / ${d.azucar || 'normal'})`
+      )
+      .join('\n');
   }
 
   // Calcula el total a pagar sumando cantidad * precio de cada detalle
