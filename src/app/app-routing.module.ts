@@ -169,8 +169,7 @@ const routes: Routes = [
         data: {
           title: 'Haz tu pedido',
           url: '/filastorecliente',
-          allowedRoles: ['Admin', 'Lider Fila Store', 'Cliente'
-          ],
+          allowedRoles: [],
         },
         canActivate: [RoleGuard],
       },

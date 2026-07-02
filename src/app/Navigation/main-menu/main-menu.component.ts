@@ -33,7 +33,7 @@ const ROUTE_ROLES: { [key: string]: string[] } = {
   '/servidor-maestros': ['Admin', 'Maestra', 'Maestro', 'Lider Maestras', 'Lider Maestros'],
   '/calendario-materiales': ['Admin', 'Maestra', 'Maestro', 'Lider Maestras', 'Lider Maestros'],
   '/change-pass': [''], // Ruta pública, sin roles requeridos
-  '/filastorecliente': ['Admin','Lider Fila Store', 'Cliente'], // Ruta pública, sin roles requeridos
+  '/filastorecliente': [], // Ruta pública, sin roles requeridos
 };
 
 @Component({
@@ -264,13 +264,7 @@ export class MainMenuComponent implements OnInit {
           menu.items.push(...submenusRelacionados);
         });
 
-        // Si el usuario tiene roles, filtrar; si no, mostrar todos
-        if (this.userRoles && this.userRoles.length > 0) {
-          this.filterMenusByRole();
-        } else {
-          this.dataSourceMenusFiltered = [...this.dataSourceMenus];
-          //console.log(this.dataSourceMenusFiltered, "dataSourceMenusFiltered");
-        }
+        this.filterMenusByRole();
       });
     });
 

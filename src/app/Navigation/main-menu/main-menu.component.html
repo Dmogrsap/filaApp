@@ -79,11 +79,24 @@
     
     <!-- Menú cuando NO está logueado -->
     <ul class="sidebar-menu" *ngIf="isLoged == false"> 
-      <li>
+      <li class="login-link">
         <a routerLink="/login" (click)="OpenSideBar($event)">
           <mat-icon class="submenu-icon">login</mat-icon>
           Iniciar Sesión
         </a>
+      </li>
+      <li *ngIf="dataSourceMenusFiltered.length > 0">
+        <div class="group-title">Fila Store</div>
+        <ul class="submenu">
+          <li *ngFor="let group of dataSourceMenusFiltered">
+            <div *ngFor="let item of group.items">
+              <a [routerLink]="item.route || item.Route || item.ruta || item.path || item.url" (click)="OpenSideBar($event)">
+                <mat-icon class="submenu-icon">local_cafe</mat-icon>
+                {{ item.Nombre }}
+              </a>
+            </div>
+          </li>
+        </ul>
       </li>
     </ul>
    
@@ -99,7 +112,7 @@
         </div>
         <ul *ngIf="group.items && openGroupIndex === i" class="submenu">
           <li *ngFor="let item of group.items">
-            <a [routerLink]="item.route" (click)="OpenSideBar($event)">
+            <a [routerLink]="item.route || item.Route || item.ruta || item.path || item.url" (click)="OpenSideBar($event)">
               <mat-icon class="submenu-icon">{{ item.icons }}</mat-icon>
               {{ item.Nombre }}
             </a>

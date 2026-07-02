@@ -156,6 +156,31 @@
   margin: 0;
   flex: 1 1 auto;
 }
+.login-link {
+  margin: 12px 20px 8px;
+}
+.login-link a {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  width: calc(100% - 0px);
+  padding: 12px 16px;
+  background: linear-gradient(135deg, #cfcccb, #88817e);
+  color: #fff;
+  text-decoration: none;
+  border-radius: 10px;
+  box-shadow: 0 6px 18px rgba(216, 67, 21, 0.24);
+  transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+  font-weight: 600;
+}
+.login-link a:hover {
+  background: linear-gradient(135deg, #1a5490, #1a5490);
+  transform: translateY(-1px);
+  box-shadow: 0 10px 22px rgba(216, 67, 21, 0.28);
+}
+.login-link a .submenu-icon {
+  color: #fff;
+}
 .group-title {
   display: flex;
   align-items: center;
