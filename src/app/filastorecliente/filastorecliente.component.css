@@ -755,6 +755,7 @@ body, html {
     gap: 8px;
     padding-top: 8px;
     flex-wrap: wrap;
+    align-items: stretch;
   }
 
   .btn-add-to-cart {
@@ -763,8 +764,29 @@ body, html {
     min-width: 70px;
   }
 
+  .product-options {
+    gap: 8px;
+  }
+
+  .option-group {
+    flex: 1 1 100%;
+  }
+
   .cart-sidebar {
     max-width: 100%;
+  }
+
+  .cart-item {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .item-price {
+    text-align: left;
+  }
+
+  .checkout-input {
+    font-size: 13px;
   }
 
   .header-content {

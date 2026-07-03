@@ -3,10 +3,66 @@
 html,
 body {
   height: 100%;
-}
-body {
+  width: 100%;
+  min-height: 100%;
   margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+body {
   font-family: Roboto, "Helvetica Neue", sans-serif;
+  background: #f7f7f7;
+  color: #111;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+img,
+svg,
+video,
+iframe {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+button,
+input,
+textarea,
+select {
+  max-width: 100%;
+}
+
+table {
+  width: 100%;
+  max-width: 100%;
+  border-collapse: collapse;
+  word-break: break-word;
+}
+
+th,
+td {
+  word-break: break-word;
+}
+
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+main,
+.responsive-container,
+.content-wrapper {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 16px;
 }
 
 .dx-datagrid-headers {
@@ -18,4 +74,88 @@ body {
 ::ng-deep .dx-icon-trash::before {
   content: "\f03e";
   color: red;
+}
+
+@media (max-width: 768px) {
+  body {
+    font-size: 14px;
+  }
+}
+
+/* Global responsive defaults */
+html,
+body,
+app-root,
+main,
+section,
+article,
+.container,
+.content,
+.content-wrapper,
+.page,
+.panel {
+  min-width: 0;
+  width: 100%;
+}
+
+.row,
+.d-flex,
+.flex-row,
+.flex-wrap,
+.header-content,
+.products-grid,
+.preview {
+  flex-wrap: wrap !important;
+}
+
+.row > *,
+.d-flex > *,
+.flex-row > *,
+.flex-wrap > * {
+  min-width: 0;
+}
+
+button,
+input,
+textarea,
+select,
+.mat-form-field,
+.dx-field-item,
+.dx-field-row,
+.dx-editor-container {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.dx-datagrid,
+.dx-datagrid .dx-datagrid-headers,
+.dx-datagrid .dx-datagrid-rowsview {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+table {
+  display: block;
+  width: 100%;
+  overflow-x: auto;
+}
+
+@media (max-width: 640px) {
+  .container,
+  .content,
+  .content-wrapper,
+  .page,
+  .panel,
+  .store-main,
+  .header-content {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .mat-form-field,
+  .dx-field-item,
+  .dx-field-row,
+  .dx-editor-container {
+    width: 100% !important;
+  }
 }
