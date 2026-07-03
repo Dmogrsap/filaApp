@@ -7,3 +7,19 @@
     content: "\f03e";
     color: red;
 }
+
+/* Permitir que el texto del desglose se muestre en varios renglones */
+.desglose-cell {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-wrap: break-word;
+  word-break: break-word;
+  display: block;
+  line-height: 1.3;
+  padding: 6px 0;
+}
+
+/* Asegura que las celdas del data-grid respeten el alto automático */
+::ng-deep .dx-datagrid-rowsview .dx-data-row td {
+  white-space: normal !important;
+}
