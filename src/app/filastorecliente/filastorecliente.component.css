@@ -44,7 +44,7 @@ body, html {
 .header-content {
   max-width: 1400px;
   margin: 0 auto;
-  padding: 16px 20px;
+  padding: 10px 14px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -53,13 +53,13 @@ body, html {
 .store-logo {
   display: flex;
   align-items: center;
-  gap: 12px;
-  font-size: 20px;
+  gap: 10px;
+  font-size: 16px;
   font-weight: 700;
   color: var(--primary-color);
   text-decoration: none;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.22s ease;
 }
 
 .store-logo:hover {
@@ -68,7 +68,7 @@ body, html {
 }
 
 .logo-icon {
-  font-size: 28px;
+  font-size: 20px;
   display: inline-block;
 }
 
@@ -84,17 +84,17 @@ body, html {
   background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
   color: white;
   border: none;
-  width: 48px;
-  height: 48px;
+  width: 40px;
+  height: 40px;
   border-radius: 8px;
-  font-size: 20px;
+  font-size: 18px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.3s ease;
+  transition: all 0.22s ease;
   position: relative;
-  box-shadow: 0 4px 12px rgba(111, 78, 55, 0.2);
+  box-shadow: 0 3px 10px rgba(111, 78, 55, 0.18);
   padding: 0;
 }
 
@@ -118,17 +118,17 @@ body, html {
 
 .cart-badge {
   position: absolute;
-  top: -8px;
-  right: -8px;
+  top: -6px;
+  right: -6px;
   background: var(--danger-color);
   color: white;
-  width: 24px;
-  height: 24px;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
   border: 2px solid white;
 }
@@ -764,7 +764,50 @@ body, html {
   }
 
   .cart-sidebar {
+    /* convertir el sidebar en bottom-sheet para móviles */
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: auto;
+    width: 100%;
+    height: 70vh;
     max-width: 100%;
+    border-radius: 12px 12px 0 0;
+    transform: translateY(100%);
+    transition: transform 0.32s cubic-bezier(.22,.9,.24,1);
+    box-shadow: 0 -6px 24px rgba(0,0,0,0.18);
+    /* permitir que todo el panel haga scroll para que el checkout no quede fijo */
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .cart-sidebar.visible {
+    transform: translateY(0);
+  }
+
+  /* Ajustes dentro del carrito para mejor experiencia móvil */
+  .cart-header {
+    padding: 14px 16px;
+    border-radius: 12px 12px 0 0;
+  }
+
+  /* Desactivar el scroll interno para que el scroll sea del sidebar completo */
+  .cart-content {
+    padding: 12px 14px;
+    flex: none;
+    overflow: visible;
+  }
+
+  .cart-checkout {
+    padding: 12px 14px;
+  }
+
+  .checkout-input {
+    font-size: 14px;
+    padding: 12px 14px;
   }
 
   .header-content {
