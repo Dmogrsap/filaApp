@@ -48,6 +48,61 @@ header {
     font-size: 18px;
     padding: 20px;
   }
+
+  @media (max-width: 768px) {
+    header {
+      min-height: 56px;
+      height: auto;
+      padding: 8px 10px;
+      gap: 8px;
+    }
+
+    .logo img {
+      max-width: 90px;
+    }
+
+    .title-container {
+      min-width: 0;
+      border-left-width: 12px;
+      border-right-width: 12px;
+      border-bottom-width: 42px;
+    }
+
+    .title-header {
+      font-size: 18px;
+      top: 8px;
+      white-space: normal;
+      line-height: 1.1;
+    }
+
+    .subtitle {
+      font-size: 12px;
+      padding: 6px 0;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .logo img {
+      max-width: 72px;
+    }
+
+    .title-container {
+      border-bottom-width: 34px;
+    }
+
+    .title-header {
+      font-size: 14px;
+      top: 6px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .subtitle {
+      font-size: 10px;
+      padding: 4px 0;
+    }
+  }
   
   .menu-button {
         background-color: transparent;
