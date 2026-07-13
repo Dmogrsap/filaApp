@@ -74,7 +74,7 @@ export class FilastoreComponent implements OnInit {
         .then(() => {
           console.log('Estado actualizado en Firestore');
           // Si el estado cambia a Entregado, mostrar notificación
-          if (e.newData.estado === 'Entregado') {
+          if ((e.newData.estado || '').toString().toLowerCase() === 'entregado') {
             const pedido = this.pedidos.find((p: any) => p.id === id);
             const nombre = this.getCustomerName(pedido);
             this.notification.notify('Pedido listo', `Pedido de ${nombre} listo para recoger`);

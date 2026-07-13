@@ -249,7 +249,7 @@
         <li *ngFor="let d of deliveredInfo.detalles">{{ d.cantidad }}x {{ d.nombre }}</li>
       </ul>
       <div class="delivered-actions">
-        <p *ngIf="deliveredInfo?.detalles"><strong>Total:</strong> ${{ calcularTotal(deliveredInfo?.detalles) | number:'1.2-2' }}</p>
+        <p *ngIf="deliveredInfo?.detalles"><strong>Total a pagar:</strong> ${{ calcularTotal(deliveredInfo?.detalles) | number:'1.2-2' }}</p>
         <button (click)="showDeliveredPopup = false">Cerrar</button>
       </div>
     </div>
