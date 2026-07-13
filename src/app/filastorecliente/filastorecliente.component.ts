@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CoffeeOrdersService } from '../services/coffee-orders.service';
 import notify from 'devextreme/ui/notify';
 
@@ -26,6 +26,15 @@ export class FilastoreclienteComponent implements OnInit {
   public cafesFrios: any[] = [];
   public carrito: CartItem[] = [];
   public mostrarCarrito = false;
+  // Para detectar cambios de estado en pedidos
+  private prevStates: Record<string, string> = {};
+  private ordersSub: any;
+  // Id del último pedido enviado por este cliente (se guarda también en localStorage)
+  public myOrderId: string | null = null;
+
+  // Popup local cuando un pedido pasa a Entregado
+  public showDeliveredPopup = false;
+  public deliveredInfo: any = null;
   
   constructor(private cafeService: CoffeeOrdersService) {}
 
@@ -54,6 +63,60 @@ export class FilastoreclienteComponent implements OnInit {
       console.log('Cafés calientes:', this.cafesCalienes);
       console.log('Cafés fríos:', this.cafesFrios);
     });
+
+    // Escuchar cambios en los pedidos para notificar cuando se pongan como Entregado
+    this.ordersSub = this.cafeService.getOrders().subscribe((orders: any[]) => {
+      // Si no hay prevStates llenos, inicializarlos
+      if (Object.keys(this.prevStates).length === 0) {
+        orders.forEach((o: any) => {
+          if (o.id) this.prevStates[o.id] = o.estado || '';
+        });
+        return;
+      }
+
+      orders.forEach((o: any) => {
+        const id = o.id;
+        const prev = this.prevStates[id];
+        const curr = o.estado || '';
+
+        const prevNorm = (prev || '').toString().toLowerCase();
+        const currNorm = (curr || '').toString().toLowerCase();
+
+        // Detectar transición a entregado (case-insensitive) y solo avisar al cliente correspondiente
+        if (prevNorm !== 'entregado' && currNorm === 'entregado') {
+          const clienteActual = (this.pedidos.cliente || '').trim().toLowerCase();
+          const clientePedido = (o.cliente || o.nombre || '').toString().trim().toLowerCase();
+          const storedLastId = localStorage.getItem('lastOrderId');
+          const isMyOrderById = (this.myOrderId && this.myOrderId === id) || (storedLastId && storedLastId === id);
+
+          // Mostrar popup si:
+          // - el cliente actual coincide con el cliente del pedido, o
+          // - este pedido coincide con el id del último pedido creado en esta sesión/localStorage
+          if ((clienteActual && clientePedido && clienteActual === clientePedido) || isMyOrderById) {
+            this.deliveredInfo = o;
+            this.showDeliveredPopup = true;
+            const nombre = o.cliente || o.nombre || 'cliente';
+            notify(`Pedido listo: ${nombre}`, 'success', 4000);
+          }
+        }
+
+        if (id) this.prevStates[id] = curr;
+      });
+    });
+  }
+
+  // Calcula el total del pedido a partir de los detalles (cantidad * precio)
+  calcularTotal(detalles: any[] | undefined): number {
+    if (!detalles || detalles.length === 0) return 0;
+    return detalles.reduce((total, d) => {
+      const cantidad = Number(d.cantidad || 0);
+      const precio = Number(d.precio ?? d.Precio ?? 0);
+      return total + cantidad * precio;
+    }, 0);
+  }
+
+  ngOnDestroy(): void {
+    if (this.ordersSub) this.ordersSub.unsubscribe();
   }
 
   /**
@@ -183,13 +246,24 @@ export class FilastoreclienteComponent implements OnInit {
 
     this.cafeService
       .crearPedido(pedidoAEnviar)
-      .then(() => {
+      .then((docRef: any) => {
         notify(
           '✓ ¡Pedido enviado con éxito! Tu café está en preparación.',
           'success',
           3000,
         );
         // Resetear formulario
+        // Guardar id del pedido para poder detectar su cambio de estado en esta sesión
+        try {
+          const id = docRef.id || (docRef && docRef._key && docRef._key.path && docRef._key.path.segments && docRef._key.path.segments.pop());
+          if (id) {
+            this.myOrderId = id;
+            localStorage.setItem('lastOrderId', id);
+          }
+        } catch (err) {
+          // ignore
+        }
+
         this.pedidos = { cliente: '', producto: [], cantidad: 1 };
         this.carrito = [];
         this.mostrarCarrito = false;

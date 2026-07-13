@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CoffeeOrdersService } from '../services/coffee-orders.service';
+import { NotificationService } from '../services/notification.service';
 
 @Component({
   selector: 'app-filastore',
@@ -19,7 +20,10 @@ export class FilastoreComponent implements OnInit {
   salesByCoffee: any[] = [];
   ordersByStatus: any[] = [];
 
-  constructor(private cafeService: CoffeeOrdersService) {}
+  constructor(
+    private cafeService: CoffeeOrdersService,
+    private notification: NotificationService
+  ) {}
 
   ngOnInit(): void {
     this.dataSourceMenusTab = [
@@ -67,9 +71,25 @@ export class FilastoreComponent implements OnInit {
     if (e.newData.hasOwnProperty('estado')) {
       this.cafeService
         .actualizarEstado(id, e.newData.estado)
-        .then(() => console.log('Estado actualizado en Firestore'))
+        .then(() => {
+          console.log('Estado actualizado en Firestore');
+          // Si el estado cambia a Entregado, mostrar notificación
+          if (e.newData.estado === 'Entregado') {
+            const pedido = this.pedidos.find((p: any) => p.id === id);
+            const nombre = this.getCustomerName(pedido);
+            this.notification.notify('Pedido listo', `Pedido de ${nombre} listo para recoger`);
+          }
+        })
         .catch((err: any) => console.error('Error al actualizar:', err));
     }
+  }
+
+  // Intenta obtener un nombre legible del objeto pedido
+  getCustomerName(pedido: any): string {
+    if (!pedido) return 'cliente';
+    return (
+      pedido.nombre || pedido.cliente || pedido.usuario || pedido.nombreCliente || pedido.email || 'cliente'
+    );
   }
 
   onRowRemoving(e: any) {

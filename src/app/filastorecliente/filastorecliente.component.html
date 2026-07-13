@@ -238,4 +238,21 @@
       </button>
     </div>
   </aside>
+
+  <!-- Popup cuando un pedido está listo -->
+  <div class="delivered-popup" *ngIf="showDeliveredPopup">
+    <div class="delivered-content">
+      <h3>Pedido listo</h3>
+      <p><strong>Cliente:</strong> {{ deliveredInfo?.cliente || deliveredInfo?.nombre || 'cliente' }}</p>
+      <p *ngIf="deliveredInfo?.detalles"><strong>Detalles:</strong></p>
+      <ul *ngIf="deliveredInfo?.detalles">
+        <li *ngFor="let d of deliveredInfo.detalles">{{ d.cantidad }}x {{ d.nombre }}</li>
+      </ul>
+      <div class="delivered-actions">
+        <p *ngIf="deliveredInfo?.detalles"><strong>Total:</strong> ${{ calcularTotal(deliveredInfo?.detalles) | number:'1.2-2' }}</p>
+        <button (click)="showDeliveredPopup = false">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
 </div>
