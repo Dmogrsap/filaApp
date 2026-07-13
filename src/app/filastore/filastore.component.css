@@ -14,12 +14,15 @@
   overflow-wrap: anywhere;
   word-wrap: break-word;
   word-break: break-word;
-  display: block;
+  
   line-height: 1.3;
   padding: 6px 0;
 }
 
-/* Asegura que las celdas del data-grid respeten el alto automático */
+/* Asegura que las celdas del data-grid respeten el alto automático
+   NOTA: Se comenta esta regla porque causa la desalineación de columnas en el Grid de DevExtreme.
+   En su lugar, se configuró [wordWrapEnabled]="true" de forma nativa en el grid.
 ::ng-deep .dx-datagrid-rowsview .dx-data-row td {
   white-space: normal !important;
 }
+*/

@@ -84,6 +84,16 @@ export class FilastoreComponent implements OnInit {
     }
   }
 
+  // Evita que el menú desplegable del lookup deforme la fila al abrirse cuando hay pocos registros
+  onEditorPreparing(e: any) {
+    if (e.parentType === 'dataRow' && e.dataField === 'estado') {
+      e.editorOptions.dropDownOptions = {
+        ...e.editorOptions.dropDownOptions,
+        container: 'body'
+      };
+    }
+  }
+
   // Intenta obtener un nombre legible del objeto pedido
   getCustomerName(pedido: any): string {
     if (!pedido) return 'cliente';

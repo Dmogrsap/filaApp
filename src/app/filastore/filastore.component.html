@@ -27,9 +27,12 @@
             keyExpr="id"
             [showBorders]="true"
             [rowAlternationEnabled]="true"
+            [wordWrapEnabled]="true"
+            [columnAutoWidth]="true"
+            [repaintChangesOnly]="true"
             (onRowUpdating)="onRowUpdating($event)"
             (onRowRemoving)="onRowRemoving($event)"
-            
+            (onEditorPreparing)="onEditorPreparing($event)"
           >
             <dxo-editing
               mode="cell"
@@ -64,7 +67,6 @@
               [allowEditing]="false"
               [allowFiltering]="false"
               [allowHeaderFiltering]="false"
-              [wordWrapEnabled]="true"
               width="250"
             >
               <ng-template dxTemplate="cell" let-data="data">
@@ -90,9 +92,16 @@
               [allowHeaderFiltering]="true"
               [filterOperations]="['=', '<>']"
             >
-              <dxo-lookup [dataSource]="['pendiente', 'entregado']">
+              <dxo-lookup
+                [dataSource]="['pendiente', 'entregado']"
+                valueExpr="this"
+                displayExpr="this"
+              >
               </dxo-lookup>
-              <dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>
+              <dxo-header-filter
+                [visible]="true"
+                [allowSearch]="true"
+              ></dxo-header-filter>
             </dxi-column>
 
             <dxi-column
