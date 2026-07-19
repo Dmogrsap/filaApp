@@ -64,4 +64,11 @@ export class CoffeeOrdersService {
     const docRef = doc(this.firestore, this.collectionName, id);
     return updateDoc(docRef, { estado: nuevoEstado });
   }
+
+  // Leer tabla de cafes
+  // getCafesedit(): Observable<any[]> {
+  //   const ref = collection(this.firestore, 'coffeeOrders');
+  //   return collectionData(ref, { idField: 'id' });
+  // }
+
 }
