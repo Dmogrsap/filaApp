@@ -37,6 +37,7 @@ import { CalendarioMaterialesComponent } from './calendario-materiales/calendari
 import { ChangePassComponent } from './change-pass/change-pass.component';
 import { FilastoreComponent } from './filastore/filastore.component';
 import { FilastoreclienteComponent } from './filastorecliente/filastorecliente.component';
+import { AddcoffeComponent } from './addcoffe/addcoffe.component';
 
 
 @NgModule({
@@ -58,6 +59,7 @@ import { FilastoreclienteComponent } from './filastorecliente/filastorecliente.c
     ChangePassComponent,
     FilastoreComponent,
     FilastoreclienteComponent,
+    AddcoffeComponent,
 
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],

@@ -18,6 +18,7 @@ import { CalendarioMaterialesComponent } from './calendario-materiales/calendari
 import { ChangePassComponent } from './change-pass/change-pass.component';
 import { FilastoreComponent } from './filastore/filastore.component';
 import { FilastoreclienteComponent } from './filastorecliente/filastorecliente.component';
+import { AddcoffeComponent } from './addcoffe/addcoffe.component';
 
 const routes: Routes = [
   {
@@ -158,7 +159,8 @@ const routes: Routes = [
           url: '/filastore',
           allowedRoles: [
             'Admin',
-            'Lider Fila Store'
+            'Lider Fila Store',
+            'Fila Cafe',
           ],
         },
         canActivate: [RoleGuard],
@@ -170,6 +172,20 @@ const routes: Routes = [
           title: 'Haz tu pedido',
           url: '/filastorecliente',
           allowedRoles: [],
+        },
+        canActivate: [RoleGuard],
+      },
+      {
+        path: 'addcoffe',
+        component: AddcoffeComponent,
+        data: {
+          title: 'Añadir Cafes',
+          url: '/addcoffe',
+          allowedRoles: [
+            'Admin',
+            'Lider Fila Store',
+            'Fila Cafe',
+          ],
         },
         canActivate: [RoleGuard],
       },

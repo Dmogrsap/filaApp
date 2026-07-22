@@ -18,7 +18,7 @@
         <br />
       </div>
 
-      <div *ngIf="items.Nombre == 'Fila Coffee'" class="container-fluid">
+      <div *ngIf="items.Nombre == 'Pedidos de Cafe'" class="container-fluid">
         <div class="dashboard-container" style="padding: 20px">
           <h2>Dashboard de Pedidos de Café (Tiempo Real)</h2>
 
@@ -118,6 +118,231 @@
               <dxi-button name="edit"></dxi-button>
               <dxi-button name="delete"></dxi-button>
             </dxi-column>
+          </dx-data-grid>
+        </div>
+      </div>
+
+      <div *ngIf="items.Nombre == 'Addcoffee'" class="container-fluid">
+        <br />
+        <div class="row" style="width: 101%">
+          <!--------------------------------------codigo Nuevo---------------------------------->
+          <dx-load-indicator
+            id="large-indicator-custom"
+            indicatorSrc="assets/img/loading1.gif"
+            height="50"
+            width="50"
+            [visible]="loadIndicatorVisible"
+          ></dx-load-indicator>
+
+          <dx-data-grid
+            [dataSource]="dataSourceCafes"
+            [remoteOperations]="true"
+            [showBorders]="true"
+            [showColumnLines]="true"
+            [showRowLines]="true"
+            [showBorders]="true"
+            [rowAlternationEnabled]="true"
+            (onSaving)="onSaving($event)"
+            height="80vh"
+            [twoWayBindingEnabled]="false"
+            (onExporting)="onExporting($event)"
+          >
+            <dxo-export [enabled]="true"></dxo-export>
+            <dxo-filter-row [visible]="false"></dxo-filter-row>
+            <dxo-header-filter
+              [visible]="true"
+              allowSearch="true"
+            ></dxo-header-filter>
+            <dxo-group-panel [visible]="false"></dxo-group-panel>
+            <dxo-scrolling mode="virtual"></dxo-scrolling>
+
+            <dxo-editing
+              mode="popup"
+              [allowAdding]="true"
+              [allowUpdating]="true"
+              [allowDeleting]="true"
+              [useIcons]="true"
+            >
+              <dxo-popup
+                title="Add/Edit Coffees"
+                [showTitle]="true"
+                [width]="700"
+                [height]="525"
+              >
+              </dxo-popup>
+              <dxo-form>
+                <dxi-item itemType="group" [colCount]="1" colSpan="2">
+                  <dxi-item
+                    dataField="Nombre"
+                    editorType="dxTextBox"
+                    [editorOptions]="{
+                      dataSource: dataSourceCafes,
+                      displayExpr: 'Nombre',
+                      valueExpr: 'Nombre',
+                    }"
+                  >
+                    <dxo-label text="Nombre"> </dxo-label>
+                    <dxi-validation-rule
+                      type="required"
+                      message="Name Required"
+                    >
+                    </dxi-validation-rule>
+                  </dxi-item>
+
+                  <dxi-item
+                    dataField="Descripcion"
+                    editorType="dxTextBox"
+                    [editorOptions]="{
+                      dataSource: dataSourceCafes,
+                      displayExpr: 'Ingrediente principal',
+                      valueExpr: 'Descripcion',
+                    }"
+                  >
+                    <dxo-label text="Ingrediente principal"> </dxo-label>
+                  </dxi-item>
+
+                  <dxi-item
+                    dataField="Tipo de Cafe"
+                    editorType="dxTextBox"
+                    [editorOptions]="{
+                      dataSource: dataSourceCafes,
+                      displayExpr: 'Tipo de Cafe',
+                      valueExpr: 'Tipo de Cafe',
+                    }"
+                  >
+                    <dxo-label text="Tipo de Cafe"> </dxo-label>
+                    <dxi-validation-rule
+                      type="required"
+                      message="Type Required"
+                    >
+                    </dxi-validation-rule>
+                  </dxi-item>
+
+                  <dxi-item
+                    dataField="Precio"
+                    editorType="dxTextBox"
+                    [editorOptions]="{
+                      dataSource: dataSourceCafes,
+                      displayExpr: 'Precio',
+                      valueExpr: 'Precio',
+                    }"
+                  >
+                    <dxo-label text="Precio"> </dxo-label>
+                    <dxi-validation-rule
+                      type="required"
+                      message="Price Required"
+                    >
+                    </dxi-validation-rule>
+                  </dxi-item>
+
+                  <dxi-item
+                    dataField="Tamaño"
+                    editorType="dxTextBox"
+                    [editorOptions]="{
+                      dataSource: dataSourceCafes,
+                      displayExpr: 'Tamaño',
+                      valueExpr: 'Tamaño',
+                    }"
+                  >
+                  <dxo-label text="Tamaño"> </dxo-label>
+                  </dxi-item>
+
+                  <dxi-item
+                    dataField="Status"
+                    editorType="dxSwitch"
+                    [editorOptions]="{
+                      dataSource: dataSourceCafes,
+                      displayExpr: 'Existencia',
+                      valueExpr: 'active',
+                      switchedOnText: 'Yes',
+                      switchedOffText: 'NO',
+                      width: 80,
+                    }"
+                  >
+                    <dxo-label location="left"></dxo-label>
+                  </dxi-item>
+                </dxi-item>
+              </dxo-form>
+            </dxo-editing>
+
+            <!---------------------Data grid para que se muestre una tabla dentro de agregar user--------------------->
+            <div
+              *dxTemplate="let cellInfo of 'singleDropDownBoxEditor'"
+              style="margin-top: 10px"
+            >
+              <dx-drop-down-box
+                [dataSource]="dataSourceCafes"
+                [(value)]="cellInfo.value"
+                [displayExpr]="getDisplayExpr"
+                valueExpr="Nombre"
+                contentTemplate="contentTemplate"
+              >
+                <div *dxTemplate="let e of 'contentTemplate'">
+                  <!-- <dx-data-grid
+                    [dataSource]="dataSourceRoles"
+                    [remoteOperations]="true"
+                    [height]="250"
+                    [keyExpr]="'Nombre'"
+                    [selectedRowKeys]="[cellInfo.value]"
+                    [focusedRowEnabled]="true"
+                    [focusedRowKey]="cellInfo.value"
+                    [hoverStateEnabled]="true"
+                    (onSelectionChanged)="
+                      onSelectionChanged(
+                        $event.selectedRowKeys,
+                        cellInfo,
+                        e.component
+                      )
+                    "
+                  >
+                    <dxo-search-panel
+                      [visible]="true"
+                      [searchVisibleColumnsOnly]="true"
+                    ></dxo-search-panel>
+                    <dxi-column
+                      dataField="Nombre"
+                      caption="Nombre"
+                    ></dxi-column>
+                    <dxo-paging [enabled]="true" [pageSize]="10"></dxo-paging>
+                    <dxo-scrolling mode="virtual"></dxo-scrolling>
+                    <dxo-selection mode="single"></dxo-selection>
+                  </dx-data-grid> -->
+                </div>
+              </dx-drop-down-box>
+            </div>
+            <!------------------------------------Data grid principal de la tabla---------------------------------------------->
+
+            <dxo-search-panel [visible]="true" [width]="100"></dxo-search-panel>
+            <dxi-column
+              alignment="center"
+              dataField="Nombre"
+              caption="Nombre"
+            ></dxi-column>
+            <dxi-column
+              alignment="center"
+              dataField="Descripcion"
+              caption="Ingrediente principal"
+            ></dxi-column>
+            <dxi-column
+              alignment="center"
+              dataField="Tipo de Cafe"
+              caption="Tipo de Cafe"
+            ></dxi-column>
+            <dxi-column
+              alignment="center"
+              dataField="Precio"
+              caption="Precio"
+            ></dxi-column>
+            <dxi-column
+              alignment="center"
+              dataField="Tamaño"
+              caption="Tamaño"
+            ></dxi-column>
+            <dxi-column
+              alignment="center"
+              dataField="Status"
+              caption="Existencia"
+            ></dxi-column>
           </dx-data-grid>
         </div>
       </div>

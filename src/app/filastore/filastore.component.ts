@@ -9,8 +9,10 @@ import { NotificationService } from '../services/notification.service';
 })
 export class FilastoreComponent implements OnInit {
   public dataSourceMenusTab: any[] = [];
+  public dataSourceCafes: any[] = [];
   public pedidos: any[] = [];
   private sub: any;
+  public loadIndicatorVisible = true;
 
   // KPIs
   totalOrders = 0;
@@ -28,7 +30,8 @@ export class FilastoreComponent implements OnInit {
   ngOnInit(): void {
     this.dataSourceMenusTab = [
       { Nombre: 'Fila Store' },
-      { Nombre: 'Fila Coffee' },
+      { Nombre: 'Pedidos de Cafe' },
+      { Nombre: 'Addcoffee' },
     ];
 
     // Escucha en tiempo real de Firestore
@@ -36,7 +39,8 @@ export class FilastoreComponent implements OnInit {
       this.pedidos = result
         .map((item: any) => ({
           ...item,
-          fecha: item.fecha && item.fecha.toDate ? item.fecha.toDate() : item.fecha,
+          fecha:
+            item.fecha && item.fecha.toDate ? item.fecha.toDate() : item.fecha,
           desglose: this.generarDesglose(item.detalles),
           totalAPagar: this.calcularTotal(item.detalles),
         }))
@@ -46,6 +50,14 @@ export class FilastoreComponent implements OnInit {
           return dateB - dateA;
         });
     });
+
+    this.cafeService.getCafes().subscribe((result) => {
+      this.dataSourceCafes = result.sort((a, b) =>
+        a.Nombre.localeCompare(b.Nombre),
+      );
+      this.loadIndicatorVisible = false;
+      console.log('Cafes', this.dataSourceCafes);
+    });
   }
 
   // Genera desglose de productos (ej: "2x Espresso, 1x Americano")
@@ -54,7 +66,7 @@ export class FilastoreComponent implements OnInit {
     return detalles
       .map(
         (d) =>
-          `${d.cantidad}x ${d.nombre} (${d.leche || 'normal'} / ${d.azucar || 'normal'})`
+          `${d.cantidad}x ${d.nombre} (${d.leche || 'normal'} / ${d.azucar || 'normal'})`,
       )
       .join('\n');
   }
@@ -62,7 +74,7 @@ export class FilastoreComponent implements OnInit {
   // Calcula el total a pagar sumando cantidad * precio de cada detalle
   calcularTotal(detalles: any[]): number {
     if (!detalles || detalles.length === 0) return 0;
-    return detalles.reduce((total, d) => total + (d.cantidad * d.precio), 0);
+    return detalles.reduce((total, d) => total + d.cantidad * d.precio, 0);
   }
 
   // Captura el cambio de estado directamente desde el Grid de DevExtreme
@@ -114,4 +126,14 @@ export class FilastoreComponent implements OnInit {
   ngOnDestroy(): void {
     if (this.sub) this.sub.unsubscribe();
   }
+
+  getDisplayExpr(item: any) {
+    if (!item) {
+      return '';
+    }
+    return `$ ${item.Nombre}, `;
+  }
+
+  onSaving(e: any) {}
+  onExporting(e: any) {}
 }
