@@ -54,10 +54,6 @@ export class RolesComponent implements OnInit {
   onSaving(e: any) {
     const change = e.changes[0];
 
-    // this.userService.getUsers().subscribe((result) => {
-    //   this.dataSourceUsers = result;
-    // });
-
     if (change) {
       e.cancel = false;
     }
@@ -76,14 +72,14 @@ export class RolesComponent implements OnInit {
         Swal.fire({
           icon: 'success',
           title: 'success',
-          text: 'User Added Successfully!',
+          text: 'Rol Added Successfully!',
         });
 
         this.rolesService.getRoles().subscribe((result) => {
           this.dataSourceRoles = result.sort((a, b) =>
             a.Role.localeCompare(b.Role)
           );
-          console.log('Roles', this.dataSourceRoles);
+          //console.log('CoffeList', this.dataSourceRoles);
         });
       });
     }
@@ -102,7 +98,7 @@ export class RolesComponent implements OnInit {
         Swal.fire({
           icon: 'success',
           title: 'success',
-          text: 'User Updated Successfully!',
+          text: 'Role Updated Successfully!',
         });
 
         this.rolesService.getRoles().subscribe((result) => {
@@ -120,16 +116,17 @@ export class RolesComponent implements OnInit {
         Swal.fire({
           icon: 'success',
           title: 'success',
-          text: 'User Eliminated',
+          text: 'Rol Eliminated',
         });
         this.rolesService.getRoles().subscribe((result) => {
           this.dataSourceRoles = result.sort((a, b) =>
             a.Role.localeCompare(b.Role)
           );
-          console.log('Roles', this.dataSourceRoles);
+          //console.log('Roles', this.dataSourceRoles);
         });
       });
     }
+
     if (change.type == 'refresh') {
       this.rolesService.getRoles().subscribe((result) => {
         this.dataSourceRoles = result.sort((a, b) =>

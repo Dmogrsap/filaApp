@@ -65,10 +65,23 @@ export class CoffeeOrdersService {
     return updateDoc(docRef, { estado: nuevoEstado });
   }
 
-  // Leer tabla de cafes
-  // getCafesedit(): Observable<any[]> {
-  //   const ref = collection(this.firestore, 'coffeeOrders');
-  //   return collectionData(ref, { idField: 'id' });
-  // }
+  // Apartado de cafes (Dashboard) para mostrar en menu
 
+  // Agregar un nuevo cafe
+  addCoffeeList(coffee: Omit<any, 'id'>) {
+    const ref = collection(this.firestore, 'coffeeOrders');
+    return addDoc(ref, coffee);
+  }
+
+  // Actualizar un cafe existente
+  updateCoffeeList(id: string, data: Partial<any>) {
+    const docRef = doc(this.firestore, 'coffeeOrders', id);
+    return updateDoc(docRef, data);
+  }
+
+  // Eliminar un cafe existente
+  deleteCoffeeList(id: string) {
+    const docRef = doc(this.firestore, 'coffeeOrders', id);
+    return deleteDoc(docRef);
+  }
 }

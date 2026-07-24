@@ -38,15 +38,15 @@ select {
   max-width: 100%;
 }
 
-table {
+table:not(.dx-datagrid-table) {
   width: 100%;
   max-width: 100%;
   border-collapse: collapse;
   word-break: break-word;
 }
 
-th,
-td {
+th:not(.dx-datagrid-headers th),
+td:not(.dx-datagrid-rowsview td) {
   word-break: break-word;
 }
 
@@ -127,14 +127,12 @@ select,
   max-width: 100%;
 }
 
-.dx-datagrid,
-.dx-datagrid .dx-datagrid-headers,
-.dx-datagrid .dx-datagrid-rowsview {
-  width: 100% !important;
-  max-width: 100% !important;
+.dx-datagrid {
+  width: 100%;
+  max-width: 100%;
 }
 
-table {
+table:not(.dx-datagrid-table) {
   display: block;
   width: 100%;
   overflow-x: auto;

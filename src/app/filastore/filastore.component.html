@@ -203,11 +203,10 @@
 
                   <dxi-item
                     dataField="Tipo de Cafe"
-                    editorType="dxTextBox"
+                    editorType="dxSelectBox"
                     [editorOptions]="{
-                      dataSource: dataSourceCafes,
-                      displayExpr: 'Tipo de Cafe',
-                      valueExpr: 'Tipo de Cafe',
+                      items: tipodeCafeOptions,
+                      placeholder: 'Seleccione un tipo'
                     }"
                   >
                     <dxo-label text="Tipo de Cafe"> </dxo-label>
@@ -253,7 +252,7 @@
                     [editorOptions]="{
                       dataSource: dataSourceCafes,
                       displayExpr: 'Existencia',
-                      valueExpr: 'active',
+                      valueExpr: 'Status',
                       switchedOnText: 'Yes',
                       switchedOffText: 'NO',
                       width: 80,
@@ -327,7 +326,9 @@
               alignment="center"
               dataField="Tipo de Cafe"
               caption="Tipo de Cafe"
-            ></dxi-column>
+            >
+              <dxo-lookup [dataSource]="tipodeCafeOptions"></dxo-lookup>
+            </dxi-column>
             <dxi-column
               alignment="center"
               dataField="Precio"

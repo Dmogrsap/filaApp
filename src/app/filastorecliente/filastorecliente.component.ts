@@ -11,6 +11,7 @@ interface CartItem {
   Imagen?: string;
   cantidadCarrito: number;
   leche?: string;
+  escencia?: string;
   azucar?: string;
 }
 
@@ -44,8 +45,9 @@ export class FilastoreclienteComponent implements OnInit {
         ...item,
         Nombre:
           item.Nombre || item.nombre || item.name || item.producto || item.title || 'Café',
-        leche: 'normal',
+        leche: 'light',
         azucar: 'normal',
+        escencia: 'Caramelo',
         cantidad: 1,
       }));
 
@@ -60,8 +62,8 @@ export class FilastoreclienteComponent implements OnInit {
         return tipo.includes('frio') || tipo.includes('frío') || tipo.includes('ice') || tipo.includes('helado');
       });
 
-      console.log('Cafés calientes:', this.cafesCalienes);
-      console.log('Cafés fríos:', this.cafesFrios);
+      //console.log('Cafés calientes:', this.cafesCalienes);
+      //console.log('Cafés fríos:', this.cafesFrios);
     });
 
     // Escuchar cambios en los pedidos para notificar cuando se pongan como Entregado
@@ -142,7 +144,8 @@ export class FilastoreclienteComponent implements OnInit {
    */
   agregarAlCarrito(cafe: any): void {
     const cantidad = cafe.cantidad;
-    const seleccionadoLeche = cafe.leche || 'normal';
+    const seleccionadoLeche = cafe.leche || 'light';
+    const seleccionadoEscencia = cafe.escencia || 'caramelo';
     const seleccionadoAzucar = cafe.azucar || 'normal';
 
     // Buscar si ya existe en el carrito con las mismas opciones
@@ -150,6 +153,7 @@ export class FilastoreclienteComponent implements OnInit {
       item =>
         item.Nombre === cafe.Nombre &&
         item.leche === seleccionadoLeche &&
+        item.escencia === seleccionadoEscencia &&
         item.azucar === seleccionadoAzucar
     );
 
@@ -165,6 +169,7 @@ export class FilastoreclienteComponent implements OnInit {
         Imagen: cafe.Imagen,
         cantidadCarrito: cantidad,
         leche: seleccionadoLeche,
+        escencia: seleccionadoEscencia,
         azucar: seleccionadoAzucar,
       });
     }
@@ -228,7 +233,8 @@ export class FilastoreclienteComponent implements OnInit {
       nombre: item.Nombre,
       cantidad: item.cantidadCarrito,
       precio: item.Precio,
-      leche: item.leche || 'normal',
+      escencia: item.escencia || 'Caramelo',
+      leche: item.leche || 'light',
       azucar: item.azucar || 'normal',
     }));
 

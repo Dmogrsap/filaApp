@@ -47,11 +47,19 @@
               <h3 class="product-name">{{ cafe.Nombre }}</h3>
               <p class="product-description">{{ cafe.Descripcion || cafe.descripcion || 'Café de calidad premium' }}</p>
               <div class="product-options">
-                <div class="option-group">
+                <div class="option-group" *ngIf="cafe.Nombre == 'Americano'">
                   <label>Leche</label>
                   <select [(ngModel)]="cafe.leche" name="leche_{{ i }}">
-                    <option value="normal">Normal</option>
+                    <option value="light">light</option>
                     <option value="deslactosada">Deslactosada</option>
+                  </select>
+                </div>
+                  <div class="option-group" *ngIf="cafe.Nombre == 'Cappuccino' || cafe.Nombre == 'Latte' || cafe.Nombre == 'Latte a las rocas'">
+                  <label>Escencia</label>
+                  <select [(ngModel)]="cafe.escencia" name="escencia{{ i }}">
+                    <option value="Caramelo">Caramelo</option>
+                    <option value="Crema Irlandesa">Crema Irlandesa</option>
+                    <option value="Avellana">Avellana</option>
                   </select>
                 </div>
                 <div class="option-group">
@@ -127,7 +135,7 @@
                 <div class="option-group">
                   <label>Leche</label>
                   <select [(ngModel)]="cafe.leche" name="leche_{{ i }}">
-                    <option value="normal">Normal</option>
+                    <option value="light">Light</option>
                     <option value="deslactosada">Deslactosada</option>
                   </select>
                 </div>
