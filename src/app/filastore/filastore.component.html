@@ -14,7 +14,7 @@
   </div>
   <div *dxTemplate="let items of 'item'">
     <div class="tabpanel-item">
-      <div *ngIf="items.Nombre == 'Fila Store'" class="container-fluid">
+      <div *ngIf="items.Nombre == 'Fila Coffe test'" class="container-fluid">
         <br />
       </div>
 
@@ -36,10 +36,12 @@
           >
             <dxo-editing
               mode="cell"
+              [allowAdding]="true"
               [allowUpdating]="true"
               [allowDeleting]="true"
               [useIcons]="true"
             >
+
             </dxo-editing>
 
             <dxo-filter-row [visible]="true"></dxo-filter-row>

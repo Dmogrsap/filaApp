@@ -155,7 +155,7 @@ const routes: Routes = [
         path: 'filastore',
         component: FilastoreComponent,
         data: {
-          title: 'Fila Store',
+          title: 'Fila Coffee',
           url: '/filastore',
           allowedRoles: [
             'Admin',

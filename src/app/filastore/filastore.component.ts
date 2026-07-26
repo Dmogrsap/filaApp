@@ -40,7 +40,7 @@ export class FilastoreComponent implements OnInit {
 
   ngOnInit(): void {
     this.dataSourceMenusTab = [
-      { Nombre: 'Fila Store' },
+      { Nombre: 'Fila Coffe test' },
       { Nombre: 'Pedidos de Cafe' },
       { Nombre: 'Añadir Nuevos Cafes' },
       { Nombre: 'Editar Insumos' },
