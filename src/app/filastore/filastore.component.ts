@@ -68,7 +68,7 @@ export class FilastoreComponent implements OnInit {
     return detalles
       .map(
         (d) =>
-          `${d.cantidad}x ${d.nombre} (${d.leche || 'normal'} / ${d.azucar || 'normal'})`,
+          `${d.cantidad}x ${d.nombre} (${d.leche} / ${d.escencia } / ${d.azucar})`,
       )
       .join('\n');
   }

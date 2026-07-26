@@ -45,9 +45,9 @@ export class FilastoreclienteComponent implements OnInit {
         ...item,
         Nombre:
           item.Nombre || item.nombre || item.name || item.producto || item.title || 'Café',
-        leche: 'light',
-        azucar: 'normal',
-        escencia: 'Caramelo',
+        leche: '',
+        azucar: '',
+        escencia: '',
         cantidad: 1,
       }));
 
@@ -144,9 +144,9 @@ export class FilastoreclienteComponent implements OnInit {
    */
   agregarAlCarrito(cafe: any): void {
     const cantidad = cafe.cantidad;
-    const seleccionadoLeche = cafe.leche || 'light';
-    const seleccionadoEscencia = cafe.escencia || 'caramelo';
-    const seleccionadoAzucar = cafe.azucar || 'normal';
+    const seleccionadoLeche = cafe.leche;
+    const seleccionadoEscencia = cafe.escencia;
+    const seleccionadoAzucar = cafe.azucar;
 
     // Buscar si ya existe en el carrito con las mismas opciones
     const existeEnCarrito = this.carrito.findIndex(
@@ -233,9 +233,9 @@ export class FilastoreclienteComponent implements OnInit {
       nombre: item.Nombre,
       cantidad: item.cantidadCarrito,
       precio: item.Precio,
-      escencia: item.escencia || 'Caramelo',
-      leche: item.leche || 'light',
-      azucar: item.azucar || 'normal',
+      escencia: item.escencia,
+      leche: item.leche,
+      azucar: item.azucar,
     }));
 
     // Calcular cantidad total
