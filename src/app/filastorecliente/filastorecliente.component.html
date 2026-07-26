@@ -64,11 +64,11 @@
                 }}
               </p>
               <div class="product-options">
-                <div class="option-group" *ngIf="cafe.Nombre == 'Americano'">
+                <div class="option-group">
                   <label>Leche</label>
                   <select [(ngModel)]="cafe.leche" name="leche_{{ i }}">
-                    <option value="light">light</option>
-                    <option value="deslactosada">Deslactosada</option>
+                    <option *ngIf="insumos.light" value="light">light</option>
+                    <option *ngIf="insumos.deslactosada" value="deslactosada">Deslactosada</option>
                   </select>
                 </div>
 
@@ -82,15 +82,16 @@
                 >
                   <label>Escencia</label>
                   <select [(ngModel)]="cafe.escencia" name="escencia{{ i }}">
-                    <option value="Caramelo">Caramelo</option>
-                    <option value="Crema Irlandesa">Crema Irlandesa</option>
-                    <option value="Avellana">Avellana</option>
+                    <option *ngIf="insumos.caramelo" value="Caramelo">Caramelo</option>
+                    <option *ngIf="insumos.cremaIrlandesa" value="Crema Irlandesa">Crema Irlandesa</option>
+                    <option *ngIf="insumos.avellana" value="Avellana">Avellana</option>
                   </select>
                 </div>
 
                 <div class="option-group">
                   <label>Azúcar</label>
                   <select [(ngModel)]="cafe.azucar" name="azucar_{{ i }}">
+                    <option value="sin azucar">Sin Azucar</option>
                     <option value="normal">Normal</option>
                     <option value="splenda">Splenda</option>
                   </select>
@@ -177,11 +178,11 @@
                 }}
               </p>
               <div class="product-options">
-                <div class="option-group" *ngIf="cafe.Nombre == 'Americano'">
+                <div class="option-group " *ngIf="cafe.Nombre == 'Latte a las rocas'">
                   <label>Leche</label>
                   <select [(ngModel)]="cafe.leche" name="leche_{{ i }}">
-                    <option value="light">Light</option>
-                    <option value="deslactosada">Deslactosada</option>
+                    <option *ngIf="insumos.light" value="light">Light</option>
+                    <option *ngIf="insumos.deslactosada" value="deslactosada">Deslactosada</option>
                   </select>
                 </div>
 
@@ -191,15 +192,16 @@
                 >
                   <label>Escencia</label>
                   <select [(ngModel)]="cafe.escencia" name="escencia{{ i }}">
-                    <option value="Caramelo">Caramelo</option>
-                    <option value="Crema Irlandesa">Crema Irlandesa</option>
-                    <option value="Avellana">Avellana</option>
+                    <option *ngIf="insumos.caramelo" value="Caramelo">Caramelo</option>
+                    <option *ngIf="insumos.cremaIrlandesa" value="Crema Irlandesa">Crema Irlandesa</option>
+                    <option *ngIf="insumos.avellana" value="Avellana">Avellana</option>
                   </select>
                 </div>
 
                 <div class="option-group">
                   <label>Azúcar</label>
                   <select [(ngModel)]="cafe.azucar" name="azucar_{{ i }}">
+                    <option value="sin azucar">Sin Azucar</option>
                     <option value="normal">Normal</option>
                     <option value="splenda">Splenda</option>
                   </select>

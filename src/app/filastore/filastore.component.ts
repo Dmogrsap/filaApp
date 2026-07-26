@@ -24,6 +24,15 @@ export class FilastoreComponent implements OnInit {
   salesByCoffee: any[] = [];
   ordersByStatus: any[] = [];
 
+  public insumos: any = {
+    light: true,
+    deslactosada: true,
+    caramelo: true,
+    cremaIrlandesa: true,
+    avellana: true,
+  };
+  private insumosSub: any;
+
   constructor(
     private cafeService: CoffeeOrdersService,
     private notification: NotificationService,
@@ -33,7 +42,8 @@ export class FilastoreComponent implements OnInit {
     this.dataSourceMenusTab = [
       { Nombre: 'Fila Store' },
       { Nombre: 'Pedidos de Cafe' },
-      { Nombre: 'Addcoffee' },
+      { Nombre: 'Añadir Nuevos Cafes' },
+      { Nombre: 'Editar Insumos' },
     ];
 
     // Escucha en tiempo real de Firestore
@@ -60,6 +70,13 @@ export class FilastoreComponent implements OnInit {
       this.loadIndicatorVisible = false;
       //console.log('Cafes', this.dataSourceCafes);
     });
+
+    this.insumosSub = this.cafeService.getInsumos().subscribe((res: any) => {
+      if (res) {
+        this.insumos = { ...this.insumos, ...res };
+      }
+      console.log('Insumos', this.insumos);
+    });
   }
 
   // Genera desglose de productos (ej: "2x Espresso, 1x Americano")
@@ -68,7 +85,7 @@ export class FilastoreComponent implements OnInit {
     return detalles
       .map(
         (d) =>
-          `${d.cantidad}x ${d.nombre} (${d.leche} / ${d.escencia } / ${d.azucar})`,
+          `${d.cantidad}x ${d.nombre} (leche: ${d.leche || 'No lleva'} / Escencia: ${d.escencia || 'No lleva'} / Azucar: ${d.azucar || 'No lleva'})`,
       )
       .join('\n');
   }
@@ -137,6 +154,7 @@ export class FilastoreComponent implements OnInit {
 
   ngOnDestroy(): void {
     if (this.sub) this.sub.unsubscribe();
+    if (this.insumosSub) this.insumosSub.unsubscribe();
   }
 
   getDisplayExpr(item: any) {
@@ -154,7 +172,6 @@ export class FilastoreComponent implements OnInit {
     }
 
     if (change.type == 'insert') {
-
       // Limpia los campos no válidos
       const cleanData = { ...change.data };
       Object.keys(cleanData).forEach((key) => {
@@ -225,6 +242,18 @@ export class FilastoreComponent implements OnInit {
         });
       });
     }
+  }
+
+  guardarInsumos(): void {
+    this.cafeService
+      .actualizarInsumos(this.insumos)
+      .then(() => {
+        this.notification.notify(
+          'Éxito',
+          'Disponibilidad de insumos actualizada',
+        );
+      })
+      .catch((err) => console.error('Error al actualizar insumos:', err));
   }
 
   onExporting(e: any) {}

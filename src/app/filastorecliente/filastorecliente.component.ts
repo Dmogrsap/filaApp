@@ -36,15 +36,37 @@ export class FilastoreclienteComponent implements OnInit {
   // Popup local cuando un pedido pasa a Entregado
   public showDeliveredPopup = false;
   public deliveredInfo: any = null;
-  
+
+  //Insumos leidos desde FilaStore
+  public insumos: any = {
+    light: true,
+    deslactosada: true,
+    caramelo: true,
+    cremaIrlandesa: true,
+    avellana: true,
+  };
+  private insumosSub: any;
+
   constructor(private cafeService: CoffeeOrdersService) {}
 
   ngOnInit(): void {
+    // Suscribirse a la colección insumos
+    this.insumosSub = this.cafeService.getInsumos().subscribe((res: any) => {
+      if (res) {
+        this.insumos = { ...this.insumos, ...res };
+      }
+    });
+
     this.cafeService.getCafes().subscribe((result) => {
       this.listaCafes = result.map((item: any) => ({
         ...item,
         Nombre:
-          item.Nombre || item.nombre || item.name || item.producto || item.title || 'Café',
+          item.Nombre ||
+          item.nombre ||
+          item.name ||
+          item.producto ||
+          item.title ||
+          'Café',
         leche: '',
         azucar: '',
         escencia: '',
@@ -53,13 +75,33 @@ export class FilastoreclienteComponent implements OnInit {
 
       // Separar cafés en calientes y fríos
       this.cafesCalienes = this.listaCafes.filter((cafe: any) => {
-        const tipo = (cafe['Tipo de Cafe'] || cafe.tipo || cafe.Tipo || '').toLowerCase();
-        return !tipo.includes('frio') && !tipo.includes('frío') && !tipo.includes('ice') && !tipo.includes('helado');
+        const tipo = (
+          cafe['Tipo de Cafe'] ||
+          cafe.tipo ||
+          cafe.Tipo ||
+          ''
+        ).toLowerCase();
+        return (
+          !tipo.includes('frio') &&
+          !tipo.includes('frío') &&
+          !tipo.includes('ice') &&
+          !tipo.includes('helado')
+        );
       });
 
       this.cafesFrios = this.listaCafes.filter((cafe: any) => {
-        const tipo = (cafe['Tipo de Cafe'] || cafe.tipo || cafe.Tipo || '').toLowerCase();
-        return tipo.includes('frio') || tipo.includes('frío') || tipo.includes('ice') || tipo.includes('helado');
+        const tipo = (
+          cafe['Tipo de Cafe'] ||
+          cafe.tipo ||
+          cafe.Tipo ||
+          ''
+        ).toLowerCase();
+        return (
+          tipo.includes('frio') ||
+          tipo.includes('frío') ||
+          tipo.includes('ice') ||
+          tipo.includes('helado')
+        );
       });
 
       //console.log('Cafés calientes:', this.cafesCalienes);
@@ -86,15 +128,27 @@ export class FilastoreclienteComponent implements OnInit {
 
         // Detectar transición a entregado (case-insensitive) y solo avisar al cliente correspondiente
         if (prevNorm !== 'entregado' && currNorm === 'entregado') {
-          const clienteActual = (this.pedidos.cliente || '').trim().toLowerCase();
-          const clientePedido = (o.cliente || o.nombre || '').toString().trim().toLowerCase();
+          const clienteActual = (this.pedidos.cliente || '')
+            .trim()
+            .toLowerCase();
+          const clientePedido = (o.cliente || o.nombre || '')
+            .toString()
+            .trim()
+            .toLowerCase();
           const storedLastId = localStorage.getItem('lastOrderId');
-          const isMyOrderById = (this.myOrderId && this.myOrderId === id) || (storedLastId && storedLastId === id);
+          const isMyOrderById =
+            (this.myOrderId && this.myOrderId === id) ||
+            (storedLastId && storedLastId === id);
 
           // Mostrar popup si:
           // - el cliente actual coincide con el cliente del pedido, o
           // - este pedido coincide con el id del último pedido creado en esta sesión/localStorage
-          if ((clienteActual && clientePedido && clienteActual === clientePedido) || isMyOrderById) {
+          if (
+            (clienteActual &&
+              clientePedido &&
+              clienteActual === clientePedido) ||
+            isMyOrderById
+          ) {
             this.deliveredInfo = o;
             this.showDeliveredPopup = true;
             const nombre = o.cliente || o.nombre || 'cliente';
@@ -119,6 +173,7 @@ export class FilastoreclienteComponent implements OnInit {
 
   ngOnDestroy(): void {
     if (this.ordersSub) this.ordersSub.unsubscribe();
+    if (this.insumosSub) this.insumosSub.unsubscribe();
   }
 
   /**
@@ -150,11 +205,11 @@ export class FilastoreclienteComponent implements OnInit {
 
     // Buscar si ya existe en el carrito con las mismas opciones
     const existeEnCarrito = this.carrito.findIndex(
-      item =>
+      (item) =>
         item.Nombre === cafe.Nombre &&
         item.leche === seleccionadoLeche &&
         item.escencia === seleccionadoEscencia &&
-        item.azucar === seleccionadoAzucar
+        item.azucar === seleccionadoAzucar,
     );
 
     if (existeEnCarrito > -1) {
@@ -198,7 +253,10 @@ export class FilastoreclienteComponent implements OnInit {
    * Calcular subtotal del carrito
    */
   calcularSubtotal(): number {
-    return this.carrito.reduce((total, item) => total + (item.Precio * item.cantidadCarrito), 0);
+    return this.carrito.reduce(
+      (total, item) => total + item.Precio * item.cantidadCarrito,
+      0,
+    );
   }
 
   /**
@@ -229,7 +287,7 @@ export class FilastoreclienteComponent implements OnInit {
     }
 
     // Construir array de productos con cantidades y opciones
-    const productosConCantidad = this.carrito.map(item => ({
+    const productosConCantidad = this.carrito.map((item) => ({
       nombre: item.Nombre,
       cantidad: item.cantidadCarrito,
       precio: item.Precio,
@@ -239,15 +297,18 @@ export class FilastoreclienteComponent implements OnInit {
     }));
 
     // Calcular cantidad total
-    const cantidadTotal = this.carrito.reduce((total, item) => total + item.cantidadCarrito, 0);
+    const cantidadTotal = this.carrito.reduce(
+      (total, item) => total + item.cantidadCarrito,
+      0,
+    );
 
     const pedidoAEnviar: Omit<any, 'id'> = {
       cliente: this.pedidos.cliente.trim(),
-      producto: productosConCantidad.map(p => p.nombre), // Array de nombres
+      producto: productosConCantidad.map((p) => p.nombre), // Array de nombres
       cantidad: cantidadTotal,
       estado: 'pendiente',
       fecha: new Date(),
-      detalles: productosConCantidad // Guardar detalles completos con opciones
+      detalles: productosConCantidad, // Guardar detalles completos con opciones
     };
 
     this.cafeService
@@ -261,7 +322,13 @@ export class FilastoreclienteComponent implements OnInit {
         // Resetear formulario
         // Guardar id del pedido para poder detectar su cambio de estado en esta sesión
         try {
-          const id = docRef.id || (docRef && docRef._key && docRef._key.path && docRef._key.path.segments && docRef._key.path.segments.pop());
+          const id =
+            docRef.id ||
+            (docRef &&
+              docRef._key &&
+              docRef._key.path &&
+              docRef._key.path.segments &&
+              docRef._key.path.segments.pop());
           if (id) {
             this.myOrderId = id;
             localStorage.setItem('lastOrderId', id);
@@ -275,7 +342,11 @@ export class FilastoreclienteComponent implements OnInit {
         this.mostrarCarrito = false;
       })
       .catch((err) => {
-        notify('❌ Hubo un error al procesar tu pedido. Intenta de nuevo.', 'error', 3000);
+        notify(
+          '❌ Hubo un error al procesar tu pedido. Intenta de nuevo.',
+          'error',
+          3000,
+        );
         console.error(err);
       });
   }

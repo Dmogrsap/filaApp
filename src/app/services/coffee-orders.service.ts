@@ -6,6 +6,8 @@ import {
   collectionData,
   addDoc,
   doc,
+  docData, // <--- Agregar
+  setDoc, // <--- Agregar
   updateDoc,
   deleteDoc,
 } from '@angular/fire/firestore';
@@ -83,5 +85,17 @@ export class CoffeeOrdersService {
   deleteCoffeeList(id: string) {
     const docRef = doc(this.firestore, 'coffeeOrders', id);
     return deleteDoc(docRef);
+  }
+
+  //Obtener lista de Insumos
+  getInsumos(): Observable<any> {
+    const docRef = doc(this.firestore, 'insumos', 'disponibilidad');
+    return docData(docRef);
+  }
+
+  // Actualizar el estado de un insumo
+  actualizarInsumos(data: any) {
+    const docRef = doc(this.firestore, 'insumos', 'disponibilidad');
+    return setDoc(docRef, data);
   }
 }
