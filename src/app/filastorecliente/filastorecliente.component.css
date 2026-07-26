@@ -840,12 +840,13 @@ body, html {
   width: 100%;
   background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
   border: none;
-  color: red;
+  color: white;
   padding: 14px 18px;
   border-radius: 14px;
   font-size: 16px;
   cursor: pointer;
   transition: transform 0.22s ease, box-shadow 0.22s ease;
+  background-color: red;
 }
 
 .delivered-actions button:hover {
@@ -865,7 +866,6 @@ body, html {
 
   .delivered-actions p {
     font-size: 18px;
-    background-color: red;
   }
 }
 
