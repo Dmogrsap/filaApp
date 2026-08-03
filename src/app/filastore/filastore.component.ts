@@ -256,5 +256,67 @@ export class FilastoreComponent implements OnInit {
       .catch((err) => console.error('Error al actualizar insumos:', err));
   }
 
+  onSaving1(e: any) {
+    const change = e.changes[0];
+
+    if (change) {
+      e.cancel = false;
+    }
+
+    if (change.type === 'insert') {
+      const cleanData = { ...change.data };
+
+      // Limpiar propiedades internas de DevExtreme
+      Object.keys(cleanData).forEach((key) => {
+        if (/^__.*__$/.test(key)) {
+          delete cleanData[key];
+        }
+      });
+
+      // Valores por defecto si no se llenan
+      const nuevoPedido = {
+        cliente: cleanData.cliente || '',
+        cantidad: cleanData.cantidad || 1,
+        estado: cleanData.estado || 'pendiente',
+        fecha: cleanData.fecha || new Date(),
+        producto: cleanData.producto || ['Pedido Manual'],
+        detalles: cleanData.detalles || [],
+      };
+
+      this.cafeService
+        .addOrder(nuevoPedido)
+        .then(() => {
+          Swal.fire({
+            icon: 'success',
+            title: 'Éxito',
+            text: '¡Pedido agregado correctamente!',
+          });
+        })
+        .catch((err) => console.error('Error al agregar pedido:', err));
+    }
+
+    if (change.type === 'update') {
+      const id = change.key;
+      const cleanData = { ...change.data };
+
+      Object.keys(cleanData).forEach((key) => {
+        if (/^__.*__$/.test(key)) {
+          delete cleanData[key];
+        }
+      });
+
+      this.cafeService
+        .updateOrder(id, cleanData)
+        .then(() => {
+          Swal.fire({
+            icon: 'success',
+            title: 'Éxito',
+            text: '¡Pedido actualizado correctamente!',
+          });
+        })
+        .catch((err) => console.error('Error al actualizar pedido:', err));
+    }
+  }
+
   onExporting(e: any) {}
 }

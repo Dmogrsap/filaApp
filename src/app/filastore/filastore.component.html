@@ -30,18 +30,77 @@
             [wordWrapEnabled]="true"
             [columnAutoWidth]="true"
             [repaintChangesOnly]="true"
+            (onSaving)="onSaving1($event)"
             (onRowUpdating)="onRowUpdating($event)"
             (onRowRemoving)="onRowRemoving($event)"
             (onEditorPreparing)="onEditorPreparing($event)"
           >
             <dxo-editing
-              mode="cell"
+              mode="popup"
               [allowAdding]="true"
               [allowUpdating]="true"
               [allowDeleting]="true"
               [useIcons]="true"
             >
+              <dxo-popup
+                title="Agregar / Editar Pedido"
+                [showTitle]="true"
+                [width]="700"
+                [height]="450"
+              >
+              </dxo-popup>
+              <dxo-form>
+                <dxi-item itemType="group" [colCount]="1" colSpan="2">
+                  <!-- Cliente (Coincide con dataField="cliente") -->
+                  <dxi-item dataField="cliente" editorType="dxTextBox">
+                    <dxo-label text="Nombre del cliente"> </dxo-label>
+                    <dxi-validation-rule
+                      type="required"
+                      message="Nombre Requerido"
+                    >
+                    </dxi-validation-rule>
+                  </dxi-item>
 
+                  <!-- Cantidad -->
+                  <dxi-item dataField="cantidad" editorType="dxNumberBox">
+                    <dxo-label text="Cantidad Total"> </dxo-label>
+                    <dxi-validation-rule
+                      type="required"
+                      message="Cantidad Requerida"
+                    >
+                    </dxi-validation-rule>
+                  </dxi-item>
+
+                  <!-- Estado (SelectBox con opciones fija) -->
+                  <dxi-item
+                    dataField="estado"
+                    editorType="dxSelectBox"
+                    [editorOptions]="{ items: ['pendiente', 'entregado'] }"
+                  >
+                    <dxo-label text="Estado del pedido"> </dxo-label>
+                    <dxi-validation-rule
+                      type="required"
+                      message="Estado Requerido"
+                    >
+                    </dxi-validation-rule>
+                  </dxi-item>
+
+                  <!-- Fecha (dxDateBox) -->
+                  <dxi-item
+                    dataField="fecha"
+                    editorType="dxDateBox"
+                    [editorOptions]="{ type: 'datetime' }"
+                  >
+                    <dxo-label text="Fecha"> </dxo-label>
+                    <dxi-validation-rule
+                      type="required"
+                      message="Fecha Requerida"
+                    >
+                    </dxi-validation-rule>
+                  </dxi-item>
+
+                </dxi-item>
+              </dxo-form>
             </dxo-editing>
 
             <dxo-filter-row [visible]="true"></dxo-filter-row>
