@@ -40,7 +40,14 @@ export class UsersComponent implements OnInit {
 
   ngOnInit() {
     this.userService.getUsers().subscribe((result) => {
-      this.dataSourceUsers = result.sort((a, b) => a.Nombre.localeCompare(b.Nombre));
+      const normalizedUsers = result.map((user: any) => ({
+        ...user,
+        Role: this.normalizeRole(user.Role),
+      }));
+
+      this.dataSourceUsers = normalizedUsers.sort((a, b) =>
+        a.Nombre.localeCompare(b.Nombre)
+      );
       this.loadIndicatorVisible = false;
       //console.log('DataSource', this.dataSourceUsers);
 
@@ -61,6 +68,30 @@ export class UsersComponent implements OnInit {
     });
   }
 
+  normalizeRole(role: any) {
+    if (Array.isArray(role)) {
+      return role.filter((item) => typeof item === 'string').join(', ');
+    }
+
+    if (typeof role === 'object' && role !== null) {
+      return role.Role || role.roleName || role.name || '';
+    }
+
+    return typeof role === 'string' ? role : '';
+  }
+
+  normalizeRoleField(data: any) {
+    if (!data) {
+      return data;
+    }
+
+    if (data.Role !== undefined) {
+      data.Role = this.normalizeRole(data.Role);
+    }
+
+    return data;
+  }
+
   valueChanged(data: any) {
     this.selectedUser = data.value;
     //console.log("this.selectedEmployee",this.selectedEmployee)
@@ -71,6 +102,31 @@ export class UsersComponent implements OnInit {
       return '';
     }
     return `$ ${item.Nombre}, `;
+  }
+
+  getRoleValue(rowData: any) {
+    const role = rowData?.Role;
+    if (Array.isArray(role)) {
+      return role.join(', ');
+    }
+    if (typeof role === 'object' && role !== null) {
+      return role.Role || role.roleName || role.name || '';
+    }
+    return role || '';
+  }
+
+  calculateRoleFilterExpression(filterValue: any, selectedFilterOperation: string, target: any) {
+    const roleValue = target;
+    if (Array.isArray(roleValue)) {
+      return roleValue.includes(filterValue);
+    }
+
+    if (typeof roleValue === 'object' && roleValue !== null) {
+      const value = roleValue.Role || roleValue.roleName || roleValue.name || '';
+      return value === filterValue;
+    }
+
+    return roleValue === filterValue;
   }
 
   // onSelectionChanged(
@@ -114,6 +170,7 @@ export class UsersComponent implements OnInit {
           delete cleanData[key];
         }
       });
+      this.normalizeRoleField(cleanData);
 
       this.userService.addUser(cleanData).then((docRef) => {
         //console.log('Usuario agregado con ID:', docRef.id);
@@ -137,6 +194,7 @@ export class UsersComponent implements OnInit {
           delete cleanData[key];
         }
       });
+      this.normalizeRoleField(cleanData);
 
       this.userService.updateUser(change.key.id, cleanData).then(() => {
         //console.log('Usuario actualizado');
