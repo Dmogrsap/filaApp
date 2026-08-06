@@ -46,6 +46,7 @@ export class FilastoreComponent implements OnInit {
     this.dataSourceMenusTab = [
       { Nombre: 'Fila Coffe test' },
       { Nombre: 'Pedidos de Cafe' },
+      { Nombre: 'Cobros de Cafe' },
       { Nombre: 'Añadir Nuevos Cafes' },
       { Nombre: 'Editar Insumos' },
     ];

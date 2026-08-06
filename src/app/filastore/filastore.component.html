@@ -30,13 +30,223 @@
             [wordWrapEnabled]="true"
             [columnAutoWidth]="true"
             [repaintChangesOnly]="true"
+            [startEditAction]="'click'"
             (onSaving)="onSaving1($event)"
             (onRowUpdating)="onRowUpdating($event)"
             (onRowRemoving)="onRowRemoving($event)"
             (onEditorPreparing)="onEditorPreparing($event)"
           >
             <dxo-editing
-              mode="popup"
+              mode="cell"
+              [allowAdding]="true"
+              [allowUpdating]="true"
+              [allowDeleting]="true"
+              [useIcons]="true"
+            >
+              <dxo-toolbar>
+                <dxi-item name="addRowButton"></dxi-item>
+              </dxo-toolbar>
+              <dxo-popup
+                title="Agregar / Editar Pedido"
+                [showTitle]="true"
+                [width]="700"
+                [height]="450"
+              >
+              </dxo-popup>
+              <dxo-form>
+                <dxi-item itemType="group" [colCount]="1" colSpan="2">
+                  <dxi-item dataField="cliente" editorType="dxTextBox">
+                    <dxo-label text="Nombre del cliente"> </dxo-label>
+                    <dxi-validation-rule
+                      type="required"
+                      message="Nombre Requerido"
+                    >
+                    </dxi-validation-rule>
+                  </dxi-item>
+
+                  <dxi-item
+                    dataField="producto"
+                    editorType="dxSelectBox"
+                    [editorOptions]="{
+                      dataSource: dataSourceCafes,
+                      displayExpr: 'Nombre',
+                      valueExpr: 'Nombre',
+                      searchEnabled: true,
+                      placeholder: 'Selecciona un café'
+                    }"
+                  >
+                    <dxo-label text="Café / Producto"> </dxo-label>
+                    <dxi-validation-rule
+                      type="required"
+                      message="Producto Requerido"
+                    >
+                    </dxi-validation-rule>
+                  </dxi-item>
+
+                  <dxi-item dataField="cantidad" editorType="dxNumberBox">
+                    <dxo-label text="Cantidad"> </dxo-label>
+                    <dxi-validation-rule
+                      type="required"
+                      message="Cantidad Requerida"
+                    >
+                    </dxi-validation-rule>
+                  </dxi-item>
+
+                  <dxi-item dataField="tamano" editorType="dxSelectBox" [editorOptions]="{ items: ['Pequeño', 'Mediano', 'Grande'] }">
+                    <dxo-label text="Tamaño"> </dxo-label>
+                  </dxi-item>
+
+                  <dxi-item dataField="leche" editorType="dxSelectBox" [editorOptions]="{ items: ['No', 'Entera', 'Light', 'Deslactosada'] }">
+                    <dxo-label text="Leche"> </dxo-label>
+                  </dxi-item>
+
+                  <dxi-item dataField="escencia" editorType="dxSelectBox" [editorOptions]="{ items: ['', 'Caramelo', 'Crema Irlandesa', 'Avellana'] }">
+                    <dxo-label text="Esencia"> </dxo-label>
+                  </dxi-item>
+
+                  <dxi-item dataField="azucar" editorType="dxCheckBox">
+                    <dxo-label text="Azúcar"> </dxo-label>
+                  </dxi-item>
+
+                  <dxi-item dataField="notas" editorType="dxTextArea">
+                    <dxo-label text="Notas"> </dxo-label>
+                  </dxi-item>
+
+                  <dxi-item
+                    dataField="estado"
+                    editorType="dxSelectBox"
+                    [editorOptions]="{ items: ['pendiente', 'entregado'] }"
+                  >
+                    <dxo-label text="Estado del pedido"> </dxo-label>
+                    <dxi-validation-rule
+                      type="required"
+                      message="Estado Requerido"
+                    >
+                    </dxi-validation-rule>
+                  </dxi-item>
+
+                  <dxi-item
+                    dataField="fecha"
+                    editorType="dxDateBox"
+                    [editorOptions]="{ type: 'datetime' }"
+                  >
+                    <dxo-label text="Fecha"> </dxo-label>
+                    <dxi-validation-rule
+                      type="required"
+                      message="Fecha Requerida"
+                    >
+                    </dxi-validation-rule>
+                  </dxi-item>
+
+                </dxi-item>
+              </dxo-form>
+            </dxo-editing>
+
+            <dxo-filter-row [visible]="true"></dxo-filter-row>
+            <dxo-header-filter [visible]="true"></dxo-header-filter>
+
+            <dxi-column
+              dataField="cliente"
+              caption="Cliente"
+              [allowEditing]="false"
+            ></dxi-column>
+            <dxi-column
+              dataField="producto"
+              caption="Producto"
+              [allowEditing]="false"
+            >
+              <ng-template dxTemplate="cell" let-data="data">
+                {{ (data.value || []).join(', ') }}
+              </ng-template>
+            </dxi-column>
+            <dxi-column
+              dataField="cantidad"
+              caption="Cant."
+              [allowEditing]="false"
+              alignment="center"
+            ></dxi-column>
+            <dxi-column
+              dataField="desglose"
+              caption="Desglose de Café"
+              [allowEditing]="false"
+              [allowFiltering]="false"
+              [allowHeaderFiltering]="false"
+              width="250"
+            >
+              <ng-template dxTemplate="cell" let-data="data">
+                <div class="desglose-cell">{{ data.value }}</div>
+              </ng-template>
+            </dxi-column>
+            <dxi-column
+              dataField="totalAPagar"
+              caption="Total a Pagar"
+              [allowEditing]="false"
+              alignment="center"
+              [allowFiltering]="false"
+              [allowHeaderFiltering]="false"
+            >
+              <dxo-format type="currency" precision="2"></dxo-format>
+            </dxi-column>
+
+            <dxi-column
+              dataField="estado"
+              caption="Estado del Pedido"
+              alignment="center"
+              filterValue="pendiente"
+              [allowEditing]="true"
+              [allowHeaderFiltering]="true"
+              [filterOperations]="['=', '<>']"
+            >
+              <dxo-lookup
+                [dataSource]="['pendiente', 'entregado']"
+                valueExpr="this"
+                displayExpr="this"
+              >
+              </dxo-lookup>
+              <dxo-header-filter
+                [visible]="true"
+                [allowSearch]="true"
+              ></dxo-header-filter>
+            </dxi-column>
+
+            <dxi-column
+              dataField="fecha"
+              caption="Fecha"
+              dataType="datetime"
+              [allowEditing]="false"
+              format="HH:mm dd/MM/yyyy"
+              sortOrder="asc"
+              [allowHeaderFiltering]="false"
+              [allowFiltering]="false"
+            ></dxi-column>
+            <dxi-column type="buttons" width="120">
+              <dxi-button name="edit"></dxi-button>
+              <dxi-button name="delete"></dxi-button>
+            </dxi-column>
+          </dx-data-grid>
+        </div>
+      </div>
+
+      <div *ngIf="items.Nombre == 'Cobros de Cafe'" class="container-fluid">
+        <div class="dashboard-container" style="padding: 20px">
+          <h2>Dashboard de Cobros de Café (Tiempo Real)</h2>
+
+          <dx-data-grid
+            [dataSource]="pedidos"
+            keyExpr="id"
+            [showBorders]="true"
+            [rowAlternationEnabled]="true"
+            [wordWrapEnabled]="true"
+            [columnAutoWidth]="true"
+            [repaintChangesOnly]="true"
+            [startEditAction]="'click'"
+            (onSaving)="onSaving($event)"
+            (onRowUpdating)="onRowUpdating($event)"
+            (onRowRemoving)="onRowRemoving($event)"
+            (onEditorPreparing)="onEditorPreparing($event)"
+          >
+            <dxo-editing
+              mode="cell"
               [allowAdding]="true"
               [allowUpdating]="true"
               [allowDeleting]="true"
