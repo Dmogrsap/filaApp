@@ -89,12 +89,12 @@
                   </select>
                 </div>
 
-                <div class="option-group">
+                <div class="option-group" *ngIf="insumos.azucar">
                   <label>Azúcar</label>
                   <select [(ngModel)]="cafe.azucar" name="azucar_{{ i }}">
                     <option value="sin azucar">Sin Azucar</option>
                     <option value="normal">Normal</option>
-                    <option value="splenda">Splenda</option>
+                    <option *ngIf="insumos.splenda" value="splenda">Splenda</option>
                   </select>
                 </div>
               </div>
@@ -200,12 +200,12 @@
                   </select>
                 </div>
 
-                <div class="option-group">
+                <div class="option-group" *ngIf="insumos.azucar">
                   <label>Azúcar</label>
                   <select [(ngModel)]="cafe.azucar" name="azucar_{{ i }}">
                     <option value="sin azucar">Sin Azucar</option>
                     <option value="normal">Normal</option>
-                    <option value="splenda">Splenda</option>
+                    <option *ngIf="insumos.splenda" value="splenda">Splenda</option>
                   </select>
                 </div>
               </div>

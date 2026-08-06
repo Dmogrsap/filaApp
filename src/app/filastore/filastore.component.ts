@@ -31,6 +31,8 @@ export class FilastoreComponent implements OnInit {
     caramelo: true,
     cremaIrlandesa: true,
     avellana: true,
+    azucar: true,
+    splenda: true,
   };
   private insumosSub: any;
   // Pedido manual desde grid
@@ -77,7 +79,7 @@ export class FilastoreComponent implements OnInit {
       if (res) {
         this.insumos = { ...this.insumos, ...res };
       }
-      console.log('Insumos', this.insumos);
+     // console.log('Insumos', this.insumos);
     });
   }
 

@@ -39,11 +39,14 @@ export class FilastoreclienteComponent implements OnInit {
 
   //Insumos leidos desde FilaStore
   public insumos: any = {
+    normal: true,
     light: true,
     deslactosada: true,
     caramelo: true,
     cremaIrlandesa: true,
     avellana: true,
+    azucar: true,
+    splenda: true,
   };
   private insumosSub: any;
 

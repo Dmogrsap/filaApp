@@ -471,7 +471,7 @@
 
           <div class="row mt-3">
             <!-- Tipos de Leche -->
-            <div class="col-md-6 mb-4">
+            <div class="col-md-4 mb-4">
               <h4>🥛 Leches</h4>
               <div class="d-flex align-items-center my-3">
                 <dx-switch
@@ -503,7 +503,7 @@
             </div>
 
             <!-- Esencias -->
-            <div class="col-md-6 mb-4">
+            <div class="col-md-4 mb-4">
               <h4>🧪 Esencias</h4>
               <div class="d-flex align-items-center my-3">
                 <dx-switch
@@ -530,6 +530,29 @@
                 ></dx-switch>
                 <span class="ms-3 fw-bold" style="margin-left: 10px"
                   >Avellana</span
+                >
+              </div>
+            </div>
+
+            <!-- Azúcar -->
+            <div class="col-md-4 mb-4">
+              <h4>🍬 Azúcar</h4>
+              <div class="d-flex align-items-center my-3">
+                <dx-switch
+                  [(value)]="insumos.azucar"
+                  (onValueChanged)="guardarInsumos()"
+                ></dx-switch>
+                <span class="ms-3 fw-bold" style="margin-left: 10px"
+                  >Azúcar</span
+                >
+              </div>
+              <div class="d-flex align-items-center my-3">
+                <dx-switch
+                  [(value)]="insumos.splenda"
+                  (onValueChanged)="guardarInsumos()"
+                ></dx-switch>
+                <span class="ms-3 fw-bold" style="margin-left: 10px"
+                  >Splenda</span
                 >
               </div>
             </div>
