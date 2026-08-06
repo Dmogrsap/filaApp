@@ -44,7 +44,6 @@ export class FilastoreComponent implements OnInit {
 
   ngOnInit(): void {
     this.dataSourceMenusTab = [
-      { Nombre: 'Fila Coffe test' },
       { Nombre: 'Pedidos de Cafe' },
       { Nombre: 'Cobros de Cafe' },
       { Nombre: 'Añadir Nuevos Cafes' },
@@ -60,6 +59,8 @@ export class FilastoreComponent implements OnInit {
             item.fecha && item.fecha.toDate ? item.fecha.toDate() : item.fecha,
           desglose: this.generarDesglose(item.detalles),
           totalAPagar: this.calcularTotal(item.detalles),
+          pago: item.pago || 'Pendiente de pagar',
+          metodoPago: item.metodoPago || 'Efectivo',
         }))
         .sort((a: any, b: any) => {
           const dateA = new Date(a.fecha).getTime();
@@ -105,21 +106,39 @@ export class FilastoreComponent implements OnInit {
   // Captura el cambio de estado directamente desde el Grid de DevExtreme
   onRowUpdating(e: any) {
     const id = e.key;
+    const cambios: any = {};
+
     if (e.newData.hasOwnProperty('estado')) {
+      cambios.estado = e.newData.estado;
+    }
+
+    if (e.newData.hasOwnProperty('pago')) {
+      cambios.pago = e.newData.pago;
+    }
+
+    if (e.newData.hasOwnProperty('metodoPago')) {
+      cambios.metodoPago = e.newData.metodoPago;
+    }
+
+    if (Object.keys(cambios).length > 0) {
       this.cafeService
-        .actualizarEstado(id, e.newData.estado)
+        .updateOrder(id, cambios)
         .then(() => {
-          console.log('Estado actualizado en Firestore');
-          // Si el estado cambia a Entregado, mostrar notificación
-          if (
-            (e.newData.estado || '').toString().toLowerCase() === 'entregado'
-          ) {
-            const pedido = this.pedidos.find((p: any) => p.id === id);
-            const nombre = this.getCustomerName(pedido);
-            this.notification.notify(
-              'Pedido listo',
-              `Pedido de ${nombre} listo para recoger`,
-            );
+          if (cambios.estado) {
+            console.log('Estado actualizado en Firestore');
+            if (
+              (cambios.estado || '').toString().toLowerCase() === 'entregado'
+            ) {
+              const pedido = this.pedidos.find((p: any) => p.id === id);
+              const nombre = this.getCustomerName(pedido);
+              this.notification.notify(
+                'Pedido listo',
+                `Pedido de ${nombre} listo para recoger`,
+              );
+            }
+          }
+          if (cambios.pago || cambios.metodoPago) {
+            console.log('Datos de cobro actualizados en Firestore');
           }
         })
         .catch((err: any) => console.error('Error al actualizar:', err));
