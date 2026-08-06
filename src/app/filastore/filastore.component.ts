@@ -25,6 +25,7 @@ export class FilastoreComponent implements OnInit {
   ordersByStatus: any[] = [];
 
   public insumos: any = {
+    normal: true,
     light: true,
     deslactosada: true,
     caramelo: true,
@@ -32,6 +33,7 @@ export class FilastoreComponent implements OnInit {
     avellana: true,
   };
   private insumosSub: any;
+  // Pedido manual desde grid
 
   constructor(
     private cafeService: CoffeeOrdersService,
@@ -78,6 +80,7 @@ export class FilastoreComponent implements OnInit {
       console.log('Insumos', this.insumos);
     });
   }
+
 
   // Genera desglose de productos (ej: "2x Espresso, 1x Americano")
   generarDesglose(detalles: any[]): string {
@@ -273,14 +276,30 @@ export class FilastoreComponent implements OnInit {
         }
       });
 
-      // Valores por defecto si no se llenan
+      const productoSeleccionado = cleanData.producto;
+      const cafeSeleccionado = this.dataSourceCafes.find(
+        (c: any) => c.Nombre === productoSeleccionado,
+      );
+      const precioUnitario = cafeSeleccionado?.Precio || 0;
+
+      const detalle = {
+        nombre: cleanData.producto || 'Pedido Manual',
+        cantidad: cleanData.cantidad || 1,
+        precio: precioUnitario,
+        tamano: cleanData.tamano || 'Mediano',
+        leche: cleanData.leche || 'No',
+        escencia: cleanData.escencia || '',
+        azucar: cleanData.azucar ? 'Si' : 'No',
+        notas: cleanData.notas || '',
+      };
+
       const nuevoPedido = {
-        cliente: cleanData.cliente || '',
+        cliente: cleanData.cliente || 'Manual',
         cantidad: cleanData.cantidad || 1,
         estado: cleanData.estado || 'pendiente',
         fecha: cleanData.fecha || new Date(),
-        producto: cleanData.producto || ['Pedido Manual'],
-        detalles: cleanData.detalles || [],
+        producto: [detalle.nombre],
+        detalles: [detalle],
       };
 
       this.cafeService
@@ -304,6 +323,33 @@ export class FilastoreComponent implements OnInit {
           delete cleanData[key];
         }
       });
+
+      // Si se actualiza el producto o la cantidad, regenerar detalles mínimos
+      if (cleanData.producto || cleanData.cantidad || cleanData.tamano || cleanData.leche || cleanData.escencia || cleanData.azucar !== undefined || cleanData.notas) {
+        const pedidoActual = this.pedidos.find((p: any) => p.id === id);
+        const productoActual = cleanData.producto || pedidoActual?.producto?.[0] || 'Pedido Manual';
+        const cafeActual = this.dataSourceCafes.find((c: any) => c.Nombre === productoActual);
+        const precioUnitario = cafeActual?.Precio || pedidoActual?.detalles?.[0]?.precio || 0;
+
+        cleanData.detalles = [
+          {
+            nombre: productoActual,
+            cantidad: cleanData.cantidad ?? pedidoActual?.cantidad ?? 1,
+            precio: precioUnitario,
+            tamano: cleanData.tamano || pedidoActual?.detalles?.[0]?.tamano || 'Mediano',
+            leche: cleanData.leche || pedidoActual?.detalles?.[0]?.leche || 'No',
+            escencia: cleanData.escencia || pedidoActual?.detalles?.[0]?.escencia || '',
+            azucar:
+              cleanData.azucar !== undefined
+                ? cleanData.azucar
+                  ? 'Si'
+                  : 'No'
+                : pedidoActual?.detalles?.[0]?.azucar || 'No',
+            notas: cleanData.notas || pedidoActual?.detalles?.[0]?.notas || '',
+          },
+        ];
+        cleanData.producto = [productoActual];
+      }
 
       this.cafeService
         .updateOrder(id, cleanData)

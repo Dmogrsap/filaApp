@@ -42,6 +42,9 @@
               [allowDeleting]="true"
               [useIcons]="true"
             >
+              <dxo-toolbar>
+                <dxi-item name="addRowButton"></dxi-item>
+              </dxo-toolbar>
               <dxo-popup
                 title="Agregar / Editar Pedido"
                 [showTitle]="true"
@@ -51,7 +54,6 @@
               </dxo-popup>
               <dxo-form>
                 <dxi-item itemType="group" [colCount]="1" colSpan="2">
-                  <!-- Cliente (Coincide con dataField="cliente") -->
                   <dxi-item dataField="cliente" editorType="dxTextBox">
                     <dxo-label text="Nombre del cliente"> </dxo-label>
                     <dxi-validation-rule
@@ -61,9 +63,27 @@
                     </dxi-validation-rule>
                   </dxi-item>
 
-                  <!-- Cantidad -->
+                  <dxi-item
+                    dataField="producto"
+                    editorType="dxSelectBox"
+                    [editorOptions]="{
+                      dataSource: dataSourceCafes,
+                      displayExpr: 'Nombre',
+                      valueExpr: 'Nombre',
+                      searchEnabled: true,
+                      placeholder: 'Selecciona un café'
+                    }"
+                  >
+                    <dxo-label text="Café / Producto"> </dxo-label>
+                    <dxi-validation-rule
+                      type="required"
+                      message="Producto Requerido"
+                    >
+                    </dxi-validation-rule>
+                  </dxi-item>
+
                   <dxi-item dataField="cantidad" editorType="dxNumberBox">
-                    <dxo-label text="Cantidad Total"> </dxo-label>
+                    <dxo-label text="Cantidad"> </dxo-label>
                     <dxi-validation-rule
                       type="required"
                       message="Cantidad Requerida"
@@ -71,7 +91,26 @@
                     </dxi-validation-rule>
                   </dxi-item>
 
-                  <!-- Estado (SelectBox con opciones fija) -->
+                  <dxi-item dataField="tamano" editorType="dxSelectBox" [editorOptions]="{ items: ['Pequeño', 'Mediano', 'Grande'] }">
+                    <dxo-label text="Tamaño"> </dxo-label>
+                  </dxi-item>
+
+                  <dxi-item dataField="leche" editorType="dxSelectBox" [editorOptions]="{ items: ['No', 'Entera', 'Light', 'Deslactosada'] }">
+                    <dxo-label text="Leche"> </dxo-label>
+                  </dxi-item>
+
+                  <dxi-item dataField="escencia" editorType="dxSelectBox" [editorOptions]="{ items: ['', 'Caramelo', 'Crema Irlandesa', 'Avellana'] }">
+                    <dxo-label text="Esencia"> </dxo-label>
+                  </dxi-item>
+
+                  <dxi-item dataField="azucar" editorType="dxCheckBox">
+                    <dxo-label text="Azúcar"> </dxo-label>
+                  </dxi-item>
+
+                  <dxi-item dataField="notas" editorType="dxTextArea">
+                    <dxo-label text="Notas"> </dxo-label>
+                  </dxi-item>
+
                   <dxi-item
                     dataField="estado"
                     editorType="dxSelectBox"
@@ -85,7 +124,6 @@
                     </dxi-validation-rule>
                   </dxi-item>
 
-                  <!-- Fecha (dxDateBox) -->
                   <dxi-item
                     dataField="fecha"
                     editorType="dxDateBox"
@@ -111,11 +149,15 @@
               caption="Cliente"
               [allowEditing]="false"
             ></dxi-column>
-            <!-- <dxi-column
+            <dxi-column
               dataField="producto"
-              caption="Café / Producto"
+              caption="Producto"
               [allowEditing]="false"
-            ></dxi-column> -->
+            >
+              <ng-template dxTemplate="cell" let-data="data">
+                {{ (data.value || []).join(', ') }}
+              </ng-template>
+            </dxi-column>
             <dxi-column
               dataField="cantidad"
               caption="Cant."
@@ -182,6 +224,8 @@
           </dx-data-grid>
         </div>
       </div>
+
+      <!-- Popup para crear pedido manual desde el grid de Cafes -->
 
       <div
         *ngIf="items.Nombre == 'Añadir Nuevos Cafes'"
@@ -429,6 +473,15 @@
             <!-- Tipos de Leche -->
             <div class="col-md-6 mb-4">
               <h4>🥛 Leches</h4>
+              <div class="d-flex align-items-center my-3">
+                <dx-switch
+                  [(value)]="insumos.normal"
+                  (onValueChanged)="guardarInsumos()"
+                ></dx-switch>
+                <span class="ms-3 fw-bold" style="margin-left: 10px"
+                  >Leche Normal</span
+                >
+              </div>
               <div class="d-flex align-items-center my-3">
                 <dx-switch
                   [(value)]="insumos.light"

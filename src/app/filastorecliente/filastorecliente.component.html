@@ -67,7 +67,8 @@
                 <div class="option-group">
                   <label>Leche</label>
                   <select [(ngModel)]="cafe.leche" name="leche_{{ i }}">
-                    <option *ngIf="insumos.light" value="light">light</option>
+                    <option *ngIf="insumos.normal" value="normal">Normal</option>
+                    <option *ngIf="insumos.light" value="light">Light</option>
                     <option *ngIf="insumos.deslactosada" value="deslactosada">Deslactosada</option>
                   </select>
                 </div>
@@ -181,6 +182,7 @@
                 <div class="option-group " *ngIf="cafe.Nombre == 'Latte a las rocas'">
                   <label>Leche</label>
                   <select [(ngModel)]="cafe.leche" name="leche_{{ i }}">
+                    <option *ngIf="insumos.light" value="light">Normal</option>
                     <option *ngIf="insumos.light" value="light">Light</option>
                     <option *ngIf="insumos.deslactosada" value="deslactosada">Deslactosada</option>
                   </select>
