@@ -63,6 +63,7 @@ export class FilastoreclienteComponent implements OnInit {
     this.cafeService.getCafes().subscribe((result) => {
       this.listaCafes = result.map((item: any) => ({
         ...item,
+        
         Nombre:
           item.Nombre ||
           item.nombre ||
@@ -70,6 +71,7 @@ export class FilastoreclienteComponent implements OnInit {
           item.producto ||
           item.title ||
           'Café',
+        imagen: item.imagen || item.Imagen || `assets/img/` + (item.Nombre || item.nombre || 'cafe') + ('.jpeg'),
         leche: '',
         azucar: '',
         escencia: '',
