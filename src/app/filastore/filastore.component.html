@@ -106,7 +106,7 @@
                     dataField="leche"
                     editorType="dxSelectBox"
                     [editorOptions]="{
-                      items: ['No', 'Entera', 'Light', 'Deslactosada'],
+                      items: ['', 'Entera', 'Light', 'Deslactosada'],
                     }"
                   >
                     <dxo-label text="Leche"> </dxo-label>
@@ -116,7 +116,7 @@
                     dataField="escencia"
                     editorType="dxSelectBox"
                     [editorOptions]="{
-                      items: ['', 'Caramelo', 'Crema Irlandesa', 'Avellana'],
+                      items: ['', 'Caramelo', 'Crema Irlandesa', 'Avellana', 'Moka', 'Vainilla'],
                     }"
                   >
                     <dxo-label text="Esencia"> </dxo-label>
@@ -332,7 +332,7 @@
                     dataField="leche"
                     editorType="dxSelectBox"
                     [editorOptions]="{
-                      items: ['No', 'Entera', 'Light', 'Deslactosada'],
+                      items: ['', 'Entera', 'Light', 'Deslactosada'],
                     }"
                   >
                     <dxo-label text="Leche"> </dxo-label>
@@ -342,7 +342,7 @@
                     dataField="escencia"
                     editorType="dxSelectBox"
                     [editorOptions]="{
-                      items: ['', 'Caramelo', 'Crema Irlandesa', 'Avellana'],
+                      items: ['', 'Caramelo', 'Crema Irlandesa', 'Avellana', 'Moka', 'Vainilla'],
                     }"
                   >
                     <dxo-label text="Esencia"> </dxo-label>
@@ -809,6 +809,27 @@
                   >Avellana</span
                 >
               </div>
+
+              <div class="d-flex align-items-center my-3">
+                <dx-switch
+                  [(value)]="insumos.moka"
+                  (onValueChanged)="guardarInsumos()"
+                ></dx-switch>
+                <span class="ms-3 fw-bold" style="margin-left: 10px"
+                  >Moka</span
+                >
+              </div>
+
+              <div class="d-flex align-items-center my-3">
+                <dx-switch
+                  [(value)]="insumos.vainilla"
+                  (onValueChanged)="guardarInsumos()"
+                ></dx-switch>
+                <span class="ms-3 fw-bold" style="margin-left: 10px"
+                  >Vainilla</span
+                >
+              </div>
+
             </div>
 
             <!-- Azúcar -->
