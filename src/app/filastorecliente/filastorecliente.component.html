@@ -322,6 +322,16 @@
         maxlength="50"
         required
       />
+      <p>Selecciona Método de Pago</p>
+      <select
+        class="checkout-select"
+        [(ngModel)]="pedidos.metodoPago"
+        name="metodoPago"
+        required
+      >
+        <option value="Efectivo">Efectivo</option>
+        <option value="Tarjeta">Tarjeta</option>
+      </select>
       <button class="btn-checkout" (click)="enviarPedido($event)">
         Confirmar Pedido
       </button>

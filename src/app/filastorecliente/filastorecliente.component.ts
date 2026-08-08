@@ -21,7 +21,13 @@ interface CartItem {
   styleUrls: ['./filastorecliente.component.css'],
 })
 export class FilastoreclienteComponent implements OnInit {
-  pedidos = { cliente: '', producto: [] as string[], cantidad: 1 };
+  pedidos = {
+    cliente: '',
+    producto: [] as string[],
+    cantidad: 1,
+    metodoPago: 'Efectivo',
+    pago: 'Pendiente de pagar',
+  };
   public listaCafes: any[] = [];
   public cafesCalienes: any[] = [];
   public cafesFrios: any[] = [];
@@ -315,6 +321,8 @@ export class FilastoreclienteComponent implements OnInit {
       cantidad: cantidadTotal,
       estado: 'pendiente',
       fecha: new Date(),
+      metodoPago: this.pedidos.metodoPago || 'Efectivo',
+      pago: this.pedidos.pago || 'Pendiente de pagar',
       detalles: productosConCantidad, // Guardar detalles completos con opciones
     };
 
@@ -344,7 +352,13 @@ export class FilastoreclienteComponent implements OnInit {
           // ignore
         }
 
-        this.pedidos = { cliente: '', producto: [], cantidad: 1 };
+        this.pedidos = {
+          cliente: '',
+          producto: [],
+          cantidad: 1,
+          metodoPago: 'Efectivo',
+          pago: 'Pendiente de pagar',
+        };
         this.carrito = [];
         this.mostrarCarrito = false;
       })

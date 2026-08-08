@@ -326,7 +326,7 @@ export class FilastoreComponent implements OnInit {
         detalles: [detalle],
       };
 
-      this.cafeService
+      const savePromise = this.cafeService
         .addOrder(nuevoPedido)
         .then(() => {
           Swal.fire({
@@ -335,7 +335,12 @@ export class FilastoreComponent implements OnInit {
             text: '¡Pedido agregado correctamente!',
           });
         })
-        .catch((err) => console.error('Error al agregar pedido:', err));
+        .catch((err) => {
+          console.error('Error al agregar pedido:', err);
+          throw err;
+        });
+
+      e.promise = savePromise;
     }
 
     if (change.type === 'update') {
