@@ -127,7 +127,7 @@ export class FilastoreComponent implements OnInit {
         .updateOrder(id, cambios)
         .then(() => {
           if (cambios.estado) {
-            console.log('Estado actualizado en Firestore');
+            //console.log('Estado actualizado en Firestore');
             if (
               (cambios.estado || '').toString().toLowerCase() === 'entregado'
             ) {
@@ -140,7 +140,7 @@ export class FilastoreComponent implements OnInit {
             }
           }
           if (cambios.pago || cambios.metodoPago) {
-            console.log('Datos de cobro actualizados en Firestore');
+            //  console.log('Datos de cobro actualizados en Firestore');
           }
         })
         .catch((err: any) => console.error('Error al actualizar:', err));
