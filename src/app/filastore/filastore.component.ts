@@ -11,6 +11,7 @@ import Swal from 'sweetalert2';
 export class FilastoreComponent implements OnInit {
   public dataSourceMenusTab: any[] = [];
   public dataSourceCafes: any[] = [];
+  public dataSourceCalendar: any[] = [];
   public pedidos: any[] = [];
   private sub: any;
   public loadIndicatorVisible = true;
@@ -37,7 +38,17 @@ export class FilastoreComponent implements OnInit {
     splenda: true,
   };
   private insumosSub: any;
-  // Pedido manual desde grid
+
+  // +++++  variables calendario  ++++++ //
+
+  public rolesCafeList: any[] = [];
+  public vistaActual: 'calendario' | 'tabla' = 'calendario';
+
+  // Opciones predefinidas para dropdowns en DevExtreme
+  public turnosOptions = ['Primer Servicio (9:00 AM)', 'Segundo Servicio (11:30 AM)', 'Especial / Evento'];
+  public tareasOptions = ['Barista', 'Caja / Cobros', 'Atención en Barra', 'Limpieza y Insumos'];
+ 
+  // +++++  cierre de variables calendario  ++++++ //
 
   constructor(
     private cafeService: CoffeeOrdersService,
@@ -50,6 +61,7 @@ export class FilastoreComponent implements OnInit {
       { Nombre: 'Cobros de Cafe' },
       { Nombre: 'Añadir Nuevos Cafes' },
       { Nombre: 'Editar Insumos' },
+      { Nombre: 'Calendario' },
     ];
 
     // Escucha en tiempo real de Firestore
@@ -85,6 +97,15 @@ export class FilastoreComponent implements OnInit {
       }
      // console.log('Insumos', this.insumos);
     });
+
+    this.cafeService.getCalendarEvents().subscribe((result) => {
+      this.dataSourceCalendar = result.sort((a, b) =>
+        a.fecha.localeCompare(b.fecha),
+      );
+      this.loadIndicatorVisible = false;
+      console.log('Calendario', this.dataSourceCalendar);
+    });
+
   }
 
 
@@ -390,6 +411,44 @@ export class FilastoreComponent implements OnInit {
           });
         })
         .catch((err) => console.error('Error al actualizar pedido:', err));
+    }
+  }
+
+  onSavingGrid(e: any) {
+    const change = e.changes[0];
+    if (!change) return;
+
+    if (change.type === 'insert') {
+      const data = { ...change.data, fecha: new Date(change.data.fecha) };
+      e.promise = this.cafeService.addCalendarEvent(data);
+    } else if (change.type === 'update') {
+      this.cafeService.updateCalendarEvent(change.key.id, change.data).then(() => {
+        //console.log('Usuario actualizado');
+        Swal.fire({
+          icon: 'success',
+          title: 'success',
+          text: 'Date list Updated Successfully!',
+        });
+      });
+    } else if (change.type === 'remove') {
+       if (change.type == 'remove') {
+      const id = typeof change.key === 'string' ? change.key : change.key.id;
+      this.cafeService.deleteCalendarEvent(id).then(() => {
+        
+        Swal.fire({
+          icon: 'success',
+          title: 'success',
+          text: 'Date list Eliminated',
+        });
+        this.cafeService.getCafes().subscribe((result) => {
+          this.dataSourceCafes = result.sort((a, b) =>
+            a.Nombre.localeCompare(b.Nombre),
+          );
+          this.loadIndicatorVisible = false;
+          //console.log('Cafes', this.dataSourceCafes);
+        });
+      });
+      }
     }
   }
 

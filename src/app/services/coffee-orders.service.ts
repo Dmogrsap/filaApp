@@ -98,4 +98,25 @@ export class CoffeeOrdersService {
     const docRef = doc(this.firestore, 'insumos', 'disponibilidad');
     return setDoc(docRef, data);
   }
+
+  getCalendarEvents(): Observable<any[]> {
+    const ref = collection(this.firestore, 'calendarEventsCoffee');
+    return collectionData(ref, { idField: 'id' });
+  }
+
+  addCalendarEvent(event: Omit<any, 'id'>) {
+    const ref = collection(this.firestore, 'calendarEventsCoffee');
+    return addDoc(ref, event);
+  }
+  
+  updateCalendarEvent(id: string, data: Partial<any>) {
+    const docRef = doc(this.firestore, 'calendarEventsCoffee', id);
+    return updateDoc(docRef, data);
+  }
+
+  deleteCalendarEvent(id: string) {
+    const docRef = doc(this.firestore, 'calendarEventsCoffee', id);
+    return deleteDoc(docRef);
+  }
+
 }

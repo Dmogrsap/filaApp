@@ -116,7 +116,14 @@
                     dataField="escencia"
                     editorType="dxSelectBox"
                     [editorOptions]="{
-                      items: ['', 'Caramelo', 'Crema Irlandesa', 'Avellana', 'Moka', 'Vainilla'],
+                      items: [
+                        '',
+                        'Caramelo',
+                        'Crema Irlandesa',
+                        'Avellana',
+                        'Moka',
+                        'Vainilla',
+                      ],
                     }"
                   >
                     <dxo-label text="Esencia"> </dxo-label>
@@ -342,7 +349,14 @@
                     dataField="escencia"
                     editorType="dxSelectBox"
                     [editorOptions]="{
-                      items: ['', 'Caramelo', 'Crema Irlandesa', 'Avellana', 'Moka', 'Vainilla'],
+                      items: [
+                        '',
+                        'Caramelo',
+                        'Crema Irlandesa',
+                        'Avellana',
+                        'Moka',
+                        'Vainilla',
+                      ],
                     }"
                   >
                     <dxo-label text="Esencia"> </dxo-label>
@@ -815,9 +829,7 @@
                   [(value)]="insumos.moka"
                   (onValueChanged)="guardarInsumos()"
                 ></dx-switch>
-                <span class="ms-3 fw-bold" style="margin-left: 10px"
-                  >Moka</span
-                >
+                <span class="ms-3 fw-bold" style="margin-left: 10px">Moka</span>
               </div>
 
               <div class="d-flex align-items-center my-3">
@@ -829,7 +841,6 @@
                   >Vainilla</span
                 >
               </div>
-
             </div>
 
             <!-- Azúcar -->
@@ -854,6 +865,200 @@
                 >
               </div>
             </div>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="items.Nombre == 'Calendario'" class="container-fluid">
+        <br />
+        <div
+          class="card p-4 shadow-sm"
+          style="background-color: #ffffff; border-radius: 8px"
+        >
+          <h3>📅 Calendario</h3>
+          <p class="text-muted">
+            Aquí puedes ver y gestionar los eventos programados para cuando te
+            toque servir.
+          </p>
+          <hr />
+
+          <div>
+            <button
+              class="btn me-2"
+              [ngClass]="
+                vistaActual === 'calendario'
+                  ? 'btn-primary'
+                  : 'btn-outline-primary'
+              "
+              (click)="vistaActual = 'calendario'"
+            >
+              📅 Vista Calendario
+            </button>
+            <button
+              class="btn"
+              [ngClass]="
+                vistaActual === 'tabla' ? 'btn-primary' : 'btn-outline-primary'
+              "
+              (click)="vistaActual = 'tabla'"
+            >
+              📋 Vista Tabla (Grid)
+            </button>
+          </div>
+
+          <!-- VISTA 1: CALENDARIO (dx-scheduler) -->
+          <div *ngIf="vistaActual === 'calendario'">
+            <dx-scheduler
+              [dataSource]="dataSourceCalendar"
+              [views]="['month', 'week', 'agenda']"
+              currentView="week"
+              [startDayHour]="7"
+              [endDayHour]="15"
+              [firstDayOfWeek]="0"
+              (onSaving)="onSavingGrid($event)"
+            >
+            </dx-scheduler>
+          </div>
+
+          <!-- VISTA 2: TABLA ADMINISTRATIVA (dx-data-grid) -->
+          <div *ngIf="vistaActual === 'tabla'">
+            <dx-data-grid
+              [dataSource]="dataSourceCalendar"
+              keyExpr="id"
+              [showBorders]="true"
+              [rowAlternationEnabled]="true"
+              (onSaving)="onSavingGrid($event)"
+            >
+              <dxo-editing
+                mode="row"
+                [allowAdding]="true"
+                [allowUpdating]="true"
+                [allowDeleting]="true"
+                [useIcons]="true"
+              >
+                <dxo-popup
+                  title="Add/Edit Coffees"
+                  [showTitle]="true"
+                  [width]="700"
+                  [height]="525"
+                >
+                </dxo-popup>
+                <dxo-form>
+                  <dxi-item itemType="group" [colCount]="1" colSpan="2">
+                    <dxi-item
+                      dataField="servidor"
+                      editorType="dxTextBox"
+                      [editorOptions]="{
+                        dataSource: dataSourceCafes,
+                        displayExpr: 'Nombre',
+                        valueExpr: 'Nombre',
+                      }"
+                    >
+                      <dxo-label text="Nombre"> </dxo-label>
+                      <dxi-validation-rule
+                        type="required"
+                        message="Name Required"
+                      >
+                      </dxi-validation-rule>
+                    </dxi-item>
+
+                    <dxi-item
+                      dataField="Descripcion"
+                      editorType="dxTextBox"
+                      [editorOptions]="{
+                        dataSource: dataSourceCafes,
+                        displayExpr: 'Ingrediente principal',
+                        valueExpr: 'Descripcion',
+                      }"
+                    >
+                      <dxo-label text="Ingrediente principal"> </dxo-label>
+                    </dxi-item>
+
+                    <dxi-item
+                      dataField="Tipo de Cafe"
+                      editorType="dxSelectBox"
+                      [editorOptions]="{
+                        items: tipodeCafeOptions,
+                        placeholder: 'Seleccione un tipo',
+                      }"
+                    >
+                      <dxo-label text="Tipo de Cafe"> </dxo-label>
+                      <dxi-validation-rule
+                        type="required"
+                        message="Type Required"
+                      >
+                      </dxi-validation-rule>
+                    </dxi-item>
+
+                    <dxi-item
+                      dataField="Precio"
+                      editorType="dxTextBox"
+                      [editorOptions]="{
+                        dataSource: dataSourceCafes,
+                        displayExpr: 'Precio',
+                        valueExpr: 'Precio',
+                      }"
+                    >
+                      <dxo-label text="Precio"> </dxo-label>
+                      <dxi-validation-rule
+                        type="required"
+                        message="Price Required"
+                      >
+                      </dxi-validation-rule>
+                    </dxi-item>
+
+                    <dxi-item
+                      dataField="Tamaño"
+                      editorType="dxTextBox"
+                      [editorOptions]="{
+                        dataSource: dataSourceCafes,
+                        displayExpr: 'Tamaño',
+                        valueExpr: 'Tamaño',
+                      }"
+                    >
+                      <dxo-label text="Tamaño"> </dxo-label>
+                    </dxi-item>
+
+                    <dxi-item
+                      dataField="Status"
+                      editorType="dxSwitch"
+                      [editorOptions]="{
+                        dataSource: dataSourceCafes,
+                        displayExpr: 'Existencia',
+                        valueExpr: 'Status',
+                        switchedOnText: 'Yes',
+                        switchedOffText: 'NO',
+                        width: 80,
+                      }"
+                    >
+                      <dxo-label location="left"></dxo-label>
+                    </dxi-item>
+                  </dxi-item>
+                </dxo-form>
+              </dxo-editing>
+
+              <dxo-filter-row [visible]="true"></dxo-filter-row>
+              <dxo-header-filter [visible]="true"></dxo-header-filter>
+
+              <dxi-column dataField="servidor" caption="Servidor"></dxi-column>
+
+              <dxi-column
+                dataField="fecha"
+                caption="Fecha y Hora"
+                dataType="datetime"
+                format="dd/MM/yyyy HH:mm"
+              ></dxi-column>
+
+              <dxi-column
+                dataField="confirmado"
+                caption="¿Confirmó?"
+                dataType="boolean"
+              ></dxi-column>
+
+              <dxi-column type="buttons" width="110">
+                <dxi-button name="edit"></dxi-button>
+                <dxi-button name="delete"></dxi-button>
+              </dxi-column>
+            </dx-data-grid>
           </div>
         </div>
       </div>
