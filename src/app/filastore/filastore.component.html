@@ -921,7 +921,7 @@
 
           <!-- VISTA 2: TABLA ADMINISTRATIVA (dx-data-grid) -->
           <div *ngIf="vistaActual === 'tabla'">
-            <dx-data-grid
+            <!-- <dx-data-grid
               [dataSource]="dataSourceCalendar"
               keyExpr="id"
               [showBorders]="true"
@@ -1045,8 +1045,11 @@
                 dataField="fecha"
                 caption="Fecha y Hora"
                 dataType="datetime"
-                format="dd/MM/yyyy HH:mm"
+                format="HH:mm dd/MM/yyyy"
+                [allowHeaderFiltering]="true"
+                [allowFiltering]="true"
               ></dxi-column>
+              
 
               <dxi-column
                 dataField="confirmado"
@@ -1055,6 +1058,88 @@
               ></dxi-column>
 
               <dxi-column type="buttons" width="110">
+                <dxi-button name="edit"></dxi-button>
+                <dxi-button name="delete"></dxi-button>
+              </dxi-column>
+            </dx-data-grid> -->
+            <dx-data-grid
+              [dataSource]="dataSourceCalendar"
+              keyExpr="id"
+              [showBorders]="true"
+              [rowAlternationEnabled]="true"
+              [wordWrapEnabled]="true"
+              [columnAutoWidth]="true"
+              [repaintChangesOnly]="true"
+              [startEditAction]="'click'"
+              (onSaving)="onSaving1($event)"
+              (onRowUpdating)="onRowUpdating($event)"
+              (onRowRemoving)="onRowRemoving($event)"
+              (onEditorPreparing)="onEditorPreparing($event)"
+            >
+              <dxo-editing
+                mode="cell"
+                [allowAdding]="true"
+                [allowUpdating]="true"
+                [allowDeleting]="true"
+                [useIcons]="true"
+              >
+                <dxo-toolbar>
+                  <dxi-item name="addRowButton"></dxi-item>
+                </dxo-toolbar>
+                <dxo-popup
+                  title="Agregar / Editar fecha"
+                  [showTitle]="true"
+                  [width]="700"
+                  [height]="450"
+                >
+                </dxo-popup>
+                <dxo-form>
+                  <dxi-item itemType="group" [colCount]="1" colSpan="2">
+                    <dxi-item dataField="servidor" editorType="dxTextBox">
+                      <dxo-label text="Nombre del Servidor"> </dxo-label>
+                      <dxi-validation-rule
+                        type="required"
+                        message="Nombre Requerido"
+                      >
+                      </dxi-validation-rule>
+                    </dxi-item>
+
+                    <dxi-item
+                      dataField="fecha"
+                      editorType="dxDateBox"
+                      [editorOptions]="{ type: 'datetime' }"
+                    >
+                      <dxo-label text="Fecha"> </dxo-label>
+                      <dxi-validation-rule
+                        type="required"
+                        message="Fecha Requerida"
+                      >
+                      </dxi-validation-rule>
+                    </dxi-item>
+                  </dxi-item>
+                </dxo-form>
+              </dxo-editing>
+
+              <dxo-filter-row [visible]="true"></dxo-filter-row>
+              <dxo-header-filter [visible]="true"></dxo-header-filter>
+
+              <dxi-column
+                dataField="servidor"
+                caption="Servidor"
+                [allowEditing]="false"
+              ></dxi-column>
+
+              <dxi-column
+                dataField="fecha"
+                caption="Fecha"
+                dataType="datetime"
+                [allowEditing]="false"
+                format="HH:mm dd/MM/yyyy"
+                sortOrder="asc"
+                [allowHeaderFiltering]="false"
+                [allowFiltering]="false"
+              ></dxi-column>
+              <dxi-column type="buttons" width="120">
                 <dxi-button name="edit"></dxi-button>
                 <dxi-button name="delete"></dxi-button>
               </dxi-column>

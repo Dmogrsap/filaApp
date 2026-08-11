@@ -103,7 +103,7 @@ export class FilastoreComponent implements OnInit {
         a.fecha.localeCompare(b.fecha),
       );
       this.loadIndicatorVisible = false;
-      console.log('Calendario', this.dataSourceCalendar);
+      //console.log('Calendario', this.dataSourceCalendar);
     });
 
   }
