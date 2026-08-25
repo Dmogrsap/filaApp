@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CoffeeOrdersService } from '../services/coffee-orders.service';
 import { NotificationService } from '../services/notification.service';
+import { SupabaseStorageService } from '../services/supabase-storage.service';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -8,14 +9,20 @@ import Swal from 'sweetalert2';
   templateUrl: './filastore.component.html',
   styleUrls: ['./filastore.component.css'],
 })
-export class FilastoreComponent implements OnInit {
+export class FilastoreComponent implements OnInit, OnDestroy {
   public dataSourceMenusTab: any[] = [];
   public dataSourceCafes: any[] = [];
   public dataSourceCalendar: any[] = [];
   public pedidos: any[] = [];
   private sub: any;
+  private cafesSub: any;
   public loadIndicatorVisible = true;
   public tipodeCafeOptions: string[] = ['Caliente', 'Helado'];
+
+  // Variables para subida de imagen de café
+  public subiendoImagen = false;
+  public previewImagenUrl: string | null = null;
+  public currentUploadedUrl: string | null = null;
 
   // KPIs
   totalOrders = 0;
@@ -62,6 +69,7 @@ export class FilastoreComponent implements OnInit {
   constructor(
     private cafeService: CoffeeOrdersService,
     private notification: NotificationService,
+    private storageService: SupabaseStorageService,
   ) {}
 
   ngOnInit(): void {
@@ -92,15 +100,7 @@ export class FilastoreComponent implements OnInit {
         });
     });
 
-    // this.cafeService.getCafes().subscribe((result) => {
-    //   this.dataSourceCafes = result.sort((a, b) =>
-    //     a.Nombre.localeCompare(b.Nombre),
-    //   );
-    //   this.loadIndicatorVisible = false;
-    //   console.log('Añadir Cafes', this.dataSourceCafes);
-    // });
-
-    this.cafeService.getCafes().subscribe({
+    this.cafesSub = this.cafeService.getCafes().subscribe({
       next: (result) => {
         this.dataSourceCafes = (result || [])
           .map((item: any) => ({
@@ -113,6 +113,7 @@ export class FilastoreComponent implements OnInit {
             Tamaño: item.Tamaño || item.Tamano || item.tamano || '',
             Status:
               item.Status !== undefined ? item.Status : (item.status ?? true),
+            imagen: item.imagen || item.Imagen || '',
           }))
           .sort((a, b) => (a.Nombre || '').localeCompare(b.Nombre || ''));
         this.loadIndicatorVisible = false;
@@ -233,6 +234,7 @@ export class FilastoreComponent implements OnInit {
 
   ngOnDestroy(): void {
     if (this.sub) this.sub.unsubscribe();
+    if (this.cafesSub) this.cafesSub.unsubscribe();
     if (this.insumosSub) this.insumosSub.unsubscribe();
   }
 
@@ -243,11 +245,61 @@ export class FilastoreComponent implements OnInit {
     return `$ ${item.Nombre}, `;
   }
 
+  onInitNewCoffeeRow(e: any) {
+    this.previewImagenUrl = null;
+    this.currentUploadedUrl = null;
+  }
+
+  onEditingCoffeeStart(e: any) {
+    this.previewImagenUrl = e.data?.imagen || e.data?.Imagen || null;
+    this.currentUploadedUrl = this.previewImagenUrl;
+  }
+
+  async onCoffeeImageSelected(e: any, formItemData: any) {
+    const file: File | undefined = e.value?.[0];
+    if (!file) return;
+
+    try {
+      this.subiendoImagen = true;
+
+      // Preview local instantáneo
+      const reader = new FileReader();
+      reader.onload = (event: any) => {
+        this.previewImagenUrl = event.target.result;
+      };
+      reader.readAsDataURL(file);
+
+      // Subir archivo a la carpeta 'cafes' en Storage
+      const { url } = await this.storageService.uploadFile(file, 'cafes');
+      this.currentUploadedUrl = url;
+
+      // Actualizar el valor en el formulario de DevExtreme
+      if (formItemData?.component) {
+        formItemData.component.updateData('imagen', url);
+      }
+
+      Swal.fire({
+        icon: 'success',
+        title: 'Imagen subida',
+        text: 'La imagen se cargó correctamente',
+        timer: 1500,
+        showConfirmButton: false,
+      });
+    } catch (error: any) {
+      console.error('Error al subir imagen:', error);
+      Swal.fire('Error', error?.message || 'Error al subir la imagen', 'error');
+    } finally {
+      this.subiendoImagen = false;
+    }
+  }
+
   onSaving(e: any) {
     const change = e.changes[0];
 
     if (change) {
       e.cancel = false;
+    } else {
+      return;
     }
 
     if (change.type == 'insert') {
@@ -259,22 +311,25 @@ export class FilastoreComponent implements OnInit {
         }
       });
 
-      this.cafeService.addCoffeeList(cleanData).then((docRef) => {
-        //console.log('Usuario agregado con ID:', docRef.id);
-        Swal.fire({
-          icon: 'success',
-          title: 'success',
-          text: 'Coffee Added Successfully!',
-        });
+      if (this.currentUploadedUrl && !cleanData.imagen) {
+        cleanData.imagen = this.currentUploadedUrl;
+      }
 
-        this.cafeService.getCafes().subscribe((result) => {
-          this.dataSourceCafes = result.sort((a, b) =>
-            a.Nombre.localeCompare(b.Nombre),
-          );
-          this.loadIndicatorVisible = false;
-          //console.log('Cafes', this.dataSourceCafes);
+      this.cafeService
+        .addCoffeeList(cleanData)
+        .then(() => {
+          Swal.fire({
+            icon: 'success',
+            title: 'Éxito',
+            text: '¡Café agregado correctamente!',
+          });
+          this.previewImagenUrl = null;
+          this.currentUploadedUrl = null;
+        })
+        .catch((err) => {
+          console.error('Error al agregar café:', err);
+          Swal.fire('Error', 'No se pudo agregar el café', 'error');
         });
-      });
     }
 
     if (change.type == 'update') {
@@ -286,40 +341,43 @@ export class FilastoreComponent implements OnInit {
         }
       });
 
-      this.cafeService.updateCoffeeList(change.key.id, cleanData).then(() => {
-        //console.log('Usuario actualizado');
-        Swal.fire({
-          icon: 'success',
-          title: 'success',
-          text: 'Coffee list Updated Successfully!',
-        });
+      if (this.currentUploadedUrl && !cleanData.imagen) {
+        cleanData.imagen = this.currentUploadedUrl;
+      }
 
-        this.cafeService.getCafes().subscribe((result) => {
-          this.dataSourceCafes = result.sort((a, b) =>
-            a.Nombre.localeCompare(b.Nombre),
-          );
-          this.loadIndicatorVisible = false;
-          //console.log('Cafes', this.dataSourceCafes);
+      const id = typeof change.key === 'string' ? change.key : change.key.id;
+      this.cafeService
+        .updateCoffeeList(id, cleanData)
+        .then(() => {
+          Swal.fire({
+            icon: 'success',
+            title: 'Éxito',
+            text: '¡Café actualizado correctamente!',
+          });
+          this.previewImagenUrl = null;
+          this.currentUploadedUrl = null;
+        })
+        .catch((err) => {
+          console.error('Error al actualizar café:', err);
+          Swal.fire('Error', 'No se pudo actualizar el café', 'error');
         });
-      });
     }
 
     if (change.type == 'remove') {
       const id = typeof change.key === 'string' ? change.key : change.key.id;
-      this.cafeService.deleteCoffeeList(id).then(() => {
-        Swal.fire({
-          icon: 'success',
-          title: 'success',
-          text: 'Coffee Eliminated',
+      this.cafeService
+        .deleteCoffeeList(id)
+        .then(() => {
+          Swal.fire({
+            icon: 'success',
+            title: 'Éxito',
+            text: 'Café eliminado',
+          });
+        })
+        .catch((err) => {
+          console.error('Error al eliminar café:', err);
+          Swal.fire('Error', 'No se pudo eliminar el café', 'error');
         });
-        this.cafeService.getCafes().subscribe((result) => {
-          this.dataSourceCafes = result.sort((a, b) =>
-            a.Nombre.localeCompare(b.Nombre),
-          );
-          this.loadIndicatorVisible = false;
-          //console.log('Cafes', this.dataSourceCafes);
-        });
-      });
     }
   }
 
