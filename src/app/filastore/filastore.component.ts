@@ -32,8 +32,8 @@ export class FilastoreComponent implements OnInit {
     caramelo: true,
     cremaIrlandesa: true,
     avellana: true,
-    moka:true,
-    vainilla:true,
+    moka: true,
+    vainilla: true,
     azucar: true,
     splenda: true,
   };
@@ -45,9 +45,18 @@ export class FilastoreComponent implements OnInit {
   public vistaActual: 'calendario' | 'tabla' = 'calendario';
 
   // Opciones predefinidas para dropdowns en DevExtreme
-  public turnosOptions = ['Primer Servicio (9:00 AM)', 'Segundo Servicio (11:30 AM)', 'Especial / Evento'];
-  public tareasOptions = ['Barista', 'Caja / Cobros', 'Atención en Barra', 'Limpieza y Insumos'];
- 
+  public turnosOptions = [
+    'Primer Servicio (9:00 AM)',
+    'Segundo Servicio (11:30 AM)',
+    'Especial / Evento',
+  ];
+  public tareasOptions = [
+    'Barista',
+    'Caja / Cobros',
+    'Atención en Barra',
+    'Limpieza y Insumos',
+  ];
+
   // +++++  cierre de variables calendario  ++++++ //
 
   constructor(
@@ -83,19 +92,43 @@ export class FilastoreComponent implements OnInit {
         });
     });
 
-    this.cafeService.getCafes().subscribe((result) => {
-      this.dataSourceCafes = result.sort((a, b) =>
-        a.Nombre.localeCompare(b.Nombre),
-      );
-      this.loadIndicatorVisible = false;
-      //console.log('Cafes', this.dataSourceCafes);
+    // this.cafeService.getCafes().subscribe((result) => {
+    //   this.dataSourceCafes = result.sort((a, b) =>
+    //     a.Nombre.localeCompare(b.Nombre),
+    //   );
+    //   this.loadIndicatorVisible = false;
+    //   console.log('Añadir Cafes', this.dataSourceCafes);
+    // });
+
+    this.cafeService.getCafes().subscribe({
+      next: (result) => {
+        this.dataSourceCafes = (result || [])
+          .map((item: any) => ({
+            ...item,
+            Nombre: item.Nombre || item.nombre || item.name || '',
+            Descripcion: item.Descripcion || item.descripcion || '',
+            'Tipo de Cafe':
+              item['Tipo de Cafe'] || item.tipo || item.Tipo || 'Caliente',
+            Precio: item.Precio ?? item.precio ?? 0,
+            Tamaño: item.Tamaño || item.Tamano || item.tamano || '',
+            Status:
+              item.Status !== undefined ? item.Status : (item.status ?? true),
+          }))
+          .sort((a, b) => (a.Nombre || '').localeCompare(b.Nombre || ''));
+        this.loadIndicatorVisible = false;
+        //console.log('Añadir Cafes cargados:', this.dataSourceCafes);
+      },
+      error: (err) => {
+        console.error('Error al cargar cafés:', err);
+        this.loadIndicatorVisible = false;
+      },
     });
 
     this.insumosSub = this.cafeService.getInsumos().subscribe((res: any) => {
       if (res) {
         this.insumos = { ...this.insumos, ...res };
       }
-     // console.log('Insumos', this.insumos);
+      // console.log('Insumos', this.insumos);
     });
 
     this.cafeService.getCalendarEvents().subscribe((result) => {
@@ -105,9 +138,7 @@ export class FilastoreComponent implements OnInit {
       this.loadIndicatorVisible = false;
       //console.log('Calendario', this.dataSourceCalendar);
     });
-
   }
-
 
   // Genera desglose de productos (ej: "2x Espresso, 1x Americano")
   generarDesglose(detalles: any[]): string {
@@ -375,20 +406,37 @@ export class FilastoreComponent implements OnInit {
       });
 
       // Si se actualiza el producto o la cantidad, regenerar detalles mínimos
-      if (cleanData.producto || cleanData.cantidad || cleanData.tamano || cleanData.leche || cleanData.escencia || cleanData.azucar !== undefined || cleanData.notas) {
+      if (
+        cleanData.producto ||
+        cleanData.cantidad ||
+        cleanData.tamano ||
+        cleanData.leche ||
+        cleanData.escencia ||
+        cleanData.azucar !== undefined ||
+        cleanData.notas
+      ) {
         const pedidoActual = this.pedidos.find((p: any) => p.id === id);
-        const productoActual = cleanData.producto || pedidoActual?.producto?.[0] || 'Pedido Manual';
-        const cafeActual = this.dataSourceCafes.find((c: any) => c.Nombre === productoActual);
-        const precioUnitario = cafeActual?.Precio || pedidoActual?.detalles?.[0]?.precio || 0;
+        const productoActual =
+          cleanData.producto || pedidoActual?.producto?.[0] || 'Pedido Manual';
+        const cafeActual = this.dataSourceCafes.find(
+          (c: any) => c.Nombre === productoActual,
+        );
+        const precioUnitario =
+          cafeActual?.Precio || pedidoActual?.detalles?.[0]?.precio || 0;
 
         cleanData.detalles = [
           {
             nombre: productoActual,
             cantidad: cleanData.cantidad ?? pedidoActual?.cantidad ?? 1,
             precio: precioUnitario,
-            tamano: cleanData.tamano || pedidoActual?.detalles?.[0]?.tamano || 'Mediano',
-            leche: cleanData.leche || pedidoActual?.detalles?.[0]?.leche || 'No',
-            escencia: cleanData.escencia || pedidoActual?.detalles?.[0]?.escencia || '',
+            tamano:
+              cleanData.tamano ||
+              pedidoActual?.detalles?.[0]?.tamano ||
+              'Mediano',
+            leche:
+              cleanData.leche || pedidoActual?.detalles?.[0]?.leche || 'No',
+            escencia:
+              cleanData.escencia || pedidoActual?.detalles?.[0]?.escencia || '',
             azucar:
               cleanData.azucar !== undefined
                 ? cleanData.azucar
@@ -422,32 +470,33 @@ export class FilastoreComponent implements OnInit {
       const data = { ...change.data, fecha: new Date(change.data.fecha) };
       e.promise = this.cafeService.addCalendarEvent(data);
     } else if (change.type === 'update') {
-      this.cafeService.updateCalendarEvent(change.key.id, change.data).then(() => {
-        //console.log('Usuario actualizado');
-        Swal.fire({
-          icon: 'success',
-          title: 'success',
-          text: 'Date list Updated Successfully!',
+      this.cafeService
+        .updateCalendarEvent(change.key.id, change.data)
+        .then(() => {
+          //console.log('Usuario actualizado');
+          Swal.fire({
+            icon: 'success',
+            title: 'success',
+            text: 'Date list Updated Successfully!',
+          });
         });
-      });
     } else if (change.type === 'remove') {
-       if (change.type == 'remove') {
-      const id = typeof change.key === 'string' ? change.key : change.key.id;
-      this.cafeService.deleteCalendarEvent(id).then(() => {
-        
-        Swal.fire({
-          icon: 'success',
-          title: 'success',
-          text: 'Date list Eliminated',
+      if (change.type == 'remove') {
+        const id = typeof change.key === 'string' ? change.key : change.key.id;
+        this.cafeService.deleteCalendarEvent(id).then(() => {
+          Swal.fire({
+            icon: 'success',
+            title: 'success',
+            text: 'Date list Eliminated',
+          });
+          this.cafeService.getCafes().subscribe((result) => {
+            this.dataSourceCafes = result.sort((a, b) =>
+              a.Nombre.localeCompare(b.Nombre),
+            );
+            this.loadIndicatorVisible = false;
+            //console.log('Cafes', this.dataSourceCafes);
+          });
         });
-        this.cafeService.getCafes().subscribe((result) => {
-          this.dataSourceCafes = result.sort((a, b) =>
-            a.Nombre.localeCompare(b.Nombre),
-          );
-          this.loadIndicatorVisible = false;
-          //console.log('Cafes', this.dataSourceCafes);
-        });
-      });
       }
     }
   }

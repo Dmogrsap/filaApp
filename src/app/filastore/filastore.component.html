@@ -535,7 +535,8 @@
 
           <dx-data-grid
             [dataSource]="dataSourceCafes"
-            [remoteOperations]="true"
+            keyExpr="id"
+            [remoteOperations]="false"
             [showBorders]="true"
             [showColumnLines]="true"
             [showRowLines]="true"
