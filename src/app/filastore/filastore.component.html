@@ -565,15 +565,14 @@
               [useIcons]="true"
             >
               <dxo-popup
-                title="☕ Agregar / Editar Café"
+                title="Agregar / Editar Café"
                 [showTitle]="true"
-                [width]="760"
-                [height]="550"
+                [width]="700"
+                [height]="620"
               >
               </dxo-popup>
-              <dxo-form [colCount]="2">
-                <!-- Columna Izquierda: Datos del Café -->
-                <dxi-item itemType="group" [colCount]="1" caption="Información del Café">
+              <dxo-form>
+                <dxi-item itemType="group" [colCount]="1" colSpan="2">
                   <dxi-item
                     dataField="Nombre"
                     editorType="dxTextBox"
@@ -601,7 +600,7 @@
                       placeholder: 'Seleccione un tipo',
                     }"
                   >
-                    <dxo-label text="Tipo de Café"> </dxo-label>
+                    <dxo-label text="Tipo de Cafe"> </dxo-label>
                     <dxi-validation-rule
                       type="required"
                       message="Tipo Requerido"
@@ -612,10 +611,6 @@
                   <dxi-item
                     dataField="Precio"
                     editorType="dxNumberBox"
-                    [editorOptions]="{
-                      format: '$#,##0.00',
-                      min: 0
-                    }"
                   >
                     <dxo-label text="Precio"> </dxo-label>
                     <dxi-validation-rule
@@ -632,86 +627,49 @@
                     <dxo-label text="Tamaño"> </dxo-label>
                   </dxi-item>
 
+                  <!-- Subidor de Imagen -->
+                  <dxi-item template="imageUploaderTemplate">
+                    <dxo-label text="Imagen del Café"></dxo-label>
+                  </dxi-item>
+
                   <dxi-item
                     dataField="Status"
                     editorType="dxSwitch"
                     [editorOptions]="{
-                      switchedOnText: 'Disponible',
-                      switchedOffText: 'Agotado',
-                      width: 120,
+                      switchedOnText: 'Sí',
+                      switchedOffText: 'No',
+                      width: 80,
                     }"
                   >
-                    <dxo-label location="left" text="Disponibilidad"></dxo-label>
-                  </dxi-item>
-                </dxi-item>
-
-                <!-- Columna Derecha: Imagen del Café -->
-                <dxi-item itemType="group" [colCount]="1" caption="Fotografía del Café">
-                  <dxi-item template="imageUploaderTemplate">
-                    <dxo-label [visible]="false"></dxo-label>
+                    <dxo-label location="left" text="Disponible"></dxo-label>
                   </dxi-item>
                 </dxi-item>
               </dxo-form>
             </dxo-editing>
 
-            <!-- Template Elegante para Subir Imagen -->
+            <!-- Template para Subir Imagen -->
             <div *dxTemplate="let data of 'imageUploaderTemplate'">
-              <div
-                class="coffee-image-upload-card"
-                [class.has-image]="previewImagenUrl || data.component.option('formData')?.imagen"
-              >
-                <!-- Si hay imagen cargada o seleccionada -->
-                <ng-container *ngIf="previewImagenUrl || data.component.option('formData')?.imagen; else sinImagen">
-                  <div class="coffee-preview-wrapper">
-                    <img
-                      [src]="previewImagenUrl || data.component.option('formData')?.imagen"
-                      alt="Foto del café"
-                      class="coffee-preview-img"
-                    />
-                    <span class="coffee-preview-badge">✓ Foto cargada</span>
-                    <button
-                      type="button"
-                      class="btn-remove-image"
-                      (click)="removerImagen(data)"
-                      title="Eliminar foto"
-                    >
-                      ✕
-                    </button>
-                  </div>
+              <div style="display: flex; flex-direction: column; gap: 8px; margin: 5px 0;">
+                <dx-file-uploader
+                  selectButtonText="Seleccionar Imagen"
+                  labelText="o arrastra la foto aquí"
+                  accept="image/*"
+                  uploadMode="useForm"
+                  [multiple]="false"
+                  (onValueChanged)="onCoffeeImageSelected($event, data)"
+                ></dx-file-uploader>
 
-                  <dx-file-uploader
-                    class="coffee-uploader"
-                    selectButtonText="Cambiar Imagen"
-                    accept="image/*"
-                    uploadMode="useForm"
-                    [multiple]="false"
-                    (onValueChanged)="onCoffeeImageSelected($event, data)"
-                  ></dx-file-uploader>
-                </ng-container>
+                <div *ngIf="subiendoImagen" style="color: #007bff; font-weight: 500; font-size: 13px;">
+                  ⏳ Subiendo imagen...
+                </div>
 
-                <!-- Si no hay imagen todavía -->
-                <ng-template #sinImagen>
-                  <div class="coffee-upload-placeholder">
-                    <div class="upload-icon-circle">☕</div>
-                    <p class="upload-title">Sube una foto del café</p>
-                    <p class="upload-subtitle">Formatos: JPG, PNG, WEBP</p>
-                  </div>
-
-                  <div style="margin-top: 14px;">
-                    <dx-file-uploader
-                      class="coffee-uploader"
-                      selectButtonText="Seleccionar Foto"
-                      accept="image/*"
-                      uploadMode="useForm"
-                      [multiple]="false"
-                      (onValueChanged)="onCoffeeImageSelected($event, data)"
-                    ></dx-file-uploader>
-                  </div>
-                </ng-template>
-
-                <!-- Indicador de subida -->
-                <div *ngIf="subiendoImagen" class="uploading-overlay">
-                  <span>⏳ Subiendo a la nube...</span>
+                <div *ngIf="previewImagenUrl" style="margin-top: 6px;">
+                  <span style="font-size: 12px; color: #666; display: block; margin-bottom: 4px;">Vista previa:</span>
+                  <img
+                    [src]="previewImagenUrl"
+                    alt="Vista previa"
+                    style="width: 90px; height: 90px; object-fit: cover; border-radius: 8px; border: 1px solid #ddd; box-shadow: 0 2px 4px rgba(0,0,0,0.1);"
+                  />
                 </div>
               </div>
             </div>
@@ -724,7 +682,7 @@
               dataField="imagen"
               caption="Foto"
               alignment="center"
-              [width]="75"
+              [width]="80"
               [allowFiltering]="false"
               [allowSorting]="false"
               cellTemplate="fotoCellTemplate"
@@ -735,11 +693,9 @@
                 *ngIf="cell.value"
                 [src]="cell.value"
                 alt="Café"
-                class="coffee-grid-thumb"
+                style="width: 40px; height: 40px; object-fit: cover; border-radius: 6px; border: 1px solid #eee;"
               />
-              <div *ngIf="!cell.value" class="coffee-placeholder-thumb">
-                ☕
-              </div>
+              <span *ngIf="!cell.value" style="font-size: 20px;">☕</span>
             </div>
 
             <dxi-column

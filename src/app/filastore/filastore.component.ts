@@ -293,14 +293,6 @@ export class FilastoreComponent implements OnInit, OnDestroy {
     }
   }
 
-  removerImagen(formItemData: any) {
-    this.previewImagenUrl = null;
-    this.currentUploadedUrl = null;
-    if (formItemData?.component) {
-      formItemData.component.updateData('imagen', '');
-    }
-  }
-
   onSaving(e: any) {
     const change = e.changes[0];
 
