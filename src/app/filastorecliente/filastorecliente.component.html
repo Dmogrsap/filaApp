@@ -64,7 +64,7 @@
                 }}
               </p>
               <div class="product-options">
-                <div class="option-group" *ngIf="cafe.llevaLeche !== false">
+                <div class="option-group" *ngIf="cafe.llevaLeche">
                   <label>Leche</label>
                   <select [(ngModel)]="cafe.leche" name="leche_{{ i }}">
                     <option value="">Sin Leche</option>
@@ -86,7 +86,7 @@
                   </select>
                 </div>
 
-                <div class="option-group" *ngIf="insumos.azucar && cafe.llevaAzucar !== false">
+                <div class="option-group" *ngIf="insumos.azucar && cafe.llevaAzucar">
                   <label>Azúcar</label>
                   <select [(ngModel)]="cafe.azucar" name="azucar_{{ i }}">
                     <option value="sin azucar">Sin Azúcar</option>
@@ -176,7 +176,7 @@
                 }}
               </p>
               <div class="product-options">
-                <div class="option-group" *ngIf="cafe.llevaLeche !== false">
+                <div class="option-group" *ngIf="cafe.llevaLeche">
                   <label>Leche</label>
                   <select [(ngModel)]="cafe.leche" name="leche_cold_{{ i }}">
                     <option value="">Sin Leche</option>
@@ -198,7 +198,7 @@
                   </select>
                 </div>
 
-                <div class="option-group" *ngIf="insumos.azucar && cafe.llevaAzucar !== false">
+                <div class="option-group" *ngIf="insumos.azucar && cafe.llevaAzucar">
                   <label>Azúcar</label>
                   <select [(ngModel)]="cafe.azucar" name="azucar_cold_{{ i }}">
                     <option value="sin azucar">Sin Azúcar</option>

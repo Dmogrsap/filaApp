@@ -120,7 +120,7 @@ export class FilastoreComponent implements OnInit, OnDestroy {
         //console.log('Añadir Cafes cargados:', this.dataSourceCafes);
       },
       error: (err) => {
-        console.error('Error al cargar cafés:', err);
+        //console.error('Error al cargar cafés:', err);
         this.loadIndicatorVisible = false;
       },
     });
@@ -176,11 +176,10 @@ export class FilastoreComponent implements OnInit, OnDestroy {
     }
 
     if (Object.keys(cambios).length > 0) {
-      this.cafeService
+      e.promise = this.cafeService
         .updateOrder(id, cambios)
         .then(() => {
           if (cambios.estado) {
-            //console.log('Estado actualizado en Firestore');
             if (
               (cambios.estado || '').toString().toLowerCase() === 'entregado'
             ) {
@@ -192,11 +191,11 @@ export class FilastoreComponent implements OnInit, OnDestroy {
               );
             }
           }
-          if (cambios.pago || cambios.metodoPago) {
-            //  console.log('Datos de cobro actualizados en Firestore');
-          }
         })
-        .catch((err: any) => console.error('Error al actualizar:', err));
+        .catch((err: any) => {
+          console.error('Error al actualizar pedido:', err);
+          throw err;
+        });
     }
   }
 
@@ -296,13 +295,11 @@ export class FilastoreComponent implements OnInit, OnDestroy {
   onSaving(e: any) {
     const change = e.changes[0];
 
-    if (change) {
-      e.cancel = false;
-    } else {
+    if (!change) {
       return;
     }
 
-    if (change.type == 'insert') {
+    if (change.type === 'insert') {
       // Limpia los campos no válidos
       const cleanData = { ...change.data };
       Object.keys(cleanData).forEach((key) => {
@@ -315,7 +312,14 @@ export class FilastoreComponent implements OnInit, OnDestroy {
         cleanData.imagen = this.currentUploadedUrl;
       }
 
-      this.cafeService
+      // Forzar booleans reales (default: leche=true, escencia=false, azucar=true)
+      // Si el switch devuelve false explícitamente, se respeta; si undefined (no tocado), se usa default
+      cleanData.llevaLeche   = cleanData.llevaLeche   === true  ? true  : false;
+      cleanData.llevaEscencia = cleanData.llevaEscencia === true  ? true  : false;
+      cleanData.llevaAzucar  = cleanData.llevaAzucar  === true  ? true  : false;
+      cleanData.Status       = cleanData.Status        === true  ? true  : false;
+
+      e.promise = this.cafeService
         .addCoffeeList(cleanData)
         .then(() => {
           Swal.fire({
@@ -328,11 +332,12 @@ export class FilastoreComponent implements OnInit, OnDestroy {
         })
         .catch((err) => {
           console.error('Error al agregar café:', err);
-          Swal.fire('Error', 'No se pudo agregar el café', 'error');
+          Swal.fire('Error', 'No se pudo agregar el café: ' + (err?.message || err), 'error');
+          throw err;
         });
     }
 
-    if (change.type == 'update') {
+    if (change.type === 'update') {
       // Limpia los campos no válidos
       const cleanData = { ...change.data };
       Object.keys(cleanData).forEach((key) => {
@@ -346,7 +351,7 @@ export class FilastoreComponent implements OnInit, OnDestroy {
       }
 
       const id = typeof change.key === 'string' ? change.key : change.key.id;
-      this.cafeService
+      e.promise = this.cafeService
         .updateCoffeeList(id, cleanData)
         .then(() => {
           Swal.fire({
@@ -359,13 +364,14 @@ export class FilastoreComponent implements OnInit, OnDestroy {
         })
         .catch((err) => {
           console.error('Error al actualizar café:', err);
-          Swal.fire('Error', 'No se pudo actualizar el café', 'error');
+          Swal.fire('Error', 'No se pudo actualizar el café: ' + (err?.message || err), 'error');
+          throw err;
         });
     }
 
-    if (change.type == 'remove') {
+    if (change.type === 'remove') {
       const id = typeof change.key === 'string' ? change.key : change.key.id;
-      this.cafeService
+      e.promise = this.cafeService
         .deleteCoffeeList(id)
         .then(() => {
           Swal.fire({
@@ -376,7 +382,8 @@ export class FilastoreComponent implements OnInit, OnDestroy {
         })
         .catch((err) => {
           console.error('Error al eliminar café:', err);
-          Swal.fire('Error', 'No se pudo eliminar el café', 'error');
+          Swal.fire('Error', 'No se pudo eliminar el café: ' + (err?.message || err), 'error');
+          throw err;
         });
     }
   }
@@ -394,11 +401,9 @@ export class FilastoreComponent implements OnInit, OnDestroy {
   }
 
   onSaving1(e: any) {
-    const change = e.changes[0];
+    const change = e.changes?.[0];
 
-    if (change) {
-      e.cancel = false;
-    }
+    if (!change) return;
 
     if (change.type === 'insert') {
       const cleanData = { ...change.data };
@@ -431,12 +436,13 @@ export class FilastoreComponent implements OnInit, OnDestroy {
         cliente: cleanData.cliente || 'Manual',
         cantidad: cleanData.cantidad || 1,
         estado: cleanData.estado || 'pendiente',
+        pago: cleanData.pago || 'Pendiente de pagar',
         fecha: cleanData.fecha || new Date(),
         producto: [detalle.nombre],
         detalles: [detalle],
       };
 
-      const savePromise = this.cafeService
+      e.promise = this.cafeService
         .addOrder(nuevoPedido)
         .then(() => {
           Swal.fire({
@@ -449,8 +455,6 @@ export class FilastoreComponent implements OnInit, OnDestroy {
           console.error('Error al agregar pedido:', err);
           throw err;
         });
-
-      e.promise = savePromise;
     }
 
     if (change.type === 'update') {
@@ -507,7 +511,7 @@ export class FilastoreComponent implements OnInit, OnDestroy {
         cleanData.producto = [productoActual];
       }
 
-      this.cafeService
+      e.promise = this.cafeService
         .updateOrder(id, cleanData)
         .then(() => {
           Swal.fire({
@@ -516,7 +520,10 @@ export class FilastoreComponent implements OnInit, OnDestroy {
             text: '¡Pedido actualizado correctamente!',
           });
         })
-        .catch((err) => console.error('Error al actualizar pedido:', err));
+        .catch((err) => {
+          console.error('Error al actualizar pedido:', err);
+          throw err;
+        });
     }
   }
 
