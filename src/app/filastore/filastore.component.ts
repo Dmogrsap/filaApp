@@ -23,6 +23,7 @@ export class FilastoreComponent implements OnInit, OnDestroy {
   public subiendoImagen = false;
   public previewImagenUrl: string | null = null;
   public currentUploadedUrl: string | null = null;
+  public currentUploadedPath: string | null = null;
 
   // KPIs
   totalOrders = 0;
@@ -269,8 +270,11 @@ export class FilastoreComponent implements OnInit, OnDestroy {
       reader.readAsDataURL(file);
 
       // Subir archivo a la carpeta 'cafes' en Storage
-      const { url } = await this.storageService.uploadFile(file, 'cafes');
+      const { url, path } = await this.storageService.uploadFile(file, 'cafes');
+      console.log('URL generada:', url);
+      console.log('PATH generado:', path);
       this.currentUploadedUrl = url;
+      this.currentUploadedPath = path;
 
       // Actualizar el valor en el formulario de DevExtreme
       if (formItemData?.component) {
@@ -308,17 +312,23 @@ export class FilastoreComponent implements OnInit, OnDestroy {
         }
       });
 
+      console.log('currentUploadedUrl =>', this.currentUploadedUrl);
       if (this.currentUploadedUrl && !cleanData.imagen) {
         cleanData.imagen = this.currentUploadedUrl;
       }
 
+      if (this.currentUploadedPath && !cleanData.imagenPath) {
+        cleanData.imagenPath = this.currentUploadedPath;
+      }
+
       // Forzar booleans reales (default: leche=true, escencia=false, azucar=true)
       // Si el switch devuelve false explícitamente, se respeta; si undefined (no tocado), se usa default
-      cleanData.llevaLeche   = cleanData.llevaLeche   === true  ? true  : false;
-      cleanData.llevaEscencia = cleanData.llevaEscencia === true  ? true  : false;
-      cleanData.llevaAzucar  = cleanData.llevaAzucar  === true  ? true  : false;
-      cleanData.Status       = cleanData.Status        === true  ? true  : false;
+      cleanData.llevaLeche = cleanData.llevaLeche === true ? true : false;
+      cleanData.llevaEscencia = cleanData.llevaEscencia === true ? true : false;
+      cleanData.llevaAzucar = cleanData.llevaAzucar === true ? true : false;
+      cleanData.Status = cleanData.Status === true ? true : false;
 
+      console.log('cleanData final =>', cleanData);
       e.promise = this.cafeService
         .addCoffeeList(cleanData)
         .then(() => {
@@ -332,7 +342,11 @@ export class FilastoreComponent implements OnInit, OnDestroy {
         })
         .catch((err) => {
           console.error('Error al agregar café:', err);
-          Swal.fire('Error', 'No se pudo agregar el café: ' + (err?.message || err), 'error');
+          Swal.fire(
+            'Error',
+            'No se pudo agregar el café: ' + (err?.message || err),
+            'error',
+          );
           throw err;
         });
     }
@@ -364,7 +378,11 @@ export class FilastoreComponent implements OnInit, OnDestroy {
         })
         .catch((err) => {
           console.error('Error al actualizar café:', err);
-          Swal.fire('Error', 'No se pudo actualizar el café: ' + (err?.message || err), 'error');
+          Swal.fire(
+            'Error',
+            'No se pudo actualizar el café: ' + (err?.message || err),
+            'error',
+          );
           throw err;
         });
     }
@@ -382,7 +400,11 @@ export class FilastoreComponent implements OnInit, OnDestroy {
         })
         .catch((err) => {
           console.error('Error al eliminar café:', err);
-          Swal.fire('Error', 'No se pudo eliminar el café: ' + (err?.message || err), 'error');
+          Swal.fire(
+            'Error',
+            'No se pudo eliminar el café: ' + (err?.message || err),
+            'error',
+          );
           throw err;
         });
     }

@@ -8,6 +8,7 @@ export class SupabaseStorageService {
   private bucket: string;
 
   constructor() {
+    bucket: 'images';
     this.supabase = createClient(environment.supabaseUrl, environment.supabaseKey, {
       auth: { persistSession: false, detectSessionInUrl: false },
     });
