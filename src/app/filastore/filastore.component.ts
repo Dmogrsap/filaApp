@@ -27,6 +27,15 @@ export class FilastoreComponent implements OnInit, OnDestroy {
   private previousImagePath: string | null = null;
   private editingCoffeeId: string | null = null;
 
+  private normalizeCoffeeFlags(data: any = {}): any {
+    const item = { ...data };
+    item.llevaLeche = item.llevaLeche === false ? false : true;
+    item.llevaEscencia = item.llevaEscencia === true ? true : false;
+    item.llevaAzucar = item.llevaAzucar === false ? false : true;
+    item.Status = item.Status === false ? false : true;
+    return item;
+  }
+
   // KPIs
   totalOrders = 0;
   totalRevenue = 0;
@@ -116,6 +125,9 @@ export class FilastoreComponent implements OnInit, OnDestroy {
             Tamaño: item.Tamaño || item.Tamano || item.tamano || '',
             Status:
               item.Status !== undefined ? item.Status : (item.status ?? true),
+            llevaLeche: item.llevaLeche === false ? false : true,
+            llevaEscencia: item.llevaEscencia === true ? true : false,
+            llevaAzucar: item.llevaAzucar === false ? false : true,
             imagen: item.imagen || item.Imagen || '',
           }))
           .sort((a, b) => (a.Nombre || '').localeCompare(b.Nombre || ''));
@@ -253,11 +265,13 @@ export class FilastoreComponent implements OnInit, OnDestroy {
   }
 
   onEditingCoffeeStart(e: any) {
+    const coffee = this.normalizeCoffeeFlags(e.data || {});
+    e.data = coffee;
 
-    this.editingCoffeeId = e.data.id;
-    this.previewImagenUrl = e.data?.imagen || e.data?.Imagen || null;
+    this.editingCoffeeId = coffee.id;
+    this.previewImagenUrl = coffee?.imagen || coffee?.Imagen || null;
     this.currentUploadedUrl = this.previewImagenUrl;
-    this.previousImagePath = e.data?.imagenPath || null;
+    this.previousImagePath = coffee?.imagenPath || null;
   }
 
   async onCoffeeImageSelected(e: any, formItemData: any) {
@@ -326,7 +340,7 @@ export class FilastoreComponent implements OnInit, OnDestroy {
 
     if (change.type === 'insert') {
       // Limpia los campos no válidos
-      const cleanData = { ...change.data };
+      const cleanData = this.normalizeCoffeeFlags({ ...change.data });
       Object.keys(cleanData).forEach((key) => {
         if (/^__.*__$/.test(key)) {
           delete cleanData[key];
@@ -341,13 +355,6 @@ export class FilastoreComponent implements OnInit, OnDestroy {
       if (this.currentUploadedPath && !cleanData.imagenPath) {
         cleanData.imagenPath = this.currentUploadedPath;
       }
-
-      // Forzar booleans reales (default: leche=true, escencia=false, azucar=true)
-      // Si el switch devuelve false explícitamente, se respeta; si undefined (no tocado), se usa default
-      cleanData.llevaLeche = cleanData.llevaLeche === true ? true : false;
-      cleanData.llevaEscencia = cleanData.llevaEscencia === true ? true : false;
-      cleanData.llevaAzucar = cleanData.llevaAzucar === true ? true : false;
-      cleanData.Status = cleanData.Status === true ? true : false;
 
       //console.log('cleanData final =>', cleanData);
       e.promise = this.cafeService
@@ -374,11 +381,11 @@ export class FilastoreComponent implements OnInit, OnDestroy {
 
     if (change.type === 'update') {
       // Limpia los campos no válidos
-      const cleanData = {
+      const cleanData = this.normalizeCoffeeFlags({
         ...change.data,
         imagen: this.currentUploadedUrl,
         imagenPath: this.currentUploadedPath,
-      };
+      });
       Object.keys(cleanData).forEach((key) => {
         if (/^__.*__$/.test(key)) {
           delete cleanData[key];
