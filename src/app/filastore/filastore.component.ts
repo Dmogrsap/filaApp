@@ -24,6 +24,8 @@ export class FilastoreComponent implements OnInit, OnDestroy {
   public previewImagenUrl: string | null = null;
   public currentUploadedUrl: string | null = null;
   public currentUploadedPath: string | null = null;
+  private previousImagePath: string | null = null;
+  private editingCoffeeId: string | null = null;
 
   // KPIs
   totalOrders = 0;
@@ -251,8 +253,11 @@ export class FilastoreComponent implements OnInit, OnDestroy {
   }
 
   onEditingCoffeeStart(e: any) {
+
+    this.editingCoffeeId = e.data.id;
     this.previewImagenUrl = e.data?.imagen || e.data?.Imagen || null;
     this.currentUploadedUrl = this.previewImagenUrl;
+    this.previousImagePath = e.data?.imagenPath || null;
   }
 
   async onCoffeeImageSelected(e: any, formItemData: any) {
@@ -271,14 +276,30 @@ export class FilastoreComponent implements OnInit, OnDestroy {
 
       // Subir archivo a la carpeta 'cafes' en Storage
       const { url, path } = await this.storageService.uploadFile(file, 'cafes');
-      console.log('URL generada:', url);
-      console.log('PATH generado:', path);
       this.currentUploadedUrl = url;
       this.currentUploadedPath = path;
+
+      if (this.editingCoffeeId) {
+        await this.cafeService.updateCoffeeList(this.editingCoffeeId, {
+          imagen: url,
+          imagenPath: path,
+        });
+
+        if (this.previousImagePath && this.previousImagePath !== path) {
+          await this.storageService.deleteFile(this.previousImagePath);
+        }
+
+        this.previousImagePath = path;
+      }
 
       // Actualizar el valor en el formulario de DevExtreme
       if (formItemData?.component) {
         formItemData.component.updateData('imagen', url);
+
+        formItemData.component.updateData('imagenPath', path);
+
+        // Forzar a DevExtreme a marcar el formulario como modificado
+        formItemData.component.repaint();
       }
 
       Swal.fire({
@@ -312,7 +333,7 @@ export class FilastoreComponent implements OnInit, OnDestroy {
         }
       });
 
-      console.log('currentUploadedUrl =>', this.currentUploadedUrl);
+      //console.log('currentUploadedUrl =>', this.currentUploadedUrl);
       if (this.currentUploadedUrl && !cleanData.imagen) {
         cleanData.imagen = this.currentUploadedUrl;
       }
@@ -328,7 +349,7 @@ export class FilastoreComponent implements OnInit, OnDestroy {
       cleanData.llevaAzucar = cleanData.llevaAzucar === true ? true : false;
       cleanData.Status = cleanData.Status === true ? true : false;
 
-      console.log('cleanData final =>', cleanData);
+      //console.log('cleanData final =>', cleanData);
       e.promise = this.cafeService
         .addCoffeeList(cleanData)
         .then(() => {
@@ -353,7 +374,11 @@ export class FilastoreComponent implements OnInit, OnDestroy {
 
     if (change.type === 'update') {
       // Limpia los campos no válidos
-      const cleanData = { ...change.data };
+      const cleanData = {
+        ...change.data,
+        imagen: this.currentUploadedUrl,
+        imagenPath: this.currentUploadedPath,
+      };
       Object.keys(cleanData).forEach((key) => {
         if (/^__.*__$/.test(key)) {
           delete cleanData[key];
@@ -364,49 +389,109 @@ export class FilastoreComponent implements OnInit, OnDestroy {
         cleanData.imagen = this.currentUploadedUrl;
       }
 
+      if (this.currentUploadedPath && !cleanData.imagenPath) {
+        cleanData.imagenPath = this.currentUploadedPath;
+      }
+
       const id = typeof change.key === 'string' ? change.key : change.key.id;
-      e.promise = this.cafeService
-        .updateCoffeeList(id, cleanData)
-        .then(() => {
+
+      e.promise = (async () => {
+        try {
+          const nuevaImagen =
+            cleanData.imagenPath &&
+            cleanData.imagenPath !== this.previousImagePath;
+
+          await this.cafeService.updateCoffeeList(id, cleanData);
+
+          if (nuevaImagen && this.previousImagePath) {
+            await this.storageService.deleteFile(this.previousImagePath);
+          }
+
           Swal.fire({
             icon: 'success',
             title: 'Éxito',
             text: '¡Café actualizado correctamente!',
           });
+
           this.previewImagenUrl = null;
           this.currentUploadedUrl = null;
-        })
-        .catch((err) => {
-          console.error('Error al actualizar café:', err);
-          Swal.fire(
-            'Error',
-            'No se pudo actualizar el café: ' + (err?.message || err),
-            'error',
-          );
+          this.currentUploadedPath = null;
+          this.previousImagePath = null;
+        } catch (err: any) {
+          console.error(err);
+
+          Swal.fire('Error', 'No se pudo actualizar el café', 'error');
+
           throw err;
-        });
+        }
+      })();
+
+      // e.promise = this.cafeService
+      //   .updateCoffeeList(id, cleanData)
+      //   .then(() => {
+      //     Swal.fire({
+      //       icon: 'success',
+      //       title: 'Éxito',
+      //       text: '¡Café actualizado correctamente!',
+      //     });
+      //     this.previewImagenUrl = null;
+      //     this.currentUploadedUrl = null;
+      //   })
+      //   .catch((err) => {
+      //     console.error('Error al actualizar café:', err);
+      //     Swal.fire(
+      //       'Error',
+      //       'No se pudo actualizar el café: ' + (err?.message || err),
+      //       'error',
+      //     );
+      //     throw err;
+      //   });
     }
 
     if (change.type === 'remove') {
       const id = typeof change.key === 'string' ? change.key : change.key.id;
-      e.promise = this.cafeService
-        .deleteCoffeeList(id)
-        .then(() => {
+
+      const cafe = this.dataSourceCafes.find((x: any) => x.id === id);
+
+      e.promise = (async () => {
+        try {
+          if (cafe?.imagenPath) {
+            await this.storageService.deleteFile(cafe.imagenPath);
+          }
+          await this.cafeService.deleteCoffeeList(id);
           Swal.fire({
             icon: 'success',
             title: 'Éxito',
             text: 'Café eliminado',
           });
-        })
-        .catch((err) => {
-          console.error('Error al eliminar café:', err);
-          Swal.fire(
-            'Error',
-            'No se pudo eliminar el café: ' + (err?.message || err),
-            'error',
-          );
+          this.previewImagenUrl = null;
+          this.currentUploadedUrl = null;
+          this.currentUploadedPath = null;
+        } catch (err) {
+          console.error(err);
+          Swal.fire('Error', 'No se pudo eliminar el café', 'error');
           throw err;
-        });
+
+          // e.promise =  this.cafeService
+          //   .deleteCoffeeList(id)
+          //   .then(() => {
+          //     Swal.fire({
+          //       icon: 'success',
+          //       title: 'Éxito',
+          //       text: 'Café eliminado',
+          //     });
+          //   })
+          //   .catch((err) => {
+          //     console.error('Error al eliminar café:', err);
+          //     Swal.fire(
+          //       'Error',
+          //       'No se pudo eliminar el café: ' + (err?.message || err),
+          //       'error',
+          //     );
+          //     throw err;
+          //   });
+        }
+      })();
     }
   }
 

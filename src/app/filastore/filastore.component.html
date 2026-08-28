@@ -567,8 +567,8 @@
               <dxo-popup
                 title="☕ Agregar / Editar Café"
                 [showTitle]="true"
-                [width]="800"
-                [height]="600"
+                [width]="1000"
+                [height]="650"
               >
               </dxo-popup>
               <dxo-form [colCount]="2">
@@ -773,6 +773,9 @@
                 [src]="cell.value"
                 alt="Café"
                 class="coffee-grid-thumb"
+                width="80"
+                height="50"
+                style="object-fit: cover; border-radius: 8px;"
               />
               <div *ngIf="!cell.value" class="coffee-placeholder-thumb">
                 ☕
