@@ -262,6 +262,18 @@ export class FilastoreComponent implements OnInit, OnDestroy {
   onInitNewCoffeeRow(e: any) {
     this.previewImagenUrl = null;
     this.currentUploadedUrl = null;
+    // Inicializar switches del formulario según disponibilidad global de insumos
+    try {
+      e.data = e.data || {};
+      // Si el admin tiene desactivada la leche en insumos, el nuevo café no debe llevarla por defecto
+      e.data.llevaLeche = this.insumos?.normal ?? e.data.llevaLeche ?? true;
+      // Usar disponibilidad de esencias (ej: cremaIrlandesa) como referencia para mostrar opción
+      e.data.llevaEscencia = this.insumos?.cremaIrlandesa ?? e.data.llevaEscencia ?? false;
+      // Azúcar según insumos globales
+      e.data.llevaAzucar = this.insumos?.azucar ?? e.data.llevaAzucar ?? true;
+    } catch (err) {
+      // ignore
+    }
   }
 
   onEditingCoffeeStart(e: any) {
