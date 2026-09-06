@@ -39,12 +39,16 @@ export class CoffeeOrdersService {
 
   addOrder(order: any) {
     // Validación mínima: requerir cliente y producto
-    if (!order || !order.cliente || !order.cliente.toString().trim()) {
+    if (!order) {
+      return Promise.reject(new Error('Pedido inválido'));
+    }
+    const clienteVal = order['cliente'] ? order['cliente'].toString().trim() : '';
+    if (!clienteVal) {
       return Promise.reject(new Error('Cliente requerido'));
     }
-    const hasProducto = Array.isArray(order.producto)
-      ? order.producto.length > 0
-      : !!order.producto;
+    const hasProducto = Array.isArray(order['producto'])
+      ? order['producto'].length > 0
+      : !!order['producto'];
     if (!hasProducto) {
       return Promise.reject(new Error('Producto requerido'));
     }
@@ -69,12 +73,16 @@ export class CoffeeOrdersService {
   // Crear un nuevo pedido (Vista Cliente)
   crearPedido(pedido: Omit<any, 'id'>) {
     // Validación mínima: requerir cliente y producto
-    if (!pedido || !pedido.cliente || !pedido.cliente.toString().trim()) {
+    if (!pedido) {
+      return Promise.reject(new Error('Pedido inválido'));
+    }
+    const cliente = pedido['cliente'] ? pedido['cliente'].toString().trim() : '';
+    if (!cliente) {
       return Promise.reject(new Error('Cliente requerido'));
     }
-    const hasProducto = Array.isArray(pedido.producto)
-      ? pedido.producto.length > 0
-      : !!pedido.producto;
+    const hasProducto = Array.isArray(pedido['producto'])
+      ? pedido['producto'].length > 0
+      : !!pedido['producto'];
     if (!hasProducto) {
       return Promise.reject(new Error('Producto requerido'));
     }
