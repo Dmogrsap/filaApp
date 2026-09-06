@@ -182,8 +182,8 @@ export class FilastoreComponent implements OnInit {
   getCustomerName(pedido: any): string {
     if (!pedido) return 'cliente';
     return (
-      pedido.nombre ||
       pedido.cliente ||
+      pedido.nombre ||
       pedido.usuario ||
       pedido.nombreCliente ||
       pedido.email ||
@@ -328,7 +328,7 @@ export class FilastoreComponent implements OnInit {
       const precioUnitario = cafeSeleccionado?.Precio || 0;
 
       const detalle = {
-        nombre: cleanData.producto || 'Pedido Manual',
+        nombre: cleanData.producto || '',
         cantidad: cleanData.cantidad || 1,
         precio: precioUnitario,
         tamano: cleanData.tamano || 'Mediano',
@@ -339,7 +339,7 @@ export class FilastoreComponent implements OnInit {
       };
 
       const nuevoPedido = {
-        cliente: cleanData.cliente || 'Manual',
+        cliente: cleanData.cliente || '',
         cantidad: cleanData.cantidad || 1,
         estado: cleanData.estado || 'pendiente',
         fecha: cleanData.fecha || new Date(),
@@ -377,7 +377,7 @@ export class FilastoreComponent implements OnInit {
       // Si se actualiza el producto o la cantidad, regenerar detalles mínimos
       if (cleanData.producto || cleanData.cantidad || cleanData.tamano || cleanData.leche || cleanData.escencia || cleanData.azucar !== undefined || cleanData.notas) {
         const pedidoActual = this.pedidos.find((p: any) => p.id === id);
-        const productoActual = cleanData.producto || pedidoActual?.producto?.[0] || 'Pedido Manual';
+        const productoActual = cleanData.producto || pedidoActual?.producto?.[0] || '';
         const cafeActual = this.dataSourceCafes.find((c: any) => c.Nombre === productoActual);
         const precioUnitario = cafeActual?.Precio || pedidoActual?.detalles?.[0]?.precio || 0;
 
