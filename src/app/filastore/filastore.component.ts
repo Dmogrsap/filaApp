@@ -263,17 +263,21 @@ export class FilastoreComponent implements OnInit, OnDestroy {
     this.previewImagenUrl = null;
     this.currentUploadedUrl = null;
     // Inicializar switches del formulario según disponibilidad global de insumos
-    try {
-      e.data = e.data || {};
-      // Si el admin tiene desactivada la leche en insumos, el nuevo café no debe llevarla por defecto
-      e.data.llevaLeche = this.insumos?.normal ?? e.data.llevaLeche ?? true;
-      // Usar disponibilidad de esencias (ej: cremaIrlandesa) como referencia para mostrar opción
-      e.data.llevaEscencia = this.insumos?.cremaIrlandesa ?? e.data.llevaEscencia ?? false;
-      // Azúcar según insumos globales
-      e.data.llevaAzucar = this.insumos?.azucar ?? e.data.llevaAzucar ?? true;
-    } catch (err) {
-      // ignore
-    }
+    e.data = e.data || {};
+    e.data.llevaLeche = this.insumos?.normal ?? e.data.llevaLeche ?? true;
+    e.data.llevaEscencia = this.hasAnyEssence() ? e.data.llevaEscencia ?? true : false;
+    e.data.llevaAzucar = this.insumos?.azucar ?? e.data.llevaAzucar ?? true;
+  }
+
+  // Devuelve true si existe al menos una esencia disponible en `insumos`
+  hasAnyEssence(): boolean {
+    return !!(
+      this.insumos?.caramelo ||
+      this.insumos?.cremaIrlandesa ||
+      this.insumos?.avellana ||
+      this.insumos?.moka ||
+      this.insumos?.vainilla
+    );
   }
 
   onEditingCoffeeStart(e: any) {
