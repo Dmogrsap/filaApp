@@ -69,22 +69,34 @@ export class FilastoreclienteComponent implements OnInit {
     });
 
     this.cafeService.getCafes().subscribe((result) => {
-      this.listaCafes = result.map((item: any) => ({
-        ...item,
-        
-        Nombre:
-          item.Nombre ||
-          item.nombre ||
-          item.name ||
-          item.producto ||
-          item.title ||
-          'Café',
-        imagen: item.imagen || item.Imagen || `assets/img/` + (item.Nombre || item.nombre || 'cafe') + ('.jpeg'),
-        leche: '',
-        azucar: '',
-        escencia: '',
-        cantidad: 1,
-      }));
+      this.listaCafes = (result || [])
+        .filter((item: any) => item.Status !== false && item.status !== false)
+        .map((item: any) => ({
+          ...item,
+          Nombre:
+            item.Nombre ||
+            item.nombre ||
+            item.name ||
+            item.producto ||
+            item.title ||
+            'Café',
+          imagen:
+            item.imagen ||
+            item.Imagen ||
+            `assets/img/` + (item.Nombre || item.nombre || 'cafe') + '.jpeg',
+          // Flags de personalización: boolean estricto.
+          // Default: leche=true, escencia=false (a menos que sea cap/latte), azucar=true
+          llevaLeche:   item.llevaLeche   === false ? false : true,
+          llevaEscencia: item.llevaEscencia === true  ? true
+            : item.llevaEscencia === false ? false
+            : (item.Nombre === 'Cappuccino' || item.Nombre === 'Latte' || item.Nombre === 'Latte a las rocas'),
+          llevaAzucar:  item.llevaAzucar  === false ? false : true,
+          // Campos del pedido del cliente (siempre vacíos al inicio)
+          leche: '',
+          azucar: '',
+          escencia: '',
+          cantidad: 1,
+        }));
 
       // Separar cafés en calientes y fríos
       this.cafesCalienes = this.listaCafes.filter((cafe: any) => {
