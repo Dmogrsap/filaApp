@@ -9,6 +9,8 @@ import Swal from 'sweetalert2';
 })
 export class HomeComponent implements OnInit {
 
+  public datasoureimages: any | null = null;
+
   constructor(private FirebaseStorageService: FirebaseStorageService) { }
 
   ngOnInit(): void {

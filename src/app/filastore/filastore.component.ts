@@ -39,6 +39,51 @@ export class FilastoreComponent implements OnInit, OnDestroy {
   // KPIs
   totalOrders = 0;
   totalRevenue = 0;
+  totalVendido = 0;
+  filtroFechaInicio = '';
+  filtroFechaFin = '';
+  filtroPago = 'Todos';
+
+  public getPedidosFiltrados(): any[] {
+    const fechaInicio = this.filtroFechaInicio
+      ? new Date(`${this.filtroFechaInicio}T00:00:00`)
+      : null;
+    const fechaFin = this.filtroFechaFin
+      ? new Date(`${this.filtroFechaFin}T23:59:59.999`)
+      : null;
+
+    return this.pedidos.filter((pedido: any) => {
+      const fechaPedido = pedido.fecha ? new Date(pedido.fecha) : null;
+      const cumpleFechaInicio =
+        !fechaInicio || !fechaPedido || fechaPedido >= fechaInicio;
+      const cumpleFechaFin = !fechaFin || !fechaPedido || fechaPedido <= fechaFin;
+
+      const pagoActual = (pedido.pago || 'Pendiente de pagar').trim();
+      const cumplePago =
+        this.filtroPago === 'Todos' ||
+        (this.filtroPago === 'Pagado' && pagoActual === 'Pagado') ||
+        (this.filtroPago === 'Sin pagar' && pagoActual !== 'Pagado');
+
+      return cumpleFechaInicio && cumpleFechaFin && cumplePago;
+    });
+  }
+
+  public limpiarFiltros(): void {
+    this.filtroFechaInicio = '';
+    this.filtroFechaFin = '';
+    this.filtroPago = 'Todos';
+    this.actualizarTotales();
+  }
+
+  public actualizarTotales(): void {
+    const pedidosFiltrados = this.getPedidosFiltrados();
+    this.totalOrders = pedidosFiltrados.length;
+    this.totalRevenue = pedidosFiltrados.reduce(
+      (sum, pedido) => sum + (Number(pedido.totalAPagar) || 0),
+      0,
+    );
+    this.totalVendido = this.totalRevenue;
+  }
 
   // Charts
   salesByCoffee: any[] = [];
@@ -110,6 +155,7 @@ export class FilastoreComponent implements OnInit, OnDestroy {
           const dateB = new Date(b.fecha).getTime();
           return dateB - dateA;
         });
+      this.actualizarTotales();
     });
 
     this.cafesSub = this.cafeService.getCafes().subscribe({
