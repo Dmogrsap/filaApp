@@ -58,20 +58,43 @@ body {
       color: #aaa;
     }
 
-/* Estilos para el contenedor de la imagen */
+/* Presentacion de la galeria principal */
 .imgPpl {
-  display: flex;             /* Habilita Flexbox */
-  justify-content: center;   /* Centra horizontalmente el contenido (la imagen) */
-  margin-bottom: 20px;       /* Añade una separación de 20px debajo de la imagen */
+  width: 100%;
+  max-width: 1200px;
+  height: clamp(240px, 42vw, 460px);
+  margin: 0 auto 20px;
+  padding: 0 20px;
 }
 
-/* Estilos para la imagen dentro del contenedor */
-.imgPpl img {
-  /* Elimina los estilos inline del HTML para manejarlos mejor en CSS */
+.imgPpl dx-gallery {
   width: 100%;
-  height: auto; /* Mantener la proporción */
-  max-width: 80%;
-  display: block; /* Asegura que la imagen se comporte como un bloque para un mejor control */
+  height: 100%;
+  overflow: hidden;
+  border-radius: 14px;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.18);
+}
+
+::ng-deep .imgPpl .dx-gallery-container,
+::ng-deep .imgPpl .dx-gallery-wrapper,
+::ng-deep .imgPpl .dx-gallery-item {
+  height: 100%;
+}
+
+::ng-deep .imgPpl .dx-gallery-item-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+::ng-deep .imgPpl .dx-gallery-nav-button {
+  background-color: rgba(255, 255, 255, 0.86);
+  color: #1a5490;
+  border-radius: 50%;
+}
+
+::ng-deep .imgPpl .dx-gallery-indicator-item-selected {
+  background-color: #1a5490;
 }
 
 .tituloFondo h1 {
@@ -250,6 +273,11 @@ body {
 
 /* Responsive design */
 @media (max-width: 768px) {
+  .imgPpl {
+    height: 260px;
+    padding: 0 12px;
+  }
+
   .cards-container {
     grid-template-columns: 1fr;
     gap: 20px;
