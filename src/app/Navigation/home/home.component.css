@@ -62,9 +62,10 @@ body {
 .imgPpl {
   width: 100%;
   max-width: 1200px;
-  height: clamp(240px, 42vw, 460px);
+  height: clamp(180px, 42vw, 460px);
   margin: 0 auto 20px;
-  padding: 0 20px;
+  padding: 0 clamp(12px, 2vw, 20px);
+  box-sizing: border-box;
 }
 
 .imgPpl dx-gallery {
@@ -274,8 +275,7 @@ body {
 /* Responsive design */
 @media (max-width: 768px) {
   .imgPpl {
-    height: 260px;
-    padding: 0 12px;
+    height: clamp(180px, 62vw, 260px);
   }
 
   .cards-container {
