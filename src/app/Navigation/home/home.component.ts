@@ -10,6 +10,10 @@ import Swal from 'sweetalert2';
 export class HomeComponent implements OnInit {
 
   public datasoureimages: any | null = null;
+  public itemsGaleria: string[] = [
+    'assets/img/filaIntro1.jpg',
+    'assets/img/filaIntro.jpg'
+  ];
 
   constructor(private FirebaseStorageService: FirebaseStorageService) { }
 
@@ -26,7 +30,11 @@ export class HomeComponent implements OnInit {
 
       // imageAlt: 'Custom image',
     });
+
+    
   }
+
+
 
 //   async onFileSelected(event: any) {
 //   const file = event.target.files[0];

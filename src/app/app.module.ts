@@ -13,7 +13,7 @@ import { MainMenuComponent } from './Navigation/main-menu/main-menu.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatIconModule } from '@angular/material/icon';
 import { HttpClientModule } from '@angular/common/http';
-import { DxDrawerModule, DxToolbarModule, DxListModule, DxAccordionModule, DxHtmlEditorModule, DxDataGridModule, DxSelectBoxModule, DxTextBoxModule, DxNumberBoxModule, DxTextAreaModule, DxCheckBoxModule, DxSwitchModule, DxAutocompleteModule, DxTagBoxModule, DxSpeedDialActionModule, DxButtonModule, DxLookupModule, DxFilterBuilderModule, DxDropDownBoxModule, DxTabPanelModule, DxTreeViewModule, DxPopupModule, DxTemplateModule, DxScrollViewModule, DxTooltipModule, DxVectorMapModule, DxChartModule, DxLoadIndicatorModule, DxValidatorModule, DxDateBoxModule, DxDateRangeBoxModule, DxTreeListModule, DxSortableModule, DxFileManagerModule, DxLoadPanelModule, DxFileUploaderModule, DxFormComponent, DxFormModule, DxSchedulerModule } from 'devextreme-angular';
+import { DxDrawerModule, DxToolbarModule, DxListModule, DxAccordionModule, DxHtmlEditorModule, DxDataGridModule, DxSelectBoxModule, DxTextBoxModule, DxNumberBoxModule, DxTextAreaModule, DxCheckBoxModule, DxSwitchModule, DxAutocompleteModule, DxTagBoxModule, DxSpeedDialActionModule, DxButtonModule, DxLookupModule, DxFilterBuilderModule, DxDropDownBoxModule, DxTabPanelModule, DxTreeViewModule, DxPopupModule, DxTemplateModule, DxScrollViewModule, DxTooltipModule, DxVectorMapModule, DxChartModule, DxLoadIndicatorModule, DxValidatorModule, DxDateBoxModule, DxDateRangeBoxModule, DxTreeListModule, DxSortableModule, DxFileManagerModule, DxLoadPanelModule, DxFileUploaderModule, DxFormComponent, DxFormModule, DxSchedulerModule, DxGalleryModule } from 'devextreme-angular';
 import { DxoSearchEditorOptionsModule, DxoSearchPanelModule, DxoZoomAndPanModule, DxoZoomLevelModule, DxoDetailsModule } from 'devextreme-angular/ui/nested';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -123,6 +123,7 @@ import { AddcoffeComponent } from './addcoffe/addcoffe.component';
     DxFileUploaderModule,
     DxFormModule,
     DxSchedulerModule,
+    DxGalleryModule,
 
 
     /*Angular Material*/
