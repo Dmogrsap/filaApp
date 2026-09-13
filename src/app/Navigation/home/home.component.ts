@@ -24,7 +24,7 @@ export class HomeComponent implements OnInit {
     private sanitizer: DomSanitizer
   ) {
     this.facebookLiveUrl = this.sanitizer.bypassSecurityTrustResourceUrl(
-      `https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(this.facebookLiveVideoLink)}&show_text=false&autoplay=false&width=1280&height=720`
+      `https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(this.facebookLiveVideoLink)}&show_text=false&autoplay=true&width=1280&height=720`
     );
   }
 
