@@ -11,7 +11,7 @@ import Swal from 'sweetalert2';
 export class HomeComponent implements OnInit {
 
   public datasoureimages: any | null = null;
-  public hayTransmisionEnVivo = true;
+  public hayTransmisionEnVivo = false;
   public facebookLiveUrl: SafeResourceUrl;
   public facebookLiveVideoLink = 'https://www.facebook.com/Iglesiafiladelfiach/videos/28160375423612066';
   public itemsGaleria: Array<{ type: 'image'; url: string }> = [
