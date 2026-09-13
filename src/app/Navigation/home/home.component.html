@@ -7,13 +7,33 @@
 
   <!-- <img src="assets/img/filaIntro1.jpg" alt="Filadelfia" style="width: 100%; height: 10%;"> -->
 
-  <dx-gallery
-  [dataSource]="itemsGaleria"
-  [loop]="true"
-  [slideshowDelay]="3000"
-  [showNavButtons]="true"
-  [showIndicator]="true">
-</dx-gallery>
+  <div *ngIf="hayTransmisionEnVivo; else galeriaImagenes" class="video-container">
+    <iframe
+      width="100%"
+      height="450"
+      [src]="facebookLiveUrl"
+      title="Transmisión en vivo de Iglesia Filadelfia"
+      frameborder="0"
+      allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+      allowfullscreen>
+    </iframe>
+  </div>
+
+  <ng-template #galeriaImagenes>
+    <dx-gallery
+      [dataSource]="itemsGaleria"
+      [loop]="true"
+      [slideshowDelay]="3000"
+      [showNavButtons]="true"
+      [showIndicator]="true"
+      itemTemplate="galleryItem">
+      <div *dxTemplate="let item of 'galleryItem'" class="gallery-item">
+        <img
+          [src]="item.url"
+          alt="Iglesia Filadelfia">
+      </div>
+    </dx-gallery>
+  </ng-template>
 
 </div>
 <br>
