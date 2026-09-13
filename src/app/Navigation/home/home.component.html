@@ -3,14 +3,14 @@
       <h1>Bienvenido a Iglesia Filadelfia</h1>
     </div>
 
-<div class="imgPpl">
+<div class="imgPpl" [class.live-mode]="hayTransmisionEnVivo">
 
   <!-- <img src="assets/img/filaIntro1.jpg" alt="Filadelfia" style="width: 100%; height: 10%;"> -->
 
   <div *ngIf="hayTransmisionEnVivo; else galeriaImagenes" class="video-container">
     <iframe
       width="100%"
-      height="450"
+      height="720"
       [src]="facebookLiveUrl"
       title="Transmisión en vivo de Iglesia Filadelfia"
       frameborder="0"
