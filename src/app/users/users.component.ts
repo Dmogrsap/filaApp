@@ -152,82 +152,71 @@ export class UsersComponent implements OnInit {
   }
 
   onSaving(e: any) {
-    const change = e.changes[0];
+    const change = e.changes?.[0];
 
-    // this.userService.getUsers().subscribe((result) => {
-    //   this.dataSourceUsers = result;
-    // });
-
-    if (change) {
-      e.cancel = false;
+    if (!change) {
+      return;
     }
 
-    if (change.type == 'insert') {
-      // Limpia los campos no válidos
-      const cleanData = { ...change.data };
-      Object.keys(cleanData).forEach((key) => {
-        if (/^__.*__$/.test(key)) {
-          delete cleanData[key];
-        }
-      });
-      this.normalizeRoleField(cleanData);
+    e.cancel = true;
+    const cleanData = { ...(change.data || {}) };
+    Object.keys(cleanData).forEach((key) => {
+      if (/^__.*__$/.test(key)) {
+        delete cleanData[key];
+      }
+    });
+    this.normalizeRoleField(cleanData);
 
-      this.userService.addUser(cleanData).then((docRef) => {
-        //console.log('Usuario agregado con ID:', docRef.id);
-        Swal.fire({
-          icon: 'success',
-          title: 'success',
-          text: 'User Added Successfully!',
-        });
-
-        this.userService.getUsers().subscribe((result) => {
-          this.dataSourceUsers = result.sort((a, b) => a.Nombre.localeCompare(b.Nombre));;
-        });
+    if (change.type === 'insert') {
+      e.promise = this.userService.addUser(cleanData).then(() => {
+        this.showSaveMessage('User Added Successfully!');
+        this.reloadUsers();
       });
     }
 
-    if (change.type == 'update') {
-      // Limpia los campos no válidos
-      const cleanData = { ...change.data };
-      Object.keys(cleanData).forEach((key) => {
-        if (/^__.*__$/.test(key)) {
-          delete cleanData[key];
-        }
-      });
-      this.normalizeRoleField(cleanData);
+    if (change.type === 'update') {
+      const id = typeof change.key === 'string' ? change.key : change.key?.id;
 
-      this.userService.updateUser(change.key.id, cleanData).then(() => {
-        //console.log('Usuario actualizado');
-        Swal.fire({
-          icon: 'success',
-          title: 'success',
-          text: 'User Updated Successfully!',
-        });
+      if (!id) {
+        e.promise = Promise.reject(new Error('User id is missing'));
+        return;
+      }
 
-        this.userService.getUsers().subscribe((result) => {
-          this.dataSourceUsers = result.sort((a, b) => a.Nombre.localeCompare(b.Nombre));;
-        });
+      e.promise = this.userService.updateUser(id, cleanData).then(() => {
+        this.showSaveMessage('User Updated Successfully!');
+        this.reloadUsers();
       });
     }
 
-    if (change.type == 'remove') {
-      const id = typeof change.key === 'string' ? change.key : change.key.id;
-      this.userService.deleteUser(id).then(() => {
-        Swal.fire({
-          icon: 'success',
-          title: 'success',
-          text: 'User Eliminated',
-        });
-        this.userService.getUsers().subscribe((result) => {
-          this.dataSourceUsers = result.sort((a, b) => a.Nombre.localeCompare(b.Nombre));;
-        });
+    if (change.type === 'remove') {
+      const id = typeof change.key === 'string' ? change.key : change.key?.id;
+
+      if (!id) {
+        e.promise = Promise.reject(new Error('User id is missing'));
+        return;
+      }
+
+      e.promise = this.userService.deleteUser(id).then(() => {
+        this.showSaveMessage('User Eliminated');
+        this.reloadUsers();
       });
     }
-    if (change.type == 'refresh') {
-      this.userService.getUsers().subscribe((result) => {
-        this.dataSourceUsers = result.sort((a, b) => a.Nombre.localeCompare(b.Nombre));;
-      });
-    }
+  }
+
+  private reloadUsers(): void {
+    this.userService.getUsers().subscribe((result) => {
+      this.dataSourceUsers = result
+        .map((user: any) => ({ ...user, Role: this.normalizeRole(user.Role) }))
+        .sort((a, b) => a.Nombre.localeCompare(b.Nombre));
+    });
+  }
+
+  private showSaveMessage(text: string): void {
+    Swal.fire({
+      icon: 'success',
+      title: 'success',
+      text,
+    });
   }
 
   onExporting(e: any) {

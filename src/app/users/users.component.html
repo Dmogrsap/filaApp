@@ -10,7 +10,6 @@
   
   <dx-data-grid
     [dataSource]="dataSourceUsers"
-    keyExpr="id"
     [showBorders]="true"
     [showColumnLines]="true"
     [showRowLines]="true"
@@ -71,12 +70,15 @@
             }"
           ></dxi-item>
 
-          <dxi-item
+        <dxi-item
             dataField="Role"
-            editorType="dxTextBox"
-            [editorOptions]="{
-              placeholder: 'Role',
-              showClearButton: true
+            editorType="dxTagBox" [editorOptions]="{
+            dataSource: dataSourceRoles,
+            displayExpr: 'Role',
+            valueExpr: 'Role',
+            searchEnabled: true,
+            showSelectionControls: true,
+            selectionMode: 'all'  
             }"
           >
             <dxo-label text="Role"> </dxo-label>
