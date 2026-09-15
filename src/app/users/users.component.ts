@@ -129,17 +129,6 @@ export class UsersComponent implements OnInit {
     return roleValue === filterValue;
   }
 
-  // onSelectionChanged(
-  //   selectedRowKeys: any,
-  //   cellInfo: any,
-  //   dropDownBoxComponent: any
-  // ) {
-  //   cellInfo.setValue(selectedRowKeys[0]);
-  //   if (selectedRowKeys.length > 0) {
-  //     dropDownBoxComponent.close();
-  //   }
-  // }
-
   onSelectionChanged(
     selectedRowKeys: any,
     cellInfo: any,

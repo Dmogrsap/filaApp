@@ -1,3 +1,16 @@
+ <!-- <dx-switch
+  [(value)]="isLive"
+  (onValueChanged)="onSaving($event)"
+  [switchedOffText]="'OFF'"
+  [switchedOnText]="'ON'"
+  [width]="100"
+  [height]="30"
+>
+</dx-switch> -->
+
+
+
+
 <input type="file" (change)="onFileSelected($event)" />
 <div *ngFor="let img of images" style="display:inline-block; margin:8px">
   <img [src]="img.url" [alt]="img.name || img.path" style="max-width:150px; max-height:150px; display:block"/>
@@ -39,3 +52,41 @@
   <dxo-paging [pageSize]="10"></dxo-paging>
   <dxo-scrolling mode="virtual"></dxo-scrolling>
 </dx-data-grid>
+
+<!-- 
+<dx-tab-panel
+  width="100%"
+  [dataSource]="dataSourceMenusTab"
+  [selectedIndex]="0"
+  [loop]="false"
+  [animationEnabled]="true"
+  [swipeEnabled]="true"
+  [scrollingEnabled]="true"
+>
+  <dxo-scrolling mode="virtual"></dxo-scrolling>
+
+  <div *dxTemplate="let titulo of 'title'">
+    <span id="titles">{{ titulo.Nombre }}</span>
+  </div>
+  <div *dxTemplate="let items of 'item'">
+    <div class="tabpanel-item">
+      <div *ngIf="items.Nombre == 'Edicion '" class="container-fluid">
+        <br />
+      </div>
+
+      <div *ngIf="items.Nombre == 'Pedidos de Cafe'" class="container-fluid">
+        <div class="dashboard-container" style="padding: 20px">
+          <h2>Dashboard de Pedidos de Café (Tiempo Real)</h2>
+        </div>
+      </div>
+
+      <div *ngIf="items.Nombre == 'Transmision en Vivo'" class="container-fluid">
+        <div class="dashboard-container" style="padding: 20px">
+          <h2>Dashboard de Cobros de Café (Tiempo Real)</h2>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</dx-tab-panel> -->
+

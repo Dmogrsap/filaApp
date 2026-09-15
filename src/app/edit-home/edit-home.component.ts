@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import Swal from 'sweetalert2';
 import { SupabaseStorageService } from '../services/supabase-storage.service';
-import { collectionData, collection, Firestore } from '@angular/fire/firestore';
+import { EdithomeService } from '../services/edithome.service';
+import { firstValueFrom, take } from 'rxjs';
 
 @Component({
   selector: 'app-edit-home',
@@ -10,24 +11,71 @@ import { collectionData, collection, Firestore } from '@angular/fire/firestore';
 })
 export class EditHomeComponent implements OnInit {
   public images: any[] = [];
+  public dataSourceEnvivo: any[] = [];
   public loading = false;
   public selectedImage: any;
   public popupVisible = false;
   public previewSelected: string | null = null;
   public uploading = false;
+  public isLive = false;
+  public liveStateId: string | null = null;
 
-  constructor(private firebaseStorage: SupabaseStorageService) {}
+  public dataSourceMenusTab: any[] = [];
+
+  constructor(
+    private firebaseStorage: SupabaseStorageService,
+    private edithomeService: EdithomeService,
+  ) {}
 
   async ngOnInit() {
-    await this.loadImages();
-
-    //  try {
-    //   const res = await this.supabaseImageService.testConnection();
-    //   //console.log('Supabase testConnection OK:', res);
-    // } catch (err) {
-    //   console.error('Supabase testConnection falló:', err);
-    // }
+    await Promise.all([this.loadImages(), this.loadLiveState()]);
   }
+
+  public async loadLiveState() {
+    try {
+      const states = await firstValueFrom(
+        this.edithomeService.getEnvivo().pipe(take(1)),
+      );
+      const state = states[0];
+      this.liveStateId = state?.id ?? null;
+      this.isLive = state?.estado === true;
+    } catch (err) {
+      console.error('Error loading live transmission state', err);
+    }
+  }
+
+  // onSaving(e: { value?: boolean; previousValue?: boolean; promise?: Promise<void> }) {
+  //   const estado = e.value ?? false;
+  //   const estadoAnterior = e.previousValue ?? !estado;
+
+  //   if (!this.liveStateId) {
+  //     this.isLive = estadoAnterior;
+  //     Swal.fire('Error', 'No existe una configuración de transmisión', 'error');
+  //     return;
+  //   }
+
+  //   e.promise = this.edithomeService
+  //     .updateEstadoTransmision(this.liveStateId, estado)
+  //     .then(() => {
+  //       this.isLive = estado;
+  //       Swal.fire({
+  //         icon: 'success',
+  //         title: 'Estado actualizado',
+  //         showConfirmButton: false,
+  //         timer: 1200,
+  //       });
+  //     })
+  //     .catch((err) => {
+  //       console.error('Error updating live transmission state', err);
+  //       this.isLive = estadoAnterior;
+  //       Swal.fire(
+  //         'Error',
+  //         'No se pudo actualizar el estado de transmisión',
+  //         'error',
+  //       );
+  //       throw err;
+  //     });
+  // }
 
   async loadImages() {
     try {
@@ -74,4 +122,28 @@ export class EditHomeComponent implements OnInit {
     this.selectedImage = event.data;
     this.popupVisible = true;
   }
+
+  normalizeEnvivo(envivo: any) {
+    if (Array.isArray(envivo)) {
+      return envivo.filter((item) => typeof item === 'string').join(', ');
+    }
+
+    if (typeof envivo === 'object' && envivo !== null) {
+      return envivo.Role || envivo.roleName || envivo.name || '';
+    }
+
+    return typeof envivo === 'string' ? envivo : '';
+  }
+  normalizeEnvivoField(data: any) {
+    if (!data) {
+      return data;
+    }
+
+    if (data.Envivo !== undefined) {
+      data.Envivo = this.normalizeEnvivo(data.Envivo);
+    }
+
+    return data;
+  }
+
 }
