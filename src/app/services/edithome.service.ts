@@ -20,12 +20,12 @@ export class EdithomeService {
   constructor(private firestore: Firestore) {}
 
   getEnvivo(): Observable<any[]> {
-    const usersRef = collection(this.firestore, 'transmisionenvivo');
+    const usersRef = collection(this.firestore, 'Transmisionenvivo');
     return collectionData(usersRef, { idField: 'id' });
   }
 
   updateEnvivo(id: string, transmisionenvivo: any): Promise<void> {
-    const transmisionRef = doc(this.firestore, 'transmisionenvivo', id);
+    const transmisionRef = doc(this.firestore, 'Transmisionenvivo', id);
     return updateDoc(transmisionRef, transmisionenvivo);
   }
 

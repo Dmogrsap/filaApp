@@ -13,12 +13,15 @@ export class EditHomeComponent implements OnInit {
   public images: any[] = [];
   public dataSourceEnvivo: any[] = [];
   public loading = false;
+  public loadIndicatorVisible = false;
   public selectedImage: any;
   public popupVisible = false;
   public previewSelected: string | null = null;
   public uploading = false;
+  public isUpdatingLive = false;
   public isLive = false;
   public liveStateId: string | null = null;
+  public envivo: any[] = [];
 
   public dataSourceMenusTab: any[] = [];
 
@@ -29,6 +32,65 @@ export class EditHomeComponent implements OnInit {
 
   async ngOnInit() {
     await Promise.all([this.loadImages(), this.loadLiveState()]);
+
+    this.edithomeService.getEnvivo().subscribe({
+      next: (data) => {
+        this.dataSourceEnvivo = data;
+        this.envivo = data[0].Envivo;
+        console.log('Datos de transmisión en vivo:', data);
+      },
+      error: (error) => {
+        //console.error('Error al obtener la colección de transmisión en vivo:', error);
+      },
+    });
+  }
+
+  public async onEnvivoChange(e: any) {
+    if (!e.event) {
+      return;
+    }
+
+    const nuevoEstado: boolean = e.value;
+    const estadoAnterior: boolean = e.previousValue ?? !nuevoEstado;
+    const id = this.liveStateId || this.dataSourceEnvivo?.[0]?.id;
+    // Validamos que tengamos el ID del documento obtenido en ngOnInit
+    if (!id) {
+      this.isLive = estadoAnterior;
+      Swal.fire(
+        'Error',
+        'No se encontró el ID de la transmisión para actualizar',
+        'error',
+      );
+      return;
+    }
+    this.isUpdatingLive = true;
+
+    try {
+      // Actualizamos en Firebase pasando el ID y el nuevo campo { envivo }
+      await this.edithomeService.updateEnvivo(id, {
+        envivo: nuevoEstado,
+      });
+      this.isLive = nuevoEstado;
+      Swal.fire({
+        icon: 'success',
+        title: nuevoEstado
+          ? '¡Transmisión activada!'
+          : 'Transmisión desactivada',
+        showConfirmButton: false,
+        timer: 1500,
+      });
+    } catch (error) {
+      console.error('Error al actualizar el estado de transmisión:', error);
+      // Revertimos el switch a su estado previo en caso de error
+      this.isLive = estadoAnterior;
+      Swal.fire(
+        'Error',
+        'No se pudo actualizar el estado en Firebase',
+        'error',
+      );
+    } finally {
+      this.isUpdatingLive = false;
+    }
   }
 
   public async loadLiveState() {
@@ -38,9 +100,10 @@ export class EditHomeComponent implements OnInit {
       );
       const state = states[0];
       this.liveStateId = state?.id ?? null;
-      this.isLive = state?.estado === true;
+      this.isLive = state?.envivo ?? false;
+      //console.log('Live transmission state loaded:', this.isLive);
     } catch (err) {
-      console.error('Error loading live transmission state', err);
+      //console.error('Error loading live transmission state', err);
     }
   }
 
@@ -145,5 +208,4 @@ export class EditHomeComponent implements OnInit {
 
     return data;
   }
-
 }

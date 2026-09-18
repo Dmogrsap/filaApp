@@ -41,3 +41,114 @@
     padding-top: 10px;
     padding-bottom: 10px;
 }
+
+/* =========================================
+   🔴 Panel Estético de Transmisión en Vivo
+   ========================================= */
+.live-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  background: #ffffff;
+  padding: 22px 28px;
+  border-radius: 14px;
+  border: 1px solid #e2e8f0;
+  border-left: 6px solid #94a3b8;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+  margin-bottom: 28px;
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Estado activo: Transmisión EN VIVO */
+.live-card.is-live {
+  border-left-color: #ef4444;
+  background: linear-gradient(135deg, #fffafa 0%, #ffffff 55%);
+  box-shadow: 0 8px 24px rgba(239, 68, 68, 0.12);
+}
+
+.live-info {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.live-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.live-title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1e293b;
+  letter-spacing: -0.2px;
+}
+
+.live-subtitle {
+  margin: 0;
+  font-size: 0.92rem;
+  color: #64748b;
+  line-height: 1.4;
+}
+
+/* Badge con estado */
+.live-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  background-color: #f1f5f9;
+  color: #64748b;
+  transition: all 0.3s ease;
+}
+
+.live-badge.active {
+  background-color: #fee2e2;
+  color: #dc2626;
+}
+
+/* Punto pulsante para el efecto 'En Vivo' */
+.pulse-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #94a3b8;
+  display: inline-block;
+  transition: all 0.3s ease;
+}
+
+.live-badge.active .pulse-dot {
+  background-color: #ef4444;
+  box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+  animation: pulse-ring 1.6s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse-ring {
+  0% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 8px rgba(239, 68, 68, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+  }
+}
+
+/* Contenedor del Switch */
+.switch-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 6px;
+  flex-shrink: 0;
+}

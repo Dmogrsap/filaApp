@@ -1,21 +1,50 @@
- <!-- <dx-switch
-  [(value)]="isLive"
-  (onValueChanged)="onSaving($event)"
-  [switchedOffText]="'OFF'"
-  [switchedOnText]="'ON'"
-  [width]="100"
-  [height]="30"
->
-</dx-switch> -->
+<div class="live-card" [class.is-live]="isLive">
+  <div class="live-info">
+    <div class="live-header">
+      <span class="live-badge" [class.active]="isLive">
+        <span class="pulse-dot"></span>
+        {{ isLive ? 'EN VIVO' : 'OFFLINE' }}
+      </span>
+      <h3 class="live-title">Transmisión en Vivo</h3>
+    </div>
+    <p class="live-subtitle">
+      {{ isLive 
+        ? 'La transmisión está activa y visible en la página principal.' 
+        : 'Activa el interruptor cuando comience la transmisión en directo.' }}
+    </p>
+  </div>
 
+  <div class="switch-container">
+    <dx-load-indicator
+      *ngIf="isUpdatingLive"
+      [width]="26"
+      [height]="26"
+    ></dx-load-indicator>
 
-
+    <dx-switch
+      [disabled]="isUpdatingLive"
+      [value]="isLive"
+      (onValueChanged)="onEnvivoChange($event)"
+      [switchedOffText]="'OFF'"
+      [switchedOnText]="'ON'"
+      [width]="100"
+      [height]="36"
+    >
+    </dx-switch>
+  </div>
+</div>
 
 <input type="file" (change)="onFileSelected($event)" />
-<div *ngFor="let img of images" style="display:inline-block; margin:8px">
-  <img [src]="img.url" [alt]="img.name || img.path" style="max-width:150px; max-height:150px; display:block"/>
+<div *ngFor="let img of images" style="display: inline-block; margin: 8px">
+  <img
+    [src]="img.url"
+    [alt]="img.name || img.path"
+    style="max-width: 150px; max-height: 150px; display: block"
+  />
   <div>{{ img.name || img.path }}</div>
-  <div style="font-size:0.85em; color:#666">{{ img.created_at ? (img.created_at | date:'short') : '-' }}</div>
+  <div style="font-size: 0.85em; color: #666">
+    {{ img.created_at ? (img.created_at | date: "short") : "-" }}
+  </div>
 </div>
 
 <!-- <dx-load-indicator [visible]="loading"></dx-load-indicator> -->
@@ -24,36 +53,50 @@
 <div class="edit-home-container">
   <h2>Imágenes subidas</h2>
 
-<dx-data-grid
-  [dataSource]="images"
-  [showBorders]="true"
-  [rowAlternationEnabled]="true"
-  [columnAutoWidth]="true"
-  height="450"
->
-  <dxi-column dataField="name" caption="Nombre"></dxi-column>
-  <dxi-column dataField="description" caption="Descripción"></dxi-column>
-  <dxi-column dataField="created_at" caption="Fecha" dataType="date"></dxi-column>
+  <dx-data-grid
+    [dataSource]="images"
+    [showBorders]="true"
+    [rowAlternationEnabled]="true"
+    [columnAutoWidth]="true"
+    height="450"
+  >
+    <dxi-column dataField="name" caption="Nombre"></dxi-column>
+    <dxi-column dataField="description" caption="Descripción"></dxi-column>
+    <dxi-column
+      dataField="created_at"
+      caption="Fecha"
+      dataType="date"
+    ></dxi-column>
 
-  <dxi-column caption="Imagen" cellTemplate="imageCell" [width]="180"></dxi-column>
+    <dxi-column
+      caption="Imagen"
+      cellTemplate="imageCell"
+      [width]="180"
+    ></dxi-column>
 
-  <div *dxTemplate="let row of 'imageCell'">
-    <!-- row puede ser el objeto de fila o contener .data según versión; soporta ambos -->
-    <img
-      [src]="(row?.data?.url) ?? row?.url"
-      [alt]="(row?.data?.name) ?? row?.name ?? (row?.data?.path) ?? row?.path"
-      style="max-width:160px; max-height:120px; display:block"
-    />
-    <div style="font-size:0.85em; color:#666">
-      {{ (row?.data?.created_at) ? (row?.data?.created_at | date:'short') : (row?.created_at ? (row.created_at | date:'short') : '-') }}
+    <div *dxTemplate="let row of 'imageCell'">
+      <!-- row puede ser el objeto de fila o contener .data según versión; soporta ambos -->
+      <img
+        [src]="row?.data?.url ?? row?.url"
+        [alt]="row?.data?.name ?? row?.name ?? row?.data?.path ?? row?.path"
+        style="max-width: 160px; max-height: 120px; display: block"
+      />
+      <div style="font-size: 0.85em; color: #666">
+        {{
+          row?.data?.created_at
+            ? (row?.data?.created_at | date: "short")
+            : row?.created_at
+              ? (row.created_at | date: "short")
+              : "-"
+        }}
+      </div>
     </div>
-  </div>
 
-  <dxo-paging [pageSize]="10"></dxo-paging>
-  <dxo-scrolling mode="virtual"></dxo-scrolling>
-</dx-data-grid>
+    <dxo-paging [pageSize]="10"></dxo-paging>
+    <dxo-scrolling mode="virtual"></dxo-scrolling>
+  </dx-data-grid>
 
-<!-- 
+  <!-- 
 <dx-tab-panel
   width="100%"
   [dataSource]="dataSourceMenusTab"
@@ -89,4 +132,4 @@
     </div>
   </div>
 </dx-tab-panel> -->
-
+</div>
