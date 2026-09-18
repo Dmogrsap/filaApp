@@ -17,6 +17,7 @@ export class SupabaseStorageService {
       },
     );
     this.bucket = environment.supabaseBucket ?? 'coffee';
+    this.bucket = environment.supabaseBucket ?? 'images';
   }
 
   private sanitizeName(name: string) {
@@ -97,6 +98,22 @@ export class SupabaseStorageService {
       console.log('Supabase delete ok', data);
     } catch (err) {
       console.error('Supabase deleteFile error', err);
+      throw err;
+    }
+  }
+
+  async replaceFile(
+    oldPath: string,
+    newFile: File,
+    folder = 'home',
+  ): Promise<{ path: string; url: string }> {
+    try {
+      if (oldPath) {
+        await this.deleteFile(oldPath);
+      }
+      return await this.uploadFile(newFile, folder);
+    } catch (err) {
+      console.error('Supabase replaceFile error', err);
       throw err;
     }
   }

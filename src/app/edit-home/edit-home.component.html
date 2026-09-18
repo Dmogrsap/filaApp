@@ -1,3 +1,6 @@
+<!-- ==========================================
+     🔴 CONTROL DE TRANSMISIÓN EN VIVO
+     ========================================== -->
 <div class="live-card" [class.is-live]="isLive">
   <div class="live-info">
     <div class="live-header">
@@ -50,102 +53,208 @@
   </div>
 </div>
 
-<input type="file" (change)="onFileSelected($event)" />
-<div *ngFor="let img of images" style="display: inline-block; margin: 8px">
-  <img
-    [src]="img.url"
-    [alt]="img.name || img.path"
-    style="max-width: 150px; max-height: 150px; display: block"
-  />
-  <div>{{ img.name || img.path }}</div>
-  <div style="font-size: 0.85em; color: #666">
-    {{ img.created_at ? (img.created_at | date: "short") : "-" }}
+<!-- ==========================================
+     🖼️ GESTOR DE IMÁGENES SUPABASE (images/home)
+     ========================================== -->
+<div class="gallery-card">
+  <div class="gallery-card-header">
+    <div class="gallery-title-wrapper">
+      <div class="gallery-title-row">
+        <h2 class="gallery-title">Imágenes del Inicio</h2>
+        <span class="gallery-badge">{{ images.length }} {{ images.length === 1 ? 'imagen' : 'imágenes' }}</span>
+      </div>
+      <p class="gallery-subtitle">
+        Gestiona las imágenes almacenadas en Supabase Storage (<strong>images/home</strong>).
+      </p>
+    </div>
+
+    <div class="gallery-actions">
+      <!-- Input oculto para subir archivo nuevo -->
+      <input
+        #fileInput
+        type="file"
+        accept="image/*"
+        (change)="onFileSelected($event)"
+        style="display: none"
+      />
+      <!-- Input oculto para reemplazar archivo existente -->
+      <input
+        #replaceFileInput
+        type="file"
+        accept="image/*"
+        (change)="onReplaceFileSelected($event)"
+        style="display: none"
+      />
+
+      <button
+        type="button"
+        class="btn-upload"
+        [disabled]="uploading || loading"
+        (click)="fileInput.click()"
+      >
+        <dx-load-indicator
+          *ngIf="uploading"
+          [width]="18"
+          [height]="18"
+        ></dx-load-indicator>
+        <span *ngIf="!uploading" class="btn-icon">📤</span>
+        <span>{{ uploading ? 'Subiendo...' : 'Subir Imagen' }}</span>
+      </button>
+
+      <button
+        type="button"
+        class="btn-refresh"
+        [disabled]="loading"
+        (click)="loadImages()"
+        title="Recargar imágenes"
+      >
+        <span>🔄</span>
+      </button>
+    </div>
   </div>
-</div>
 
-<!-- <dx-load-indicator [visible]="loading"></dx-load-indicator> -->
-
-<!-- ...existing code... -->
-<div class="edit-home-container">
-  <h2>Imágenes subidas</h2>
-
+  <!-- Tabla DataGrid de imágenes -->
   <dx-data-grid
     [dataSource]="images"
     [showBorders]="true"
     [rowAlternationEnabled]="true"
     [columnAutoWidth]="true"
-    height="450"
+    [hoverStateEnabled]="true"
+    class="styled-grid"
+    height="480"
   >
-    <dxi-column dataField="name" caption="Nombre"></dxi-column>
-    <dxi-column dataField="description" caption="Descripción"></dxi-column>
+    <dxo-search-panel
+      [visible]="true"
+      [highlightCaseSensitive]="false"
+      placeholder="Buscar por nombre..."
+    ></dxo-search-panel>
+
+    <dxi-column
+      caption="Vista Previa"
+      cellTemplate="imageCell"
+      [width]="120"
+      alignment="center"
+    ></dxi-column>
+
+    <dxi-column dataField="name" caption="Nombre del archivo"></dxi-column>
+
+    <dxi-column
+      dataField="path"
+      caption="Ruta en Storage"
+      [width]="180"
+      cellTemplate="pathCell"
+    ></dxi-column>
+
     <dxi-column
       dataField="created_at"
       caption="Fecha"
       dataType="date"
+      format="shortDate"
+      [width]="130"
     ></dxi-column>
 
     <dxi-column
-      caption="Imagen"
-      cellTemplate="imageCell"
-      [width]="180"
+      caption="Acciones"
+      cellTemplate="actionsCell"
+      [width]="210"
+      alignment="center"
     ></dxi-column>
 
-    <div *dxTemplate="let row of 'imageCell'">
-      <!-- row puede ser el objeto de fila o contener .data según versión; soporta ambos -->
+    <!-- Template para la celda de la imagen -->
+    <div *dxTemplate="let row of 'imageCell'" class="img-preview-cell">
       <img
-        [src]="row?.data?.url ?? row?.url"
-        [alt]="row?.data?.name ?? row?.name ?? row?.data?.path ?? row?.path"
-        style="max-width: 160px; max-height: 120px; display: block"
+        [src]="row?.data?.url"
+        [alt]="row?.data?.name"
+        class="grid-thumbnail"
+        (click)="onPreview(row?.data)"
+        title="Clic para ampliar"
       />
-      <div style="font-size: 0.85em; color: #666">
-        {{
-          row?.data?.created_at
-            ? (row?.data?.created_at | date: "short")
-            : row?.created_at
-              ? (row.created_at | date: "short")
-              : "-"
-        }}
-      </div>
     </div>
 
-    <dxo-paging [pageSize]="10"></dxo-paging>
-    <dxo-scrolling mode="virtual"></dxo-scrolling>
+    <!-- Template para la ruta -->
+    <div *dxTemplate="let row of 'pathCell'">
+      <code class="path-chip">{{ row?.data?.path }}</code>
+    </div>
+
+    <!-- Template para las acciones -->
+    <div *dxTemplate="let row of 'actionsCell'" class="action-buttons">
+      <button
+        type="button"
+        class="action-btn btn-view"
+        (click)="onPreview(row?.data)"
+        title="Ver imagen completa"
+      >
+        👁️ Ver
+      </button>
+      <button
+        type="button"
+        class="action-btn btn-replace"
+        (click)="openReplaceDialog(row?.data, replaceFileInput)"
+        title="Reemplazar por otra imagen"
+      >
+        🔄 Cambiar
+      </button>
+      <button
+        type="button"
+        class="action-btn btn-delete"
+        (click)="onDelete(row?.data)"
+        title="Eliminar de Supabase"
+      >
+        🗑️
+      </button>
+    </div>
+
+    <dxo-paging [pageSize]="6"></dxo-paging>
+    <dxo-pager
+      [showPageSizeSelector]="true"
+      [allowedPageSizes]="[6, 12, 24]"
+      [showInfo]="true"
+    ></dxo-pager>
   </dx-data-grid>
-
-  <!-- 
-<dx-tab-panel
-  width="100%"
-  [dataSource]="dataSourceMenusTab"
-  [selectedIndex]="0"
-  [loop]="false"
-  [animationEnabled]="true"
-  [swipeEnabled]="true"
-  [scrollingEnabled]="true"
->
-  <dxo-scrolling mode="virtual"></dxo-scrolling>
-
-  <div *dxTemplate="let titulo of 'title'">
-    <span id="titles">{{ titulo.Nombre }}</span>
-  </div>
-  <div *dxTemplate="let items of 'item'">
-    <div class="tabpanel-item">
-      <div *ngIf="items.Nombre == 'Edicion '" class="container-fluid">
-        <br />
-      </div>
-
-      <div *ngIf="items.Nombre == 'Pedidos de Cafe'" class="container-fluid">
-        <div class="dashboard-container" style="padding: 20px">
-          <h2>Dashboard de Pedidos de Café (Tiempo Real)</h2>
-        </div>
-      </div>
-
-      <div *ngIf="items.Nombre == 'Transmision en Vivo'" class="container-fluid">
-        <div class="dashboard-container" style="padding: 20px">
-          <h2>Dashboard de Cobros de Café (Tiempo Real)</h2>
-        </div>
-      </div>
-
-    </div>
-  </div>
-</dx-tab-panel> -->
 </div>
+
+<!-- Modal Popup para vista previa de imagen en grande -->
+<dx-popup
+  [(visible)]="popupVisible"
+  [width]="620"
+  [height]="'auto'"
+  [showTitle]="true"
+  [title]="selectedImage?.name || 'Vista Previa de Imagen'"
+  [dragEnabled]="false"
+  [closeOnOutsideClick]="true"
+>
+  <div *dxTemplate="let data of 'content'" class="popup-image-container">
+    <div class="popup-image-wrapper">
+      <img
+        [src]="selectedImage?.url"
+        [alt]="selectedImage?.name"
+        class="popup-image"
+      />
+    </div>
+    <div class="popup-image-meta">
+      <div>
+        <strong>Ruta:</strong> <code>{{ selectedImage?.path }}</code>
+      </div>
+      <div *ngIf="selectedImage?.created_at">
+        <strong>Fecha:</strong> {{ selectedImage?.created_at | date: 'medium' }}
+      </div>
+    </div>
+    <!-- <div class="popup-actions">
+      <button
+        type="button"
+        class="btn-copy-url"
+        (click)="copyImageUrl(selectedImage?.url)"
+      >
+        📋 Copiar Enlace Público
+      </button>
+      <a
+        [href]="selectedImage?.url"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="btn-open-tab"
+      >
+        ↗️ Abrir en pestaña nueva
+      </a>
+    </div> -->
+  </div>
+</dx-popup>

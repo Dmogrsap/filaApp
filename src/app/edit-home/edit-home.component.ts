@@ -23,11 +23,12 @@ export class EditHomeComponent implements OnInit {
   public liveStateId: string | null = null;
   public liveVideoLink: string = '';
   public envivo: any[] = [];
+  public imageToReplace: any = null;
 
   public dataSourceMenusTab: any[] = [];
 
   constructor(
-    private firebaseStorage: SupabaseStorageService,
+    private supabaseStorage: SupabaseStorageService,
     private edithomeService: EdithomeService,
   ) {}
 
@@ -164,45 +165,15 @@ export class EditHomeComponent implements OnInit {
     }
   }
 
-  // onSaving(e: { value?: boolean; previousValue?: boolean; promise?: Promise<void> }) {
-  //   const estado = e.value ?? false;
-  //   const estadoAnterior = e.previousValue ?? !estado;
-
-  //   if (!this.liveStateId) {
-  //     this.isLive = estadoAnterior;
-  //     Swal.fire('Error', 'No existe una configuración de transmisión', 'error');
-  //     return;
-  //   }
-
-  //   e.promise = this.edithomeService
-  //     .updateEstadoTransmision(this.liveStateId, estado)
-  //     .then(() => {
-  //       this.isLive = estado;
-  //       Swal.fire({
-  //         icon: 'success',
-  //         title: 'Estado actualizado',
-  //         showConfirmButton: false,
-  //         timer: 1200,
-  //       });
-  //     })
-  //     .catch((err) => {
-  //       console.error('Error updating live transmission state', err);
-  //       this.isLive = estadoAnterior;
-  //       Swal.fire(
-  //         'Error',
-  //         'No se pudo actualizar el estado de transmisión',
-  //         'error',
-  //       );
-  //       throw err;
-  //     });
-  // }
+  // GESTIÓN DE IMÁGENES EN SUPABASE (images/home)
 
   async loadImages() {
     try {
       this.loading = true;
-      this.images = await this.firebaseStorage.listFiles('images');
+      // Listamos todas las imágenes dentro de la carpeta 'home' del bucket 'images'
+      this.images = await this.supabaseStorage.listFiles('home');
     } catch (err) {
-      console.error('Error listing files', err);
+      console.error('Error listing files from Supabase', err);
     } finally {
       this.loading = false;
     }
@@ -211,58 +182,122 @@ export class EditHomeComponent implements OnInit {
   async onFileSelected(event: any) {
     const file: File | undefined = event.target.files?.[0];
     if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      Swal.fire('Formato incorrecto', 'Por favor selecciona un archivo de imagen (PNG, JPG, etc.)', 'warning');
+      event.target.value = '';
+      return;
+    }
+
+    try {
+      this.uploading = true;
+      await this.supabaseStorage.uploadFile(file, 'home');
+      await this.loadImages();
+      Swal.fire({
+        icon: 'success',
+        title: '¡Imagen subida!',
+        text: 'La imagen se guardó exitosamente en Supabase (images/home).',
+        timer: 1600,
+        showConfirmButton: false,
+      });
+    } catch (err: any) {
+      console.error('Error uploading image to Supabase', err);
+      Swal.fire('Error', err?.message || 'Fallo al subir imagen a Supabase', 'error');
+    } finally {
+      this.uploading = false;
+      event.target.value = '';
+    }
+  }
+
+  async onDelete(image: any) {
+    if (!image?.path) return;
+
+    const result = await Swal.fire({
+      title: '¿Eliminar imagen?',
+      text: `Se eliminará permanentemente "${image.name || 'la imagen'}" de Supabase.`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#ef4444',
+      cancelButtonColor: '#64748b',
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar',
+    });
+
+    if (!result.isConfirmed) return;
+
     try {
       this.loading = true;
-      const { path, url } = await this.firebaseStorage.uploadFile(
-        file,
-        'images',
-      );
+      await this.supabaseStorage.deleteFile(image.path);
       await this.loadImages();
-      Swal.fire('OK', 'Imagen subida a Firebase Storage', 'success');
-    } catch (err: any) {
-      console.error('Error uploading image', err);
-      Swal.fire('Error', err?.message || 'Fallo al subir imagen', 'error');
+      Swal.fire({
+        icon: 'success',
+        title: 'Imagen eliminada',
+        timer: 1400,
+        showConfirmButton: false,
+      });
+    } catch (err) {
+      console.error('Delete error', err);
+      Swal.fire('Error', 'No se pudo eliminar la imagen de Supabase', 'error');
     } finally {
       this.loading = false;
     }
   }
 
-  async onDelete(path: string) {
+  openReplaceDialog(image: any, fileInput: HTMLInputElement) {
+    this.imageToReplace = image;
+    fileInput.click();
+  }
+
+  async onReplaceFileSelected(event: any) {
+    const file: File | undefined = event.target.files?.[0];
+    if (!file || !this.imageToReplace) return;
+
+    if (!file.type.startsWith('image/')) {
+      Swal.fire('Formato incorrecto', 'Por favor selecciona un archivo de imagen válido', 'warning');
+      event.target.value = '';
+      return;
+    }
+
     try {
-      await this.firebaseStorage.deleteFile(path);
+      this.uploading = true;
+      await this.supabaseStorage.replaceFile(this.imageToReplace.path, file, 'home');
+      this.imageToReplace = null;
       await this.loadImages();
-      Swal.fire('OK', 'Archivo eliminado', 'success');
-    } catch (err) {
-      console.error('Delete error', err);
-      Swal.fire('Error', 'No se pudo eliminar', 'error');
+      Swal.fire({
+        icon: 'success',
+        title: '¡Imagen reemplazada!',
+        text: 'La imagen ha sido actualizada en Supabase con éxito.',
+        timer: 1600,
+        showConfirmButton: false,
+      });
+    } catch (err: any) {
+      console.error('Error al reemplazar imagen', err);
+      Swal.fire('Error', err?.message || 'No se pudo reemplazar la imagen', 'error');
+    } finally {
+      this.uploading = false;
+      event.target.value = '';
     }
   }
 
-  onRowClick(event: any) {
-    this.selectedImage = event.data;
+  onPreview(image: any) {
+    this.selectedImage = image;
     this.popupVisible = true;
   }
 
-  normalizeEnvivo(envivo: any) {
-    if (Array.isArray(envivo)) {
-      return envivo.filter((item) => typeof item === 'string').join(', ');
-    }
-
-    if (typeof envivo === 'object' && envivo !== null) {
-      return envivo.Role || envivo.roleName || envivo.name || '';
-    }
-
-    return typeof envivo === 'string' ? envivo : '';
+  copyImageUrl(url: string) {
+    if (!url) return;
+    navigator.clipboard.writeText(url).then(() => {
+      Swal.fire({
+        icon: 'success',
+        title: '¡Enlace copiado!',
+        text: 'La URL pública ha sido copiada al portapapeles.',
+        timer: 1300,
+        showConfirmButton: false,
+      });
+    });
   }
-  normalizeEnvivoField(data: any) {
-    if (!data) {
-      return data;
-    }
 
-    if (data.Envivo !== undefined) {
-      data.Envivo = this.normalizeEnvivo(data.Envivo);
-    }
-
-    return data;
+  onRowClick(event: any) {
+    this.onPreview(event.data);
   }
 }
