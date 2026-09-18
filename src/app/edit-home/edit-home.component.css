@@ -143,12 +143,77 @@
   }
 }
 
-/* Contenedor del Switch */
+/* Contenedor del Switch y controles */
 .switch-container {
   display: flex;
   align-items: center;
-  justify-content: center;
   gap: 12px;
-  padding: 6px;
   flex-shrink: 0;
+}
+
+.switch-mobile-label {
+  display: none; /* Oculto en pantallas grandes */
+}
+
+.switch-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* =========================================
+   📱 Responsividad para Móviles (< 640px)
+   ========================================= */
+@media (max-width: 640px) {
+  .live-card {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 16px;
+    gap: 14px;
+    border-radius: 12px;
+    border-left-width: 5px;
+    margin-bottom: 20px;
+  }
+
+  .live-card.is-live {
+    background: linear-gradient(180deg, #fff5f5 0%, #ffffff 55%);
+  }
+
+  .live-header {
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .live-title {
+    font-size: 1.1rem;
+  }
+
+  .live-subtitle {
+    font-size: 0.85rem;
+  }
+
+  .live-badge {
+    padding: 4px 10px;
+    font-size: 0.7rem;
+  }
+
+  .switch-container {
+    width: 100%;
+    justify-content: space-between;
+    padding-top: 12px;
+    border-top: 1px solid #f1f5f9;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .live-card.is-live .switch-container {
+    border-top-color: #fee2e2;
+  }
+
+  .switch-mobile-label {
+    display: block;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: #475569;
+  }
 }

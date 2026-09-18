@@ -37,7 +37,7 @@ export class EditHomeComponent implements OnInit {
       next: (data) => {
         this.dataSourceEnvivo = data;
         this.envivo = data[0].Envivo;
-        console.log('Datos de transmisión en vivo:', data);
+        //console.log('Datos de transmisión en vivo:', data);
       },
       error: (error) => {
         //console.error('Error al obtener la colección de transmisión en vivo:', error);

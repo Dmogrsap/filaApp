@@ -15,22 +15,25 @@
   </div>
 
   <div class="switch-container">
-    <dx-load-indicator
-      *ngIf="isUpdatingLive"
-      [width]="26"
-      [height]="26"
-    ></dx-load-indicator>
+    <span class="switch-mobile-label">Estado de la transmisión:</span>
+    <div class="switch-controls">
+      <dx-load-indicator
+        *ngIf="isUpdatingLive"
+        [width]="24"
+        [height]="24"
+      ></dx-load-indicator>
 
-    <dx-switch
-      [disabled]="isUpdatingLive"
-      [value]="isLive"
-      (onValueChanged)="onEnvivoChange($event)"
-      [switchedOffText]="'OFF'"
-      [switchedOnText]="'ON'"
-      [width]="100"
-      [height]="36"
-    >
-    </dx-switch>
+      <dx-switch
+        [disabled]="isUpdatingLive"
+        [value]="isLive"
+        (onValueChanged)="onEnvivoChange($event)"
+        [switchedOffText]="'OFF'"
+        [switchedOnText]="'ON'"
+        [width]="95"
+        [height]="34"
+      >
+      </dx-switch>
+    </div>
   </div>
 </div>
 
