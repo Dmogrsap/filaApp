@@ -12,6 +12,19 @@
         ? 'La transmisión está activa y visible en la página principal.' 
         : 'Activa el interruptor cuando comience la transmisión en directo.' }}
     </p>
+
+    <div class="live-link-section">
+      <button 
+        type="button" 
+        class="btn-live-link" 
+        (click)="agregarLinkTransmision()">
+        <span class="link-icon">🔗</span>
+        {{ liveVideoLink ? 'Cambiar Enlace de Transmisión' : 'Agregar Enlace de Transmisión' }}
+      </button>
+      <span *ngIf="liveVideoLink" class="current-link-preview" [title]="liveVideoLink">
+        {{ liveVideoLink }}
+      </span>
+    </div>
   </div>
 
   <div class="switch-container">

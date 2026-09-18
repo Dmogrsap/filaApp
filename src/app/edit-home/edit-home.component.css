@@ -94,6 +94,49 @@
   line-height: 1.4;
 }
 
+/* Sección de enlace de transmisión */
+.live-link-section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+
+.btn-live-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background-color: #f8fafc;
+  border: 1px solid #cbd5e1;
+  color: #334155;
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-size: 0.83rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-live-link:hover {
+  background-color: #f1f5f9;
+  border-color: #94a3b8;
+  color: #0f172a;
+}
+
+.current-link-preview {
+  font-size: 0.8rem;
+  color: #64748b;
+  background: #f8fafc;
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+  max-width: 280px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 /* Badge con estado */
 .live-badge {
   display: inline-flex;
@@ -195,6 +238,24 @@
   .live-badge {
     padding: 4px 10px;
     font-size: 0.7rem;
+  }
+
+  .live-link-section {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    width: 100%;
+  }
+
+  .btn-live-link {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .current-link-preview {
+    max-width: 100%;
+    width: 100%;
+    box-sizing: border-box;
   }
 
   .switch-container {

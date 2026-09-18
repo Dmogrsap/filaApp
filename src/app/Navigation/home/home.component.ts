@@ -47,35 +47,28 @@ export class HomeComponent implements OnInit {
     this.edithomeService.getEnvivo().subscribe({
       next: (data) => {
         this.dataSourceEnvivo = data;
-        this.hayTransmisionEnVivo = data[0]?.envivo || false;
+        const config = data[0];
+        this.hayTransmisionEnVivo = config?.envivo || false;
+
+        // Si viene un enlace configurado en Firebase, actualizamos el reproductor
+        if (config?.link) {
+          this.actualizarUrlVideo(config.link);
+        }
+
         console.log('Datos de transmisión en vivo:', this.hayTransmisionEnVivo);
       },
       error: (error) => {
         //console.error('Error al obtener la colección de transmisión en vivo:', error);
       },
-    });
-
-    
-    
+    }); 
   }
 
-//   async onFileSelected(event: any) {
-//   const file = event.target.files[0];
-//   if (file) {
-//     await this.imageService.uploadAndSave(file, 'Nombre de la imagen',);
-//     Swal.fire({
-//       icon: 'success',
-//       title: 'Image Uploaded Successfully',
-//       text: 'Your image has been uploaded.',
-//       imageUrl: 'assets/img/success.png',
-//       imageWidth: 600,
-//       imageHeight: 300,
-//       width: 600,
-      
-
-//       // imageAlt: 'Custom image',
-//     });
-//   }
-// }
+  actualizarUrlVideo(link: string): void {
+    if (!link || link === this.facebookLiveVideoLink) return;
+    this.facebookLiveVideoLink = link;
+    this.facebookLiveUrl = this.sanitizer.bypassSecurityTrustResourceUrl(
+      `https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(link)}&show_text=false&autoplay=true&width=1280&height=720`
+    );
+  }
 
 }
