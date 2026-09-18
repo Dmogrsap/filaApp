@@ -12,6 +12,7 @@ import Swal from 'sweetalert2';
 export class HomeComponent implements OnInit {
 
   public datasoureimages: any | null = null;
+  public images: any [] = [];
   public hayTransmisionEnVivo = true;
   public dataSourceEnvivo: any [] = [];
   public facebookLiveUrl: SafeResourceUrl;
@@ -24,7 +25,8 @@ export class HomeComponent implements OnInit {
   constructor(
     private FirebaseStorageService: FirebaseStorageService,
     private sanitizer: DomSanitizer,
-    private edithomeService: EdithomeService
+    private edithomeService: EdithomeService,
+    private supabaseStorage: FirebaseStorageService,
   ) {
     this.facebookLiveUrl = this.sanitizer.bypassSecurityTrustResourceUrl(
       `https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(this.facebookLiveVideoLink)}&show_text=false&autoplay=true&width=1280&height=720`
@@ -61,6 +63,12 @@ export class HomeComponent implements OnInit {
         //console.error('Error al obtener la colección de transmisión en vivo:', error);
       },
     }); 
+
+    this.supabaseStorage.listFiles('home').then((data) => {
+      this.images = data;
+      console.log('Imágenes cargadas desde Supabase:', this.images);
+    });
+
   }
 
   actualizarUrlVideo(link: string): void {
