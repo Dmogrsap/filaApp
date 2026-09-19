@@ -17,10 +17,11 @@ export class HomeComponent implements OnInit {
   public dataSourceEnvivo: any [] = [];
   public facebookLiveUrl: SafeResourceUrl;
   public facebookLiveVideoLink = 'https://www.facebook.com/Iglesiafiladelfiach/videos/28160375423612066';
-  public itemsGaleria: Array<{ type: 'image'; url: string }> = [
-    { type: 'image', url: 'assets/img/filaIntro1.jpg' },
-    { type: 'image', url: 'assets/img/filaIntro.jpg' }
-  ];
+  // public itemsGaleria: Array<{ type: 'image'; url: string }> = [
+  //   { type: 'image', url: 'assets/img/filaIntro1.jpg' },
+  //   { type: 'image', url: 'assets/img/filaIntro.jpg' }
+  // ];
+  public itemsGaleria: any [] = [];
 
   constructor(
     private FirebaseStorageService: FirebaseStorageService,
@@ -64,9 +65,17 @@ export class HomeComponent implements OnInit {
       },
     }); 
 
-    this.supabaseStorage.listFiles('home').then((data) => {
-      this.images = data;
-      console.log('Imágenes cargadas desde Supabase:', this.images);
+    this.edithomeService.getimageshome().subscribe({
+      next: (data) => {
+        this.images = data;
+        for (const image of this.images) {
+          this.itemsGaleria.push({ url: image.url });
+        }
+        console.log('Imágenes cargadas desde Supabase:', this.itemsGaleria);
+      },
+      error: (error) => {
+        console.error('Error al obtener las imágenes:', error);
+      }
     });
 
   }

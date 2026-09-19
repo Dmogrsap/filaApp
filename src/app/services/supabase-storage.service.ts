@@ -1,4 +1,14 @@
 import { Injectable } from '@angular/core';
+import {
+  Firestore,
+  addDoc,
+  collection,
+  deleteDoc,
+  getDocs,
+  query,
+  serverTimestamp,
+  where,
+} from '@angular/fire/firestore';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { environment } from 'src/environments/environment';
 
@@ -7,7 +17,7 @@ export class SupabaseStorageService {
   private supabase: SupabaseClient;
   private bucket: string;
 
-  constructor() {
+  constructor(private firestore: Firestore) {
     bucket: 'coffee';
     this.supabase = createClient(
       environment.supabaseUrl,
@@ -43,6 +53,18 @@ export class SupabaseStorageService {
         .from(this.bucket)
         .getPublicUrl(path);
       const url = publicRes?.data?.publicUrl ?? publicRes?.publicUrl ?? '';
+
+      await addDoc(collection(this.firestore, 'imagenes'), {
+        bucket: this.bucket,
+        folder,
+        name: file.name,
+        path,
+        url,
+        contentType: file.type,
+        size: file.size,
+        createdAt: serverTimestamp(),
+      });
+
       console.log('Supabase upload ok', { path, url });
       return { path, url };
     } catch (err) {
@@ -95,6 +117,14 @@ export class SupabaseStorageService {
         .from(this.bucket)
         .remove([path]);
       if (error) throw error;
+
+      const imagesQuery = query(
+        collection(this.firestore, 'imagenes'),
+        where('path', '==', path),
+      );
+      const imageDocuments = await getDocs(imagesQuery);
+      await Promise.all(imageDocuments.docs.map((imageDocument) => deleteDoc(imageDocument.ref)));
+
       console.log('Supabase delete ok', data);
     } catch (err) {
       console.error('Supabase deleteFile error', err);

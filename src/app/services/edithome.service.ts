@@ -29,4 +29,9 @@ export class EdithomeService {
     return updateDoc(transmisionRef, transmisionenvivo);
   }
 
+  getimageshome(): Observable<any[]> {
+    const usersRef = collection(this.firestore, 'imagenes');
+    return collectionData(usersRef, { idField: 'id' });
+  }
+
 }
