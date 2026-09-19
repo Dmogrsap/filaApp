@@ -84,7 +84,7 @@ const routes: Routes = [
         data: {
           title: 'Edicion de Portada',
           url: '/edit-home',
-          allowedRoles: ['Admin'],
+          allowedRoles: ['Admin','Transmision','Redes'],
         },
         canActivate: [RoleGuard],
       },

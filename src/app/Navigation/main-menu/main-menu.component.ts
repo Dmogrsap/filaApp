@@ -27,7 +27,7 @@ const ROUTE_ROLES: { [key: string]: string[] } = {
   '/lideres': ['Admin','Pastor'],
   '/roles': ['Admin'],
   '/servidores-alabanza': ['Admin', 'Musico Alabanza', 'Lider Alabanza', 'Cantante alabanza', 'Pastor'],
-  '/edit-home': ['Admin','Transmisión','Lider Transmisión','Redes','Pastor'],
+  '/edit-home': ['Admin','Transmision','Lider Transmisión','Redes','Pastor'],
   '/song-manager': ['Admin', 'Musico Alabanza', 'Lider Alabanza', 'Cantante alabanza', 'Pastor'],
   '/filastore': ['Admin','Lider Fila Store','Fila Cafe', 'Pastor'],
   '/servidor-maestros': ['Admin', 'Maestra', 'Maestro', 'Lider Maestras', 'Lider Maestros','Pastor'],
