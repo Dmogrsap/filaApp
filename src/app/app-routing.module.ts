@@ -49,7 +49,7 @@ const routes: Routes = [
       {
         path: 'users',
         component: UsersComponent,
-        data: { title: 'Usuarios', url: 'users', allowedRoles: ['Admin'] },
+        data: { title: 'Usuarios', url: 'users', allowedRoles: ['Admin','Pastor'] },
         canActivate: [RoleGuard],
       },
 

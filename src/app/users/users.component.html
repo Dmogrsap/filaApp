@@ -78,7 +78,7 @@
             valueExpr: 'Role',
             searchEnabled: true,
             showSelectionControls: true,
-            selectionMode: 'all'  
+            selectionMode: 'multiple'
             }"
           >
             <dxo-label text="Role"> </dxo-label>
@@ -178,6 +178,20 @@
       alignment="center"
       dataField="isActive"
       caption="Is Active"
-    ></dxi-column>
+      cellTemplate="isActiveCell"
+    >
+      <dxo-lookup
+        [dataSource]="[
+          { value: true, text: 'Activo' },
+          { value: false, text: 'Inactivo' }
+        ]"
+        valueExpr="value"
+        displayExpr="text"
+      ></dxo-lookup>
+    </dxi-column>
+
+    <div *dxTemplate="let cell of 'isActiveCell'" class="active-cell">
+      <span *ngIf="cell.value" aria-label="Activo">&#10003;</span>
+    </div>
   </dx-data-grid>
 </div>

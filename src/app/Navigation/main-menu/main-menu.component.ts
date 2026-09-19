@@ -23,15 +23,15 @@ import Swal from 'sweetalert2';
 // Definición de rutas con TODOS los roles (debe coincidir con app-routing.module.ts)
 const ROUTE_ROLES: { [key: string]: string[] } = {
   '/access': ['Admin'],
-  '/users': ['Admin'],
-  '/lideres': ['Admin'],
+  '/users': ['Admin','Pastor'],
+  '/lideres': ['Admin','Pastor'],
   '/roles': ['Admin'],
-  '/servidores-alabanza': ['Admin', 'Musico Alabanza', 'Lider Alabanza', 'Cantante alabanza'],
-  '/edit-home': ['Admin'],
-  '/song-manager': ['Admin', 'Musico Alabanza', 'Lider Alabanza', 'Cantante alabanza'],
-  '/filastore': ['Admin','Lider Fila Store','Fila Cafe'],
-  '/servidor-maestros': ['Admin', 'Maestra', 'Maestro', 'Lider Maestras', 'Lider Maestros'],
-  '/calendario-materiales': ['Admin', 'Maestra', 'Maestro', 'Lider Maestras', 'Lider Maestros'],
+  '/servidores-alabanza': ['Admin', 'Musico Alabanza', 'Lider Alabanza', 'Cantante alabanza', 'Pastor'],
+  '/edit-home': ['Admin','Transmisión','Lider Transmisión','Redes','Pastor'],
+  '/song-manager': ['Admin', 'Musico Alabanza', 'Lider Alabanza', 'Cantante alabanza', 'Pastor'],
+  '/filastore': ['Admin','Lider Fila Store','Fila Cafe', 'Pastor'],
+  '/servidor-maestros': ['Admin', 'Maestra', 'Maestro', 'Lider Maestras', 'Lider Maestros','Pastor'],
+  '/calendario-materiales': ['Admin', 'Maestra', 'Maestro', 'Lider Maestras', 'Lider Maestros','Pastor'],
   '/change-pass': [''], // Ruta pública, sin roles requeridos
   '/filastorecliente': [], // Ruta pública, sin roles requeridos
 };

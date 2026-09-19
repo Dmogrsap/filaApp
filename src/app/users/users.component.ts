@@ -33,7 +33,7 @@ export class UsersComponent implements OnInit {
 
   constructor(
     private userService: UsersService,
-    private rolesService: RolesService
+    private rolesService: RolesService,
   ) {
     this.refreshMode = 'reshape';
   }
@@ -46,7 +46,7 @@ export class UsersComponent implements OnInit {
       }));
 
       this.dataSourceUsers = normalizedUsers.sort((a, b) =>
-        a.Nombre.localeCompare(b.Nombre)
+        a.Nombre.localeCompare(b.Nombre),
       );
       this.loadIndicatorVisible = false;
       //console.log('DataSource', this.dataSourceUsers);
@@ -63,21 +63,29 @@ export class UsersComponent implements OnInit {
     });
 
     this.rolesService.getRoles().subscribe((result) => {
-      this.dataSourceRoles = result.sort((a, b) => a.Role.localeCompare(b.Role));
+      this.dataSourceRoles = result.sort((a, b) =>
+        a.Role.localeCompare(b.Role),
+      );
       //console.log('dataSourceRoles', this.dataSourceRoles);
     });
   }
 
   normalizeRole(role: any) {
     if (Array.isArray(role)) {
-      return role.filter((item) => typeof item === 'string').join(', ');
+      return role.filter((item) => typeof item === 'string');
     }
 
     if (typeof role === 'object' && role !== null) {
-      return role.Role || role.roleName || role.name || '';
+      const roleValue = role.Role || role.roleName || role.name || '';
+      return roleValue ? [roleValue] : [];
     }
 
-    return typeof role === 'string' ? role : '';
+    return typeof role === 'string'
+      ? role
+          .split(',')
+          .map((item) => item.trim())
+          .filter(Boolean)
+      : [];
   }
 
   normalizeRoleField(data: any) {
@@ -92,10 +100,10 @@ export class UsersComponent implements OnInit {
     return data;
   }
 
-  valueChanged(data: any) {
-    this.selectedUser = data.value;
-    //console.log("this.selectedEmployee",this.selectedEmployee)
-  }
+  // valueChanged(data: any) {
+  //   this.selectedUser = data.value;
+  //   //console.log("this.selectedEmployee",this.selectedEmployee)
+  // }
 
   getDisplayExpr(item: any) {
     if (!item) {
@@ -104,25 +112,30 @@ export class UsersComponent implements OnInit {
     return `$ ${item.Nombre}, `;
   }
 
-  getRoleValue(rowData: any) {
-    const role = rowData?.Role;
-    if (Array.isArray(role)) {
-      return role.join(', ');
-    }
-    if (typeof role === 'object' && role !== null) {
-      return role.Role || role.roleName || role.name || '';
-    }
-    return role || '';
-  }
+  // getRoleValue(rowData: any) {
+  //   const role = rowData?.Role;
+  //   if (Array.isArray(role)) {
+  //     return role.join(', ');
+  //   }
+  //   if (typeof role === 'object' && role !== null) {
+  //     return role.Role || role.roleName || role.name || '';
+  //   }
+  //   return role || '';
+  // }
 
-  calculateRoleFilterExpression(filterValue: any, selectedFilterOperation: string, target: any) {
+  calculateRoleFilterExpression(
+    filterValue: any,
+    selectedFilterOperation: string,
+    target: any,
+  ) {
     const roleValue = target;
     if (Array.isArray(roleValue)) {
       return roleValue.includes(filterValue);
     }
 
     if (typeof roleValue === 'object' && roleValue !== null) {
-      const value = roleValue.Role || roleValue.roleName || roleValue.name || '';
+      const value =
+        roleValue.Role || roleValue.roleName || roleValue.name || '';
       return value === filterValue;
     }
 
@@ -132,7 +145,7 @@ export class UsersComponent implements OnInit {
   onSelectionChanged(
     selectedRowKeys: any,
     cellInfo: any,
-    dropDownBoxComponent: any
+    dropDownBoxComponent: any,
   ) {
     cellInfo.value = selectedRowKeys[0];
     if (selectedRowKeys.length > 0) {
@@ -164,15 +177,26 @@ export class UsersComponent implements OnInit {
     }
 
     if (change.type === 'update') {
-      const id = typeof change.key === 'string' ? change.key : change.key?.id;
+      // const id = typeof change.key === 'string' ? change.key : change.key?.id;
 
-      if (!id) {
-        e.promise = Promise.reject(new Error('User id is missing'));
-        return;
-      }
+      // if (!id) {
+      //   e.promise = Promise.reject(new Error('User id is missing'));
+      //   return;
+      // }
 
-      e.promise = this.userService.updateUser(id, cleanData).then(() => {
-        this.showSaveMessage('User Updated Successfully!');
+      const cleanData = { ...change.data };
+      Object.keys(cleanData).forEach((key) => {
+        if (/^__.*__$/.test(key)) {
+          delete cleanData[key];
+        }
+      });
+
+      this.userService.updateUser(change.key.id, cleanData).then(() => {
+        Swal.fire({
+          icon: 'success',
+          title: 'success',
+          text: 'User Updated Successfully!',
+        });
         this.reloadUsers();
       });
     }
@@ -194,9 +218,8 @@ export class UsersComponent implements OnInit {
 
   private reloadUsers(): void {
     this.userService.getUsers().subscribe((result) => {
-      this.dataSourceUsers = result
-        .map((user: any) => ({ ...user, Role: this.normalizeRole(user.Role) }))
-        .sort((a, b) => a.Nombre.localeCompare(b.Nombre));
+      this.dataSourceUsers = result;
+      this.loadIndicatorVisible = false;
     });
   }
 

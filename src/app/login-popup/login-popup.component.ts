@@ -89,7 +89,7 @@ export class LoginPopupComponent {
     });
   }
 
-  private loginUser(user: any): void {
+  public loginUser(user: any): void {
     // console.log('Procesando login para usuario:', user);
     // console.log('Campo Role:', user.Role);
     // console.log('Tipo de Role:', typeof user.Role);

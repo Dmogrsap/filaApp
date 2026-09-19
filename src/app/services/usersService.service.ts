@@ -23,7 +23,10 @@ export class UsersService {
   // private apiUrl = environment.baseUrl;
   private apiUrlFire = environment.firebase;
 
-  constructor(private http: HttpClient, private firestore: Firestore) {}
+  constructor(
+    private http: HttpClient,
+    private firestore: Firestore,
+  ) {}
 
   getUsers(): Observable<any[]> {
     const usersRef = collection(this.firestore, 'Usuarios');
@@ -36,9 +39,10 @@ export class UsersService {
   }
 
   updateUser(id: string, user: any): Promise<void> {
-  const userRef = doc(this.firestore, 'Usuarios', id);
-  return updateDoc(userRef, user);
-}
+    const userRef = doc(this.firestore, 'Usuarios', id);
+    return updateDoc(userRef, user);
+  }
+
 
   deleteUser(id: string): Promise<void> {
     const userRef = doc(this.firestore, 'Usuarios', id);
@@ -46,7 +50,7 @@ export class UsersService {
   }
 
   getRefresh$() {
-    this._refresh$;
+    return this._refresh$;
   }
 
   // getUsers(): Observable<IResultObject[]> {
