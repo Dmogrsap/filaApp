@@ -128,9 +128,10 @@
     
     <div class="sidebar-user">
       <mat-icon>account_circle</mat-icon>
-      <br> <br>
-      <div *ngIf="isLoged ==false" >{{'Bienvenido Hermano' }}</div>
-      <div *ngIf="isLoged">{{'Bienvenido: '+ userName }}</div>
+      <div class="welcome-message">
+        <div *ngIf="isLoged ==false">{{'Bienvenido Hermano' }}</div>
+        <div *ngIf="isLoged">{{'Bienvenido: '+ userName }}</div>
+      </div>
 
          <!-- Botón de salir -->
       <div class="logout-container" *ngIf="isLoged">

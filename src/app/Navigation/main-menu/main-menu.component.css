@@ -239,6 +239,17 @@
   color: #fff;
   font-weight: 500;
 }
+.welcome-message {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.logout-container {
+  flex: 0 0 auto;
+}
+.logout-btn {
+  margin: 0;
+}
 #main {
   margin-left: 0;
   transition: margin-left 0.3s, padding 0.3s;
@@ -272,6 +283,20 @@
   .sidebar-user {
     padding: 12px 14px;
     font-size: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .sidebar-user > mat-icon {
+    flex: 0 0 auto;
+  }
+
+  .logout-container {
+    flex: 1 1 100%;
+  }
+
+  .logout-btn {
+    width: 100%;
+    justify-content: center;
   }
 
   .login-link {
