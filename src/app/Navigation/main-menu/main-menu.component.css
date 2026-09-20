@@ -92,6 +92,9 @@
   left: 0;
   width: 260px;
   height: 100vh;
+  height: 100dvh;
+  min-height: 0;
+  box-sizing: border-box;
   background: #111;
   color: #fff;
   transform: translateX(-100%);
@@ -233,6 +236,7 @@
   align-items: center;
   gap: 10px;
   padding: 18px 20px;
+  flex: 0 0 auto;
   background: #181818;
   border-top: 1px solid #222;
   font-size: 1.1em;
@@ -325,6 +329,10 @@
   #sidebar {
     width: 100vw;
     max-width: 100%;
+  }
+
+  .sidebar-user {
+    padding-bottom: calc(14px + env(safe-area-inset-bottom));
   }
 
   .sidebar-header {
