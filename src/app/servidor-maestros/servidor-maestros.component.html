@@ -7,7 +7,7 @@
     width="50"
     [visible]="loadIndicatorVisible"
   ></dx-load-indicator>
-  
+
   <dx-data-grid
     [dataSource]="datasourceServidores"
     [remoteOperations]="true"
@@ -49,7 +49,7 @@
             editorType="dxTextBox"
             [editorOptions]="{
               placeholder: 'Nombre',
-              showClearButton: true
+              showClearButton: true,
             }"
           ></dxi-item>
 
@@ -58,7 +58,7 @@
             editorType="dxTextBox"
             [editorOptions]="{
               placeholder: 'Apellido',
-              showClearButton: true
+              showClearButton: true,
             }"
           ></dxi-item>
 
@@ -67,24 +67,27 @@
             editorType="dxTextBox"
             [editorOptions]="{
               placeholder: 'Email',
-              showClearButton: true
+              showClearButton: true,
             }"
           ></dxi-item>
 
-          <!-- <dxi-item
+          <dxi-item
             dataField="Role"
-            editorType="dxLookup"
+            editorType="dxTagBox"
             [editorOptions]="{
-              dataSource: datasourceRolesLider,
+              dataSource: dataSourceRoles,
               displayExpr: 'Role',
-              valueExpr: 'Role'
+              valueExpr: 'Role',
+              searchEnabled: true,
+              showSelectionControls: true,
+              selectionMode: 'multiple',
             }"
           >
             <dxo-label text="Role"> </dxo-label>
             <dxi-validation-rule type="required" message="Role Required">
             </dxi-validation-rule>
-          </dxi-item> -->
-
+          </dxi-item>
+            
           <dxi-item
             dataField="isActive"
             editorType="dxSwitch"
@@ -94,7 +97,7 @@
               valueExpr: 'active',
               switchedOnText: 'Yes',
               switchedOffText: 'NO',
-              width: 80
+              width: 80,
             }"
           >
             <dxo-label location="left"></dxo-label>
