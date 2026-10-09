@@ -13,6 +13,7 @@ interface CartItem {
   leche?: string;
   escencia?: string;
   azucar?: string;
+  dobleShot?: string;
 }
 
 @Component({
@@ -55,6 +56,7 @@ export class FilastoreclienteComponent implements OnInit {
     vainilla:true,
     azucar: true,
     splenda: true,
+    dobleShot: true,
   };
   private insumosSub: any;
 
@@ -91,6 +93,7 @@ export class FilastoreclienteComponent implements OnInit {
             : item.llevaEscencia === false ? false
             : (item.Nombre === 'Cappuccino' || item.Nombre === 'Latte' || item.Nombre === 'Latte a las rocas'),
           llevaAzucar:  item.llevaAzucar  === false ? false : true,
+          llevashot:   item.llevashot   === false ? false : true,
           // Campos del pedido del cliente (siempre vacíos al inicio)
           leche: '',
           azucar: '',
@@ -227,6 +230,7 @@ export class FilastoreclienteComponent implements OnInit {
     const seleccionadoLeche = cafe.leche;
     const seleccionadoEscencia = cafe.escencia;
     const seleccionadoAzucar = cafe.azucar;
+    const seleccionadoDobleShot = cafe.dobleShot;
 
     // Buscar si ya existe en el carrito con las mismas opciones
     const existeEnCarrito = this.carrito.findIndex(
@@ -234,7 +238,8 @@ export class FilastoreclienteComponent implements OnInit {
         item.Nombre === cafe.Nombre &&
         item.leche === seleccionadoLeche &&
         item.escencia === seleccionadoEscencia &&
-        item.azucar === seleccionadoAzucar,
+        item.azucar === seleccionadoAzucar &&
+        item.dobleShot === seleccionadoDobleShot
     );
 
     if (existeEnCarrito > -1) {
@@ -251,6 +256,7 @@ export class FilastoreclienteComponent implements OnInit {
         leche: seleccionadoLeche,
         escencia: seleccionadoEscencia,
         azucar: seleccionadoAzucar,
+        dobleShot: seleccionadoDobleShot,
       });
     }
 
