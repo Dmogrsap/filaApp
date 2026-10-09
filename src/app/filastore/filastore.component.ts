@@ -100,6 +100,7 @@ export class FilastoreComponent implements OnInit, OnDestroy {
     vainilla: true,
     azucar: true,
     splenda: true,
+    dobleShot: true,
   };
   private insumosSub: any;
 
@@ -494,27 +495,6 @@ export class FilastoreComponent implements OnInit, OnDestroy {
           throw err;
         }
       })();
-
-      // e.promise = this.cafeService
-      //   .updateCoffeeList(id, cleanData)
-      //   .then(() => {
-      //     Swal.fire({
-      //       icon: 'success',
-      //       title: 'Éxito',
-      //       text: '¡Café actualizado correctamente!',
-      //     });
-      //     this.previewImagenUrl = null;
-      //     this.currentUploadedUrl = null;
-      //   })
-      //   .catch((err) => {
-      //     console.error('Error al actualizar café:', err);
-      //     Swal.fire(
-      //       'Error',
-      //       'No se pudo actualizar el café: ' + (err?.message || err),
-      //       'error',
-      //     );
-      //     throw err;
-      //   });
     }
 
     if (change.type === 'remove') {
@@ -540,25 +520,6 @@ export class FilastoreComponent implements OnInit, OnDestroy {
           console.error(err);
           Swal.fire('Error', 'No se pudo eliminar el café', 'error');
           throw err;
-
-          // e.promise =  this.cafeService
-          //   .deleteCoffeeList(id)
-          //   .then(() => {
-          //     Swal.fire({
-          //       icon: 'success',
-          //       title: 'Éxito',
-          //       text: 'Café eliminado',
-          //     });
-          //   })
-          //   .catch((err) => {
-          //     console.error('Error al eliminar café:', err);
-          //     Swal.fire(
-          //       'Error',
-          //       'No se pudo eliminar el café: ' + (err?.message || err),
-          //       'error',
-          //     );
-          //     throw err;
-          //   });
         }
       })();
     }

@@ -1062,6 +1062,23 @@
                 >
               </div>
             </div>
+
+            <!-- Extras -->
+            <div class="col-md-4 mb-4">
+              <h4>☕ Extras</h4>
+              <div class="d-flex align-items-center my-3">
+                <dx-switch
+                  [(value)]="insumos.dobleShot"
+                  switchedOnText="Sí"
+                  switchedOffText="No"
+                  [width]="75"
+                  (onValueChanged)="guardarInsumos()"
+                ></dx-switch>
+                <span class="ms-3 fw-bold" style="margin-left: 10px"
+                  >Doble shot</span
+                >
+              </div>
+            </div>
           </div>
         </div>
       </div>
