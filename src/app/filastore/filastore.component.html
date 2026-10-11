@@ -603,9 +603,7 @@
 
       <!-- Popup para crear pedido manual desde el grid de Cafes -->
 
-      <div
-        *ngIf="items.Nombre == 'Añadir Nuevos Cafes'"
-        class="container-fluid"
+      <div *ngIf="items.Nombre == 'Añadir Nuevos Cafes'" class="container-fluid"
       >
         <br />
         <div class="row" style="width: 101%">
@@ -769,7 +767,7 @@
                   </dxi-item>
 
                   <dxi-item
-                    dataField="llevaDobleShot"
+                    dataField="llevaDobleshot"
                     editorType="dxSwitch"
                     [editorOptions]="{
                       switchedOnText: 'Sí',
@@ -948,6 +946,18 @@
 
             <dxi-column
               alignment="center"
+              dataField="llevaDobleshot"
+              caption="Doble Shot"
+              [width]="95"
+              cellTemplate="badgeDobleshotTemplate"
+            ></dxi-column>
+            <div *dxTemplate="let cell of 'badgeDobleshotTemplate'">
+              <span *ngIf="cell.value !== false" class="badge bg-danger text-white">⚡ Sí</span>
+              <span *ngIf="cell.value === false" class="badge bg-secondary text-white">✕ No</span>
+            </div>  
+
+            <dxi-column
+              alignment="center"
               dataField="Status"
               caption="Existencia"
               [width]="95"
@@ -1077,7 +1087,7 @@
 
             <!-- Extras -->
             <div class="col-md-4 mb-4">
-              <h4>☕ Extras</h4>
+              <h4>☕ Doble Shot</h4>
               <div class="d-flex align-items-center my-3">
                 <dx-switch
                   [(value)]="insumos.dobleShot"

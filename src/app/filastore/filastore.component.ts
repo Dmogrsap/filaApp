@@ -314,6 +314,7 @@ export class FilastoreComponent implements OnInit, OnDestroy {
     e.data.llevaLeche = this.insumos?.normal ?? e.data.llevaLeche ?? true;
     e.data.llevaEscencia = this.hasAnyEssence() ? e.data.llevaEscencia ?? true : false;
     e.data.llevaAzucar = this.insumos?.azucar ?? e.data.llevaAzucar ?? true;
+    e.data.llevaDobleshot = this.insumos?.dobleShot ?? e.data.llevaDobleshot ?? true;
   }
 
   // Devuelve true si existe al menos una esencia disponible en `insumos`
@@ -566,6 +567,7 @@ export class FilastoreComponent implements OnInit, OnDestroy {
         leche: cleanData.leche || 'No',
         escencia: cleanData.escencia || '',
         azucar: cleanData.azucar ? 'Si' : 'No',
+        dobleShot: cleanData.dobleShot ? 'Si' : 'No',
         notas: cleanData.notas || '',
       };
 
@@ -612,6 +614,7 @@ export class FilastoreComponent implements OnInit, OnDestroy {
         cleanData.leche ||
         cleanData.escencia ||
         cleanData.azucar !== undefined ||
+        cleanData.dobleShot ||
         cleanData.notas
       ) {
         const pedidoActual = this.pedidos.find((p: any) => p.id === id);
@@ -638,6 +641,12 @@ export class FilastoreComponent implements OnInit, OnDestroy {
                   ? 'Si'
                   : 'No'
                 : pedidoActual?.detalles?.[0]?.azucar || 'No',
+            dobleShot:
+              cleanData.dobleShot !== undefined
+                ? cleanData.dobleShot
+                  ? 'Si'
+                  : 'No'
+                : pedidoActual?.detalles?.[0]?.dobleShot || 'No',
             notas: cleanData.notas || pedidoActual?.detalles?.[0]?.notas || '',
           },
         ];

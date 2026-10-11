@@ -95,7 +95,7 @@
                   </select>
                 </div>
 
-                <div class="option-group" *ngIf="insumos.dobleShot && cafe.llevaDobleShot">
+                <div class="option-group" *ngIf="insumos.dobleShot && cafe.llevaDobleshot">
                   <label>Doble Shot</label>
                   <select [(ngModel)]="cafe.dobleShot" name="dobleShot_{{ i }}">
                     <option value="">No</option>
@@ -215,7 +215,7 @@
                     <option *ngIf="insumos.splenda" value="splenda">Splenda</option>
                   </select>
                 </div>
-                <div class="option-group" *ngIf="insumos.dobleShot && cafe.llevaDobleShot">
+                <div class="option-group" *ngIf="insumos.dobleShot && cafe.llevaDobleshot">
                   <label>Doble Shot</label>
                   <select [(ngModel)]="cafe.dobleShot" name="dobleShot_cold_{{ i }}">
                     <option value="">No</option>

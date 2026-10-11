@@ -93,7 +93,7 @@ export class FilastoreclienteComponent implements OnInit {
             : item.llevaEscencia === false ? false
             : (item.Nombre === 'Cappuccino' || item.Nombre === 'Latte' || item.Nombre === 'Latte a las rocas'),
           llevaAzucar:  item.llevaAzucar  === false ? false : true,
-          llevaDobleShot: item.llevaDobleShot === false ? false : true,
+          llevaDobleshot: item.llevaDobleshot === false ? false : true,
           // Campos del pedido del cliente (siempre vacíos al inicio)
           leche: '',
           azucar: '',
