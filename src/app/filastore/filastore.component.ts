@@ -209,7 +209,7 @@ export class FilastoreComponent implements OnInit, OnDestroy {
     return detalles
       .map(
         (d) =>
-          `${d.cantidad}x ${d.nombre} (leche: ${d.leche || 'No lleva'} / Escencia: ${d.escencia || 'No lleva'} / Azucar: ${d.azucar || 'No lleva'})`,
+          `${d.cantidad}x ${d.nombre} (leche: ${d.leche || 'No lleva'} / Escencia: ${d.escencia || 'No lleva'} / Azucar: ${d.azucar || 'No lleva'} / Doble shot: ${d.dobleShot === 'si' ? 'Sí' : 'No'})`,
       )
       .join('\n');
   }
