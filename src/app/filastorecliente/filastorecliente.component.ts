@@ -93,11 +93,12 @@ export class FilastoreclienteComponent implements OnInit {
             : item.llevaEscencia === false ? false
             : (item.Nombre === 'Cappuccino' || item.Nombre === 'Latte' || item.Nombre === 'Latte a las rocas'),
           llevaAzucar:  item.llevaAzucar  === false ? false : true,
-          llevashot:   item.llevashot   === false ? false : true,
+          llevaDobleShot: item.llevaDobleShot === false ? false : true,
           // Campos del pedido del cliente (siempre vacíos al inicio)
           leche: '',
           azucar: '',
           escencia: '',
+          dobleShot: '',
           cantidad: 1,
         }));
 
@@ -325,6 +326,7 @@ export class FilastoreclienteComponent implements OnInit {
       escencia: item.escencia,
       leche: item.leche,
       azucar: item.azucar,
+      dobleShot: item.dobleShot,
     }));
 
     // Calcular cantidad total

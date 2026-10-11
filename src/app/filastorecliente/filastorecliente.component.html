@@ -94,6 +94,15 @@
                     <option *ngIf="insumos.splenda" value="splenda">Splenda</option>
                   </select>
                 </div>
+
+                <div class="option-group" *ngIf="insumos.dobleShot && cafe.llevaDobleShot">
+                  <label>Doble Shot</label>
+                  <select [(ngModel)]="cafe.dobleShot" name="dobleShot_{{ i }}">
+                    <option value="">Sin Doble Shot</option>
+                    <option value="si">Sí</option>
+                  </select>
+                </div>
+
               </div>
               <div class="product-footer">
                 <span class="product-price">${{ cafe.Precio || 0 }}</span>
@@ -206,6 +215,13 @@
                     <option *ngIf="insumos.splenda" value="splenda">Splenda</option>
                   </select>
                 </div>
+                <div class="option-group" *ngIf="insumos.dobleShot && cafe.llevaDobleShot">
+                  <label>Doble Shot</label>
+                  <select [(ngModel)]="cafe.dobleShot" name="dobleShot_cold_{{ i }}">
+                    <option value="">No</option>
+                    <option value="si">Sí</option>
+                  </select>
+                </div>
               </div>
               <div class="product-footer">
                 <span class="product-price">${{ cafe.Precio || 0 }}</span>
@@ -275,6 +291,7 @@
               <span *ngIf="item.escencia">Esencia: {{ item.escencia }} · </span>
               <span *ngIf="item.leche">leche: {{ item.leche }} · </span>
               <span *ngIf="item.azucar">azucar: {{ item.azucar }} · </span>
+              <span *ngIf="item.dobleShot">dobleShot: {{ item.dobleShot }} · </span>
             </p>
           </div>
           <div class="item-price">

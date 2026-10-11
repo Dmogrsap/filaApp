@@ -768,6 +768,18 @@
                     <dxo-label location="left" text="🍬 ¿Lleva Azúcar?"></dxo-label>
                   </dxi-item>
 
+                  <dxi-item
+                    dataField="llevaDobleShot"
+                    editorType="dxSwitch"
+                    [editorOptions]="{
+                      switchedOnText: 'Sí',
+                      switchedOffText: 'No',
+                      width: 75,
+                    }"
+                  >
+                    <dxo-label location="left" text="⚡ ¿Lleva Doble Shot?"></dxo-label>
+                  </dxi-item>
+
                   <!-- Subidor de Imagen -->
                   <dxi-item template="imageUploaderTemplate">
                     <dxo-label [visible]="false"></dxo-label>
