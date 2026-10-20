@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { EdithomeService } from 'src/app/services/edithome.service';
-import { FirebaseStorageService } from 'src/app/services/image.service';
+import { SupabaseStorageService } from 'src/app/services/supabase-storage.service';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -11,8 +11,6 @@ import Swal from 'sweetalert2';
 })
 export class HomeComponent implements OnInit {
 
-  public datasoureimages: any | null = null;
-  public images: any [] = [];
   public hayTransmisionEnVivo = true;
   public dataSourceEnvivo: any [] = [];
   public facebookLiveUrl: SafeResourceUrl;
@@ -21,13 +19,12 @@ export class HomeComponent implements OnInit {
   //   { type: 'image', url: 'assets/img/filaIntro1.jpg' },
   //   { type: 'image', url: 'assets/img/filaIntro.jpg' }
   // ];
-  public itemsGaleria: any [] = [];
+  public itemsGaleria: Array<{ url: string }> = [];
 
   constructor(
-    private FirebaseStorageService: FirebaseStorageService,
     private sanitizer: DomSanitizer,
     private edithomeService: EdithomeService,
-    private supabaseStorage: FirebaseStorageService,
+    private supabaseStorage: SupabaseStorageService,
   ) {
     this.facebookLiveUrl = this.sanitizer.bypassSecurityTrustResourceUrl(
       `https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(this.facebookLiveVideoLink)}&show_text=false&autoplay=true&width=1280&height=720`
@@ -65,19 +62,16 @@ export class HomeComponent implements OnInit {
       },
     }); 
 
-    this.edithomeService.getimageshome().subscribe({
-      next: (data) => {
-        this.images = data;
-        for (const image of this.images) {
-          this.itemsGaleria.push({ url: image.url });
-        }
-        console.log('Imágenes cargadas desde Supabase:', this.itemsGaleria);
-      },
-      error: (error) => {
-        console.error('Error al obtener las imágenes:', error);
-      }
-    });
+    this.cargarImagenesGaleria();
+  }
 
+  private async cargarImagenesGaleria(): Promise<void> {
+    try {
+      const images = await this.supabaseStorage.listFiles('home');
+      this.itemsGaleria = images.map((image) => ({ url: image.url }));
+    } catch (error) {
+      console.error('Error al cargar imágenes de Supabase (images/home):', error);
+    }
   }
 
   actualizarUrlVideo(link: string): void {
