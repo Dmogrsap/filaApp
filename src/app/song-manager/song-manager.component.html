@@ -367,22 +367,25 @@
 
 <!-- PREVISUALIZACION -->
 <div *ngIf="loadIndicatorVisible === false" class="preview">
-  <div class="column">
+  <div class="column song-preview-column">
     <h3>Previsualización</h3>
-    <div style="display: flex; gap: 20px">
-      <div style="flex: 1">
+    <div *ngIf="selectedSong; else selectSongPrompt" class="song-preview-content">
+      <section class="song-preview-section song-preview-title">
         <h4>Título</h4>
         <pre>{{ previewTitulo }}</pre>
-      </div>
-      <div style="flex: 1">
+      </section>
+      <section class="song-preview-section">
         <h4>Acordes</h4>
         <pre>{{ previewAcordes }}</pre>
-      </div>
-      <div style="flex: 1">
+      </section>
+      <section class="song-preview-section song-preview-lyrics">
         <h4>Letra</h4>
         <pre>{{ previewLetra }}</pre>
-      </div>
+      </section>
     </div>
+    <ng-template #selectSongPrompt>
+      <p class="song-preview-empty">Selecciona una canción de la tabla para ver su contenido.</p>
+    </ng-template>
   </div>
 
   <div class="column" style="width: 30%">
