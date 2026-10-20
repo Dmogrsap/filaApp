@@ -727,6 +727,17 @@
                   >
                     <dxo-label location="left" text="Disponibilidad"></dxo-label>
                   </dxi-item>
+
+                  <dxi-item
+                    dataField="distintivo"
+                    editorType="dxSelectBox"
+                    [editorOptions]="{
+                      items: ['Ninguno', 'Nuevo', 'De temporada'],
+                      placeholder: 'Selecciona un distintivo',
+                    }"
+                  >
+                    <dxo-label text="Distintivo"></dxo-label>
+                  </dxi-item>
                 </dxi-item>
 
                 <!-- Columna 2: Personalizaciones y Fotografía -->
@@ -882,6 +893,11 @@
               alignment="center"
               dataField="Nombre"
               caption="Nombre"
+            ></dxi-column>
+            <dxi-column
+              alignment="center"
+              dataField="distintivo"
+              caption="Distintivo"
             ></dxi-column>
             <dxi-column
               alignment="center"

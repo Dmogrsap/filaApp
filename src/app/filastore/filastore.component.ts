@@ -33,6 +33,7 @@ export class FilastoreComponent implements OnInit, OnDestroy {
     item.llevaEscencia = item.llevaEscencia === true ? true : false;
     item.llevaAzucar = item.llevaAzucar === false ? false : true;
     item.Status = item.Status === false ? false : true;
+    item.distintivo = item.distintivo || 'Ninguno';
     return item;
   }
 
@@ -316,6 +317,7 @@ export class FilastoreComponent implements OnInit, OnDestroy {
     e.data.llevaEscencia = this.hasAnyEssence() ? e.data.llevaEscencia ?? true : false;
     e.data.llevaAzucar = this.insumos?.azucar ?? e.data.llevaAzucar ?? true;
     e.data.llevaDobleshot = this.insumos?.dobleShot ?? e.data.llevaDobleshot ?? true;
+    e.data.distintivo = e.data.distintivo || 'Ninguno';
   }
 
   // Devuelve true si existe al menos una esencia disponible en `insumos`

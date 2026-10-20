@@ -51,6 +51,14 @@
               <div class="product-badge">
                 {{ cafe["Tipo de Cafe"] || cafe.tipo || "Café" }}
               </div>
+              <div
+                *ngIf="cafe.distintivo && cafe.distintivo !== 'Ninguno'"
+                class="product-season-badge"
+                [class.product-season-badge-new]="cafe.distintivo === 'Nuevo'"
+                [class.product-season-badge-seasonal]="cafe.distintivo === 'De temporada'"
+              >
+                {{ cafe.distintivo === 'Nuevo' ? '✨ Nuevo' : '🍂 De temporada' }}
+              </div>
             </div>
 
             <!-- Información del Producto -->
@@ -172,6 +180,14 @@
               </div>
               <div class="product-badge">
                 {{ cafe["Tipo de Cafe"] || cafe.tipo || "Café" }}
+              </div>
+              <div
+                *ngIf="cafe.distintivo && cafe.distintivo !== 'Ninguno'"
+                class="product-season-badge"
+                [class.product-season-badge-new]="cafe.distintivo === 'Nuevo'"
+                [class.product-season-badge-seasonal]="cafe.distintivo === 'De temporada'"
+              >
+                {{ cafe.distintivo === 'Nuevo' ? '✨ Nuevo' : '🍂 De temporada' }}
               </div>
             </div>
 
