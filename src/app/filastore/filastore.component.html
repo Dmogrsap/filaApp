@@ -123,6 +123,7 @@
                         'Avellana',
                         'Moka',
                         'Vainilla',
+                        'Pumpkin Spice',
                       ],
                     }"
                   >
@@ -981,7 +982,7 @@
 
           <div class="row mt-3">
             <!-- Tipos de Leche -->
-            <div class="col-md-4 mb-4">
+            <div class="col-12 col-sm-6 col-md-3 mb-4">
               <h4>🥛 Leches</h4>
               <div class="d-flex align-items-center my-3">
                 <dx-switch
@@ -1013,7 +1014,7 @@
             </div>
 
             <!-- Esencias -->
-            <div class="col-md-4 mb-4">
+            <div class="col-12 col-sm-6 col-md-3 mb-4">
               <h4>🧪 Esencias</h4>
               <div class="d-flex align-items-center my-3">
                 <dx-switch
@@ -1060,10 +1061,19 @@
                   >Vainilla</span
                 >
               </div>
+              <div class="d-flex align-items-center my-3">
+                <dx-switch
+                  [(value)]="insumos.pumpkinSpice"
+                  (onValueChanged)="guardarInsumos()"
+                ></dx-switch>
+                <span class="ms-3 fw-bold" style="margin-left: 10px"
+                  >Pumpkin Spice</span
+                >
+              </div>
             </div>
 
             <!-- Azúcar -->
-            <div class="col-md-4 mb-4">
+            <div class="col-12 col-sm-6 col-md-3 mb-4">
               <h4>🍬 Azúcar</h4>
               <div class="d-flex align-items-center my-3">
                 <dx-switch
@@ -1086,7 +1096,7 @@
             </div>
 
             <!-- Extras -->
-            <div class="col-md-4 mb-4">
+            <div class="col-12 col-sm-6 col-md-3 mb-4">
               <h4>☕ Doble Shot</h4>
               <div class="d-flex align-items-center my-3">
                 <dx-switch

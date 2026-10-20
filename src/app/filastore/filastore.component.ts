@@ -98,6 +98,7 @@ export class FilastoreComponent implements OnInit, OnDestroy {
     avellana: true,
     moka: true,
     vainilla: true,
+    pumpkinSpice: true,
     azucar: true,
     splenda: true,
     dobleShot: true,

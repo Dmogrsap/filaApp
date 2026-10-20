@@ -54,6 +54,7 @@ export class FilastoreclienteComponent implements OnInit {
     avellana: true,
     moka:true,
     vainilla:true,
+    pumpkinSpice: true,
     azucar: true,
     splenda: true,
     dobleShot: true,
