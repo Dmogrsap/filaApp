@@ -83,6 +83,7 @@ export class FilastoreclienteComponent implements OnInit {
             item.producto ||
             item.title ||
             'Café',
+          distintivo: item.distintivo || item.Distintivo || 'Ninguno',
           imagen:
             item.imagen ||
             item.Imagen ||

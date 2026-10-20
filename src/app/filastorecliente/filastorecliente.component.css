@@ -728,6 +728,23 @@ body, html {
     height: 160px;
   }
 
+  .product-season-badge {
+    display: block;
+    top: 18px;
+    right: auto;
+    bottom: auto;
+    left: -40px;
+    width: 145px;
+    max-width: none;
+    padding: 6px 0;
+    border-radius: 0;
+    text-align: center;
+    font-size: 10px;
+    transform: rotate(-45deg);
+    transform-origin: center;
+    z-index: 2;
+  }
+
   .product-name {
     font-size: 14px;
   }
@@ -754,13 +771,18 @@ body, html {
   }
 
   .product-season-badge {
-    top: auto;
+    top: 18px;
     right: auto;
-    bottom: 8px;
-    left: 8px;
-    max-width: calc(100% - 16px);
-    padding: 5px 8px;
+    bottom: auto;
+    left: -40px;
+    width: 145px;
+    max-width: none;
+    padding: 6px 0;
+    border-radius: 0;
+    text-align: center;
     font-size: 10px;
+    transform: rotate(-45deg);
+    transform-origin: center;
   }
 
   .products-header {
