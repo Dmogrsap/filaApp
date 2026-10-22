@@ -261,16 +261,7 @@
                         showClearButton: true
                       }"
                     ></dxi-item>
-
-                    <!-- <dxi-item
-            dataField="Email"
-            editorType="dxTextBox"
-            [editorOptions]="{
-              placeholder: 'Email',
-              showClearButton: true
-            }"
-          ></dxi-item> -->
-
+                    
                     <dxi-item
                       dataField="tocaDomingo"
                       editorType="dxSwitch"
@@ -370,6 +361,13 @@
   <div class="column song-preview-column">
     <h3>Previsualización</h3>
     <div *ngIf="selectedSong; else selectSongPrompt" class="song-preview-content">
+      <button
+        type="button"
+        class="download-pdf-button"
+        (click)="downloadSongPdf()"
+      >
+        Descargar letra y acordes en PDF
+      </button>
       <section class="song-preview-section song-preview-title">
         <h4>Título</h4>
         <pre>{{ previewTitulo }}</pre>
@@ -388,7 +386,7 @@
     </ng-template>
   </div>
 
-  <div class="column" style="width: 30%">
+  <div class="column sunday-songs-column" style="width: 30%">
     <h3>Canciones para el domingo</h3>
     <div>
       <dx-data-grid
@@ -396,6 +394,7 @@
         [showBorders]="true"
         [columnAutoWidth]="false"
         [rowAlternationEnabled]="true"
+        (onRowClick)="onRowClick($event)"
         height="auto"
         width="100%"
         style="max-width: 580px"

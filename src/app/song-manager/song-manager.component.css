@@ -84,6 +84,22 @@ flex-grow: 1;              /* Permite que la columna crezca para ocupar espacio 
   gap: 14px;
 }
 
+.download-pdf-button {
+  grid-column: 1 / -1;
+  justify-self: end;
+  padding: 10px 14px;
+  border: 0;
+  border-radius: 6px;
+  background: #1e3a5f;
+  color: #fff;
+  font: inherit;
+  cursor: pointer;
+}
+
+.download-pdf-button:hover {
+  background: #294d78;
+}
+
 .song-preview-section {
   min-width: 0;
   padding: 14px;
@@ -143,6 +159,15 @@ flex-grow: 1;              /* Permite que la columna crezca para ocupar espacio 
   .preview > .column {
     width: 100% !important;
     min-width: 0;
+    order: 3;
+  }
+
+  .preview > .sunday-songs-column {
+    order: 1;
+  }
+
+  .preview > .song-preview-column {
+    order: 2;
   }
 
   .song-preview-content {
