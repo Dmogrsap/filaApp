@@ -10,6 +10,7 @@
   
   <dx-data-grid
     [dataSource]="dataSourceUsers"
+    keyExpr="id"
     [showBorders]="true"
     [showColumnLines]="true"
     [showRowLines]="true"
@@ -29,6 +30,7 @@
 
     <dxo-editing
       mode="popup"
+      [refreshMode]="refreshMode"
       [allowAdding]="true"
       [allowUpdating]="true"
       [allowDeleting]="true"

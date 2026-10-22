@@ -4,7 +4,6 @@ import { DataType } from 'devextreme/common';
 import Swal from 'sweetalert2';
 import { UsersService } from '../services/usersService.service';
 import { RolesService } from '../services/rolesService.service';
-import { AuthServiceService } from '../services/auth-service.service';
 
 @Component({
   selector: 'app-song-manager',
@@ -34,8 +33,7 @@ export class SongManagerComponent implements OnInit {
   constructor(
     private songService: SongManagerService,
     private userService: UsersService,
-    private rolesService: RolesService,
-    private authService: AuthServiceService
+    private rolesService: RolesService
   ) {}
 
   ngOnInit() {
@@ -234,31 +232,6 @@ export class SongManagerComponent implements OnInit {
             title: 'success',
             text: 'Músico actualizado exitosamente!',
           });
-          // Proteger el estado del usuario logueado
-          const currentUserName = this.authService.currentUser?.nombre;
-          if (currentUserName && cleanData.Nombre === currentUserName) {
-            // Si se editó el usuario logueado, actualizar roles si cambiaron
-            if (cleanData.Role) {
-              let roleNames: string[] = [];
-              if (typeof cleanData.Role === 'string') {
-                roleNames = cleanData.Role
-                  .split(',')
-                  .map((role: string) => role.trim())
-                  .filter((role: string) => role);
-              } else if (Array.isArray(cleanData.Role)) {
-                roleNames = cleanData.Role.filter(
-                  (role: any) => typeof role === 'string'
-                );
-              } else if (typeof cleanData.Role === 'object') {
-                roleNames = [
-                  cleanData.Role.roleName ||
-                    cleanData.Role.name ||
-                    cleanData.Role.Nombre,
-                ].filter((role: any) => role);
-              }
-              this.authService.setUserRoles(roleNames);
-            }
-          }
         });
       }
     } else if (change.type === 'remove') {
