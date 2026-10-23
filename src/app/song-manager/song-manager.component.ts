@@ -1,4 +1,4 @@
-import { Component, OnInit, SimpleChanges } from '@angular/core';
+import { Component, HostListener, OnInit, SimpleChanges } from '@angular/core';
 import { SongManagerService } from '../services/song-manager.service';
 import { DataType } from 'devextreme/common';
 import Swal from 'sweetalert2';
@@ -30,6 +30,8 @@ export class SongManagerComponent implements OnInit {
   public selectedMusicos: any[] = [];
   public selectedMusicosIds: any[] = [];
   public popupVisible = false;
+  public songEditorPopupWidth = 700;
+  public songEditorPopupHeight = 525;
 
   constructor(
     private songService: SongManagerService,
@@ -39,6 +41,8 @@ export class SongManagerComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.updateSongEditorPopupSize();
+
     this.dataSourceMenusTab = [
       { Nombre: 'Add/ Edit Canciones' },
       { Nombre: 'Add/ Edit Musicos' },
@@ -81,6 +85,18 @@ export class SongManagerComponent implements OnInit {
       }
       console.log('datasourceRolesAlabanza', this.datasourceRolesAlabanza);
     });
+  }
+
+  @HostListener('window:resize')
+  updateSongEditorPopupSize(): void {
+    if (window.innerWidth <= 768) {
+      this.songEditorPopupWidth = Math.round(window.innerWidth * 0.92);
+      this.songEditorPopupHeight = Math.round(window.innerHeight * 0.82);
+      return;
+    }
+
+    this.songEditorPopupWidth = 700;
+    this.songEditorPopupHeight = 525;
   }
 
   private updateUsersData(users: any[]) {
