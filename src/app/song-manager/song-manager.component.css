@@ -169,6 +169,10 @@ flex-grow: 1;              /* Permite que la columna crezca para ocupar espacio 
     order: 2;
   }
 
+  .preview > .musicians-column {
+    order: 3;
+  }
+
   .song-preview-content {
     grid-template-columns: minmax(0, 1fr);
   }

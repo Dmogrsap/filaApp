@@ -143,60 +143,62 @@ export class SongManagerComponent implements OnInit {
 
   // Guardar cambios en canciones
   onSavingSongs(e: any) {
-    const change = e.changes[0];
-    if (change) {
-      e.cancel = false;
+    const change = e.changes?.[0];
+    if (!change) {
+      return;
     }
-    if (change.type == 'insert') {
-      const cleanData = { ...change.data };
-      Object.keys(cleanData).forEach((key) => {
-        if (/^__.*__$/.test(key)) {
-          delete cleanData[key];
-        }
-      });
-      this.songService.addSongs(cleanData).then((docRef) => {
-        Swal.fire({
+
+    const cleanData = { ...(change.data || {}) };
+    Object.keys(cleanData).forEach((key) => {
+      if (/^__.*__$/.test(key)) {
+        delete cleanData[key];
+      }
+    });
+
+    const id =
+      typeof change.key === 'string' ? change.key : change.key?.id;
+    let savePromise: Promise<unknown>;
+    let successMessage: string;
+
+    if (change.type === 'insert') {
+      savePromise = this.songService.addSongs(cleanData);
+      successMessage = 'Canción agregada correctamente.';
+    } else if (change.type === 'update') {
+      if (!id) {
+        throw new Error('La canción no tiene un identificador válido.');
+      }
+      savePromise = this.songService.updateSongs(id, cleanData);
+      successMessage = 'Canción actualizada correctamente.';
+    } else if (change.type === 'remove') {
+      if (!id) {
+        throw new Error('La canción no tiene un identificador válido.');
+      }
+      savePromise = this.songService.deleteSongs(id);
+      successMessage = 'Canción eliminada correctamente.';
+    } else {
+      throw new Error(`Tipo de cambio de canción no soportado: ${change.type}`);
+    }
+
+    e.cancel = true;
+    e.promise = savePromise
+      .then(() => {
+        e.component.cancelEditData();
+        return Swal.fire({
           icon: 'success',
-          title: 'success',
-          text: 'Song Added Successfully!',
+          title: 'Guardado',
+          text: successMessage,
         });
-        this.songService.getSongs().subscribe((result) => {
-          this.datasourceSongs = result.sort((a, b) =>
-            a.Nombre.localeCompare(b.Nombre)
-          );
-        });
-      });
-    }
-    if (change.type == 'update') {
-      const cleanData = { ...change.data };
-      Object.keys(cleanData).forEach((key) => {
-        if (/^__.*__$/.test(key)) {
-          delete cleanData[key];
-        }
-      });
-      this.songService.updateSongs(change.key.id, cleanData).then(() => {
-        Swal.fire({
-          icon: 'success',
-          title: 'success',
-          text: 'Song Updated Successfully!',
+      })
+      .catch((error: unknown) => {
+        console.error('Error al guardar la canción en Firestore:', error);
+        const message =
+          error instanceof Error ? ` ${error.message}` : '';
+        return Swal.fire({
+          icon: 'error',
+          title: 'No se pudo guardar',
+          text: `Verifica tu conexión e inténtalo de nuevo.${message}`,
         });
       });
-    }
-    if (change.type == 'remove') {
-      const id = typeof change.key === 'string' ? change.key : change.key.id;
-      this.songService.deleteSongs(id).then(() => {
-        Swal.fire({
-          icon: 'success',
-          title: 'success',
-          text: 'Song Eliminated',
-        });
-        this.songService.getSongs().subscribe((result) => {
-          this.datasourceSongs = result.sort((a, b) =>
-            a.Nombre.localeCompare(b.Nombre)
-          );
-        });
-      });
-    }
   }
 
   // Guardar cambios en músicos/servidores

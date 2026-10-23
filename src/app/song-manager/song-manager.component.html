@@ -30,6 +30,7 @@
           >
             <dx-data-grid
               [dataSource]="datasourceSongs"
+              [keyExpr]="'id'"
               [remoteOperations]="true"
               [showBorders]="true"
               [showColumnLines]="true"
@@ -184,8 +185,8 @@
                 [width]="100"
               ></dxo-search-panel>
               <dxi-column dataField="Titulo" caption="Titulo"> </dxi-column>
-              <!-- <dxi-column dataField="Acordes" caption="Acordes"> </dxi-column>
-              <dxi-column dataField="Letra" caption="Letra"> </dxi-column> -->
+              <dxi-column dataField="Acordes" [visible]="false"></dxi-column>
+              <dxi-column dataField="Letra" [visible]="false"></dxi-column>
               <!-- <dxi-column
                 dataField="isActive"
                 caption="is Active"
@@ -404,7 +405,7 @@
     </div>
   </div>
 
-  <div class="column">
+  <div class="column musicians-column">
     <h3>Músicos que tocan el domingo</h3>
 
     <dx-popup
