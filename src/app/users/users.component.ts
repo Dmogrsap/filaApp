@@ -169,41 +169,57 @@ export class UsersComponent implements OnInit {
     });
     this.normalizeRoleField(cleanData);
 
-    let savePromise: Promise<unknown>;
     if (change.type === 'insert') {
-      savePromise = this.userService.addUser(cleanData).then(() => {
+      e.promise = this.userService.addUser(cleanData).then(() => {
         this.showSaveMessage('User Added Successfully!');
+        this.reloadUsers();
       });
-    } else if (change.type === 'update') {
-      const id = typeof change.key === 'string' ? change.key : change.key?.id;
-      if (!id) {
-        savePromise = Promise.reject(new Error('User id is missing'));
-      } else {
-        savePromise = this.userService.updateUser(id, cleanData).then(() => {
-          this.showSaveMessage('User Updated Successfully!');
-        });
-      }
-    } else if (change.type === 'remove') {
-      const id = typeof change.key === 'string' ? change.key : change.key?.id;
-
-      if (!id) {
-        savePromise = Promise.reject(new Error('User id is missing'));
-      } else {
-        savePromise = this.userService.deleteUser(id).then(() => {
-          this.showSaveMessage('User Eliminated');
-        });
-      }
-    } else {
-      return;
     }
 
-    e.promise = savePromise.catch((error) => {
-      Swal.fire({
-        icon: 'error',
-        title: 'No se pudo guardar',
-        text: 'Ocurrió un error al guardar los cambios del usuario. Inténtalo de nuevo.',
+    if (change.type === 'update') {
+      // const id = typeof change.key === 'string' ? change.key : change.key?.id;
+
+      // if (!id) {
+      //   e.promise = Promise.reject(new Error('User id is missing'));
+      //   return;
+      // }
+
+      const cleanData = { ...change.data };
+      Object.keys(cleanData).forEach((key) => {
+        if (/^__.*__$/.test(key)) {
+          delete cleanData[key];
+        }
       });
-      throw error;
+
+      this.userService.updateUser(change.key.id, cleanData).then(() => {
+        Swal.fire({
+          icon: 'success',
+          title: 'success',
+          text: 'User Updated Successfully!',
+        });
+        this.reloadUsers();
+      });
+    }
+
+    if (change.type === 'remove') {
+      const id = typeof change.key === 'string' ? change.key : change.key?.id;
+
+      if (!id) {
+        e.promise = Promise.reject(new Error('User id is missing'));
+        return;
+      }
+
+      e.promise = this.userService.deleteUser(id).then(() => {
+        this.showSaveMessage('User Eliminated');
+        this.reloadUsers();
+      });
+    }
+  }
+
+  private reloadUsers(): void {
+    this.userService.getUsers().subscribe((result) => {
+      this.dataSourceUsers = result;
+      this.loadIndicatorVisible = false;
     });
   }
 

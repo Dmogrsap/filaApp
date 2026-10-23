@@ -159,7 +159,6 @@ flex-grow: 1;              /* Permite que la columna crezca para ocupar espacio 
   .preview > .column {
     width: 100% !important;
     min-width: 0;
-    order: 3;
   }
 
   .preview > .sunday-songs-column {
