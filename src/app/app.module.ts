@@ -38,6 +38,7 @@ import { ChangePassComponent } from './change-pass/change-pass.component';
 import { FilastoreComponent } from './filastore/filastore.component';
 import { FilastoreclienteComponent } from './filastorecliente/filastorecliente.component';
 import { AddcoffeComponent } from './addcoffe/addcoffe.component';
+import { MultimediaComponent } from './multimedia/multimedia.component';
 
 
 @NgModule({
@@ -60,6 +61,7 @@ import { AddcoffeComponent } from './addcoffe/addcoffe.component';
     FilastoreComponent,
     FilastoreclienteComponent,
     AddcoffeComponent,
+    MultimediaComponent,
 
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],

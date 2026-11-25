@@ -19,6 +19,7 @@ import { ChangePassComponent } from './change-pass/change-pass.component';
 import { FilastoreComponent } from './filastore/filastore.component';
 import { FilastoreclienteComponent } from './filastorecliente/filastorecliente.component';
 import { AddcoffeComponent } from './addcoffe/addcoffe.component';
+import { MultimediaComponent } from './multimedia/multimedia.component';
 
 const routes: Routes = [
   {
@@ -56,7 +57,7 @@ const routes: Routes = [
       {
         path: 'lideres',
         component: LideresComponent,
-        data: { title: 'Lideres', url: 'lideres', allowedRoles: ['Admin'] },
+        data: { title: 'Lideres', url: 'lideres', allowedRoles: ['Admin', 'Pastor'] },
         canActivate: [RoleGuard],
       },
 
@@ -73,7 +74,7 @@ const routes: Routes = [
         data: {
           title: 'Servidores Alabanza',
           url: '/servidores-alabanza',
-          allowedRoles: ['Admin', 'Musico Alabanza', 'Lider Alabanza'],
+          allowedRoles: ['Admin', 'Musico Alabanza', 'Lider Alabanza','Pastor'],
         },
         canActivate: [RoleGuard],
       },
@@ -84,7 +85,7 @@ const routes: Routes = [
         data: {
           title: 'Edicion de Portada',
           url: '/edit-home',
-          allowedRoles: ['Admin','Transmision','Redes'],
+          allowedRoles: ['Admin','Transmision','Redes','Pastor'],
         },
         canActivate: [RoleGuard],
       },
@@ -100,6 +101,7 @@ const routes: Routes = [
             'Musico Alabanza',
             'Lider Alabanza',
             'Cantante alabanza',
+            'Pastor'
           ],
         },
         canActivate: [RoleGuard],
@@ -117,6 +119,7 @@ const routes: Routes = [
             'Maestro',
             'Lider Maestras',
             'Lider Maestros',
+            'Pastor'
           ],
         },
         canActivate: [RoleGuard],
@@ -134,6 +137,7 @@ const routes: Routes = [
             'Maestro',
             'Lider Maestras',
             'Lider Maestros',
+            'Pastor'
           ],
         },
         canActivate: [RoleGuard],
@@ -161,6 +165,7 @@ const routes: Routes = [
             'Admin',
             'Lider Fila Store',
             'Fila Cafe',
+            'Pastor'
           ],
         },
         canActivate: [RoleGuard],
@@ -186,6 +191,17 @@ const routes: Routes = [
             'Lider Fila Store',
             'Fila Cafe',
           ],
+        },
+        canActivate: [RoleGuard],
+      },
+
+      {
+        path: 'multimedia',
+        component: MultimediaComponent,
+        data: {
+          title: 'Multimedia',
+          url: '/multimedia',
+          allowedRoles: ['Admin','Multimedia','Lider Multimedia', 'Pastor'],
         },
         canActivate: [RoleGuard],
       },

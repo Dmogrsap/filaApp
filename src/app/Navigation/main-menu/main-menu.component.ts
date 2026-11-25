@@ -34,6 +34,7 @@ const ROUTE_ROLES: { [key: string]: string[] } = {
   '/calendario-materiales': ['Admin', 'Maestra', 'Maestro', 'Lider Maestras', 'Lider Maestros','Pastor'],
   '/change-pass': [''], // Ruta pública, sin roles requeridos
   '/filastorecliente': [], // Ruta pública, sin roles requeridos
+  '/multimedia': ['Admin','Multimedia','Lider Multimedia', 'Pastor'],
 };
 
 @Component({
