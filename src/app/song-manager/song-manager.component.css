@@ -52,6 +52,11 @@
   ::ng-deep .dx-popup-wrapper .dx-texteditor-input {
     font-size: 16px !important;
   }
+
+  ::ng-deep .song-editor-popup .dx-popup-content {
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
 }
 
 .preview {

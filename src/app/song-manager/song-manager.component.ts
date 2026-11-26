@@ -5,6 +5,7 @@ import {
   OnInit,
   SimpleChanges,
 } from '@angular/core';
+import { PositionConfig } from 'devextreme/animation/position';
 import { SongManagerService } from '../services/song-manager.service';
 import { DataType } from 'devextreme/common';
 import Swal from 'sweetalert2';
@@ -38,6 +39,11 @@ export class SongManagerComponent implements OnInit, OnDestroy {
   public popupVisible = false;
   public songEditorPopupWidth = 700;
   public songEditorPopupHeight = 525;
+  public songEditorPopupPosition: PositionConfig = {
+    my: 'center',
+    at: 'center',
+    of: 'window',
+  };
   private readonly onVisualViewportResize = () =>
     this.updateSongEditorPopupSize();
 
@@ -114,11 +120,22 @@ export class SongManagerComponent implements OnInit, OnDestroy {
     if (viewportWidth <= 768) {
       this.songEditorPopupWidth = Math.round(viewportWidth * 0.92);
       this.songEditorPopupHeight = Math.round(viewportHeight * 0.82);
+      this.songEditorPopupPosition = {
+        my: 'top',
+        at: 'top',
+        of: 'window',
+        offset: { x: 0, y: 8 },
+      };
       return;
     }
 
     this.songEditorPopupWidth = 700;
     this.songEditorPopupHeight = 525;
+    this.songEditorPopupPosition = {
+      my: 'center',
+      at: 'center',
+      of: 'window',
+    };
   }
 
   private updateUsersData(users: any[]) {
