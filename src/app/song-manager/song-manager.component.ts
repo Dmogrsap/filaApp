@@ -1,4 +1,10 @@
-import { Component, HostListener, OnInit, SimpleChanges } from '@angular/core';
+import {
+  Component,
+  HostListener,
+  OnDestroy,
+  OnInit,
+  SimpleChanges,
+} from '@angular/core';
 import { SongManagerService } from '../services/song-manager.service';
 import { DataType } from 'devextreme/common';
 import Swal from 'sweetalert2';
@@ -11,7 +17,7 @@ import { AuthServiceService } from '../services/auth-service.service';
   templateUrl: './song-manager.component.html',
   styleUrls: ['./song-manager.component.css'],
 })
-export class SongManagerComponent implements OnInit {
+export class SongManagerComponent implements OnInit, OnDestroy {
   selectedSong?: any;
   previewText: string = '';
   showOnlySunday: boolean = false;
@@ -32,6 +38,8 @@ export class SongManagerComponent implements OnInit {
   public popupVisible = false;
   public songEditorPopupWidth = 700;
   public songEditorPopupHeight = 525;
+  private readonly onVisualViewportResize = () =>
+    this.updateSongEditorPopupSize();
 
   constructor(
     private songService: SongManagerService,
@@ -42,6 +50,10 @@ export class SongManagerComponent implements OnInit {
 
   ngOnInit() {
     this.updateSongEditorPopupSize();
+    window.visualViewport?.addEventListener(
+      'resize',
+      this.onVisualViewportResize
+    );
 
     this.dataSourceMenusTab = [
       { Nombre: 'Add/ Edit Canciones' },
@@ -87,11 +99,21 @@ export class SongManagerComponent implements OnInit {
     });
   }
 
+  ngOnDestroy(): void {
+    window.visualViewport?.removeEventListener(
+      'resize',
+      this.onVisualViewportResize
+    );
+  }
+
   @HostListener('window:resize')
   updateSongEditorPopupSize(): void {
-    if (window.innerWidth <= 768) {
-      this.songEditorPopupWidth = Math.round(window.innerWidth * 0.92);
-      this.songEditorPopupHeight = Math.round(window.innerHeight * 0.82);
+    const viewportWidth = window.visualViewport?.width ?? window.innerWidth;
+    const viewportHeight = window.visualViewport?.height ?? window.innerHeight;
+
+    if (viewportWidth <= 768) {
+      this.songEditorPopupWidth = Math.round(viewportWidth * 0.92);
+      this.songEditorPopupHeight = Math.round(viewportHeight * 0.82);
       return;
     }
 
