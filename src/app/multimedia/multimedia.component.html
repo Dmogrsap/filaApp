@@ -4,15 +4,32 @@
     <div class="gallery-title-wrapper">
       <div class="gallery-title-row">
         <h2 class="gallery-title">Archivos Multimedia</h2>
-        <span class="gallery-badge">{{ images.length }} {{ images.length === 1 ? 'archivo' : 'archivos' }}</span>
+        <span class="gallery-badge">{{ visibleFiles.length }} {{ visibleFiles.length === 1 ? 'archivo' : 'archivos' }}</span>
       </div>
       <p class="gallery-subtitle">
-        Gestiona imágenes, PDF y PowerPoint almacenados en Supabase Storage (<strong>images/multimedia</strong>).
+        Organiza imágenes y documentos por categoría.
       </p>
     </div>
 
     <div class="gallery-actions">
-      <!-- Input oculto para subir archivo nuevo -->
+      <label class="upload-category">
+        <span>Guardar en</span>
+        <select
+          [value]="uploadCategory"
+          (change)="onUploadCategoryChange($event)"
+          aria-label="Categoría del archivo nuevo"
+        >
+          <option value="" disabled>Elige categoría</option>
+          <option
+            *ngFor="let category of categories"
+            [value]="category.value"
+            [disabled]="category.value === 'sin-categoria'"
+          >
+            {{ category.label }}
+          </option>
+        </select>
+      </label>
+
       <input
         #fileInput
         type="file"
@@ -20,7 +37,6 @@
         (change)="onFileSelected($event)"
         style="display: none"
       />
-      <!-- Input oculto para reemplazar archivo existente -->
       <input
         #replaceFileInput
         type="file"
@@ -32,7 +48,7 @@
       <button
         type="button"
         class="btn-upload"
-        [disabled]="uploading || loading"
+        [disabled]="uploading || loading || !uploadCategory"
         (click)="fileInput.click()"
       >
         <dx-load-indicator
@@ -48,17 +64,60 @@
         type="button"
         class="btn-refresh"
         [disabled]="loading"
-        (click)="loadImages()"
-        title="Recargar imágenes"
+        (click)="loadFiles()"
+        title="Recargar archivos"
       >
         <span>🔄</span>
       </button>
     </div>
   </div>
 
-  <!-- Tabla DataGrid de imágenes -->
+  <div class="media-filters">
+    <div class="media-type-tabs" role="group" aria-label="Filtrar por tipo">
+      <button
+        type="button"
+        [class.active]="mediaTypeFilter === 'all'"
+        (click)="mediaTypeFilter = 'all'"
+      >
+        Todo
+      </button>
+      <button
+        type="button"
+        [class.active]="mediaTypeFilter === 'images'"
+        (click)="mediaTypeFilter = 'images'"
+      >
+        Imágenes
+      </button>
+      <button
+        type="button"
+        [class.active]="mediaTypeFilter === 'documents'"
+        (click)="mediaTypeFilter = 'documents'"
+      >
+        Archivos
+      </button>
+    </div>
+
+    <label class="category-filter">
+      <span>Categoría</span>
+      <select
+        [value]="categoryFilter"
+        (change)="onCategoryFilterChange($event)"
+        aria-label="Filtrar por categoría"
+      >
+        <option value="all">Todas las categorías</option>
+        <option *ngFor="let category of categories" [value]="category.value">
+          {{ category.label }}
+        </option>
+      </select>
+    </label>
+  </div>
+
+  <div *ngIf="!loading && visibleFiles.length === 0" class="empty-state">
+    No hay archivos que coincidan con los filtros seleccionados.
+  </div>
+
   <dx-data-grid
-    [dataSource]="images"
+    [dataSource]="visibleFiles"
     [showBorders]="true"
     [rowAlternationEnabled]="true"
     [columnAutoWidth]="true"
@@ -69,7 +128,7 @@
     <dxo-search-panel
       [visible]="true"
       [highlightCaseSensitive]="false"
-      placeholder="Buscar por nombre..."
+      placeholder="Buscar archivos..."
     ></dxo-search-panel>
 
     <dxi-column
@@ -80,6 +139,12 @@
     ></dxi-column>
 
     <dxi-column dataField="name" caption="Nombre del archivo"></dxi-column>
+
+    <dxi-column
+      caption="Categoría"
+      cellTemplate="categoryCell"
+      [width]="150"
+    ></dxi-column>
 
     <dxi-column
       dataField="path"
@@ -103,7 +168,6 @@
       alignment="center"
     ></dxi-column>
 
-    <!-- Template para la celda de la imagen -->
     <div *dxTemplate="let row of 'imageCell'" class="img-preview-cell">
       <ng-container *ngIf="isImage(row?.data); else documentPreview">
         <img
@@ -122,12 +186,16 @@
       </ng-template>
     </div>
 
-    <!-- Template para la ruta -->
+    <div *dxTemplate="let row of 'categoryCell'">
+      <span class="category-badge">
+        {{ getCategoryLabel(row?.data?.category) }}
+      </span>
+    </div>
+
     <div *dxTemplate="let row of 'pathCell'">
       <code class="path-chip">{{ row?.data?.path }}</code>
     </div>
 
-    <!-- Template para las acciones -->
     <div *dxTemplate="let row of 'actionsCell'" class="action-buttons">
       <button
         *ngIf="isImage(row?.data)"
@@ -143,7 +211,7 @@
         type="button"
         class="action-btn btn-replace"
         (click)="openReplaceDialog(row?.data, replaceFileInput)"
-        title="Reemplazar por otra imagen"
+        title="Reemplazar archivo"
       >
         <span class="action-icon" aria-hidden="true">🔄</span>
         <span class="action-label">Cambiar</span>

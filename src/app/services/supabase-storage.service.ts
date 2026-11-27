@@ -12,6 +12,14 @@ import {
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { environment } from 'src/environments/environment';
 
+type StorageFile = {
+  path: string;
+  url: string;
+  name?: string;
+  created_at?: string | null;
+  contentType?: string;
+};
+
 @Injectable({ providedIn: 'root' })
 export class SupabaseStorageService {
   private supabase: SupabaseClient;
@@ -78,8 +86,20 @@ export class SupabaseStorageService {
   ): Promise<
     { path: string; url: string; name?: string; created_at?: string | null }[]
   > {
+    return this.listFolderFiles(prefix, false);
+  }
+
+  async listFilesRecursively(
+    prefix = 'coffee',
+  ): Promise<StorageFile[]> {
+    return this.listFolderFiles(prefix, true);
+  }
+
+  private async listFolderFiles(
+    prefix: string,
+    recursive: boolean,
+  ): Promise<StorageFile[]> {
     try {
-      // list objects under prefix
       const { data, error } = await this.supabase.storage
         .from(this.bucket)
         .list(prefix, {
@@ -89,8 +109,13 @@ export class SupabaseStorageService {
         });
       if (error) throw error;
 
-      const items = await Promise.all(
-        (data || []).map(async (it: any) => {
+        const entries = data || [];
+        const files = entries.filter((entry: any) => entry.id !== null);
+        const folders = recursive
+          ? entries.filter((entry: any) => entry.id === null)
+          : [];
+        const items: StorageFile[] = await Promise.all(
+          files.map(async (it: any) => {
           const fullPath = `${prefix}/${it.name}`;
           const publicRes: any = this.supabase.storage
             .from(this.bucket)
@@ -101,10 +126,16 @@ export class SupabaseStorageService {
             url,
             name: it.name,
             created_at: it.updated_at ?? null,
+            contentType: it.metadata?.mimetype,
           };
         }),
       );
-      return items;
+      const nestedItems = await Promise.all(
+        folders.map((folder: any) =>
+          this.listFolderFiles(`${prefix}/${folder.name}`, true),
+        ),
+      );
+      return [...items, ...nestedItems.flat()];
     } catch (err) {
       console.error('Supabase listFiles error', err);
       throw err;

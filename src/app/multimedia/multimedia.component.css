@@ -59,6 +59,90 @@
   display: flex;
   align-items: center;
   gap: 10px;
+  flex-wrap: wrap;
+}
+
+.upload-category,
+.category-filter {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #475569;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.upload-category select,
+.category-filter select {
+  min-width: 150px;
+  max-width: 100%;
+  padding: 9px 30px 9px 10px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #334155;
+  font: inherit;
+}
+
+.media-filters {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 16px;
+  padding: 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  background: #f8fafc;
+}
+
+.media-type-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.media-type-tabs button {
+  min-height: 38px;
+  padding: 8px 14px;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  background: transparent;
+  color: #475569;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.media-type-tabs button:hover {
+  background: #e2e8f0;
+}
+
+.media-type-tabs button.active {
+  border-color: #bfdbfe;
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+
+.category-badge {
+  display: inline-block;
+  max-width: 100%;
+  padding: 4px 9px;
+  border-radius: 999px;
+  background: #f1f5f9;
+  color: #475569;
+  font-size: 0.78rem;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.empty-state {
+  margin: 0 0 14px;
+  padding: 18px;
+  border: 1px dashed #cbd5e1;
+  border-radius: 8px;
+  color: #64748b;
+  text-align: center;
 }
 
 .btn-upload {
@@ -343,6 +427,52 @@
     margin-bottom: 20px;
   }
 
+  .gallery-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .upload-category {
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .upload-category select {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .gallery-actions .btn-upload,
+  .gallery-actions .btn-refresh {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .media-filters {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 10px;
+  }
+
+  .media-type-tabs {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .media-type-tabs button {
+    padding: 8px 5px;
+  }
+
+  .category-filter {
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .category-filter select {
+    flex: 1;
+    min-width: 0;
+  }
+
   .action-buttons {
     gap: 4px;
   }
@@ -357,16 +487,6 @@
     flex-direction: column;
     align-items: stretch;
     gap: 14px;
-  }
-
-  .gallery-actions {
-    width: 100%;
-    justify-content: space-between;
-  }
-
-  .btn-upload {
-    flex: 1;
-    justify-content: center;
   }
 
   .live-card {

@@ -2,6 +2,9 @@ import { Component } from '@angular/core';
 import Swal from 'sweetalert2';
 import { SupabaseStorageService } from '../services/supabase-storage.service';
 
+type MediaCategory = 'predicacion' | 'anuncios' | 'dominical' | 'fondos' | 'sin-categoria';
+type MediaTypeFilter = 'all' | 'images' | 'documents';
+
 @Component({
   selector: 'app-multimedia',
   templateUrl: './multimedia.component.html',
@@ -12,6 +15,16 @@ export class MultimediaComponent {
   public uploading = false;
   public loading = false;
   public images: any[] = [];
+  public mediaTypeFilter: MediaTypeFilter = 'all';
+  public categoryFilter: MediaCategory | 'all' = 'all';
+  public uploadCategory: MediaCategory | '' = '';
+  public readonly categories: { value: MediaCategory; label: string }[] = [
+    { value: 'predicacion', label: 'Predicación' },
+    { value: 'anuncios', label: 'Anuncios' },
+    { value: 'dominical', label: 'Dominical' },
+    { value: 'fondos', label: 'Fondos' },
+    { value: 'sin-categoria', label: 'Sin categoría' },
+  ];
   public imageToReplace: any = null;
   public selectedImage: any;
   public popupVisible = false;
@@ -20,12 +33,18 @@ export class MultimediaComponent {
   constructor(private supabaseStorage: SupabaseStorageService) {}
 
   ngOnInit(): void {
-    this.loadImages();
+    this.loadFiles();
   }
 
   async onFileSelected(event: any) {
     const file: File | undefined = event.target.files?.[0];
     if (!file) return;
+
+    if (!this.uploadCategory || this.uploadCategory === 'sin-categoria') {
+      Swal.fire('Selecciona una categoría', 'Elige dónde guardar el archivo.', 'warning');
+      event.target.value = '';
+      return;
+    }
 
     if (!this.isSupportedFile(file)) {
       Swal.fire(
@@ -39,12 +58,15 @@ export class MultimediaComponent {
 
     try {
       this.uploading = true;
-      await this.supabaseStorage.uploadFile(file, 'multimedia');
-      await this.loadImages();
+      await this.supabaseStorage.uploadFile(
+        file,
+        `multimedia/${this.uploadCategory}`,
+      );
+      await this.loadFiles();
       Swal.fire({
         icon: 'success',
         title: '¡Archivo subido!',
-        text: 'El archivo se guardó exitosamente en Supabase (images/multimedia).',
+        text: 'El archivo se guardó exitosamente en Supabase.',
         timer: 1600,
         showConfirmButton: false,
       });
@@ -61,11 +83,14 @@ export class MultimediaComponent {
     }
   }
 
-  async loadImages() {
+  async loadFiles() {
     try {
       this.loading = true;
-      // Listamos todas las imágenes dentro de la carpeta 'multimedia' del bucket 'images'
-      this.images = await this.supabaseStorage.listFiles('multimedia');
+      const files = await this.supabaseStorage.listFilesRecursively('multimedia');
+      this.images = files.map((file) => ({
+        ...file,
+        category: this.getCategoryFromPath(file.path),
+      }));
     } catch (err) {
       console.error('Error listing files from Supabase', err);
     } finally {
@@ -92,10 +117,10 @@ export class MultimediaComponent {
       await this.supabaseStorage.replaceFile(
         this.imageToReplace.path,
         file,
-        'multimedia',
+        this.getFolderForCategory(this.imageToReplace.category),
       );
       this.imageToReplace = null;
-      await this.loadImages();
+      await this.loadFiles();
       Swal.fire({
         icon: 'success',
         title: '¡Archivo reemplazado!',
@@ -120,6 +145,54 @@ export class MultimediaComponent {
     if (!this.isImage(image)) return;
     this.selectedImage = image;
     this.popupVisible = true;
+  }
+
+  get visibleFiles(): any[] {
+    return this.images.filter((file) => {
+      const matchesType =
+        this.mediaTypeFilter === 'all' ||
+        (this.mediaTypeFilter === 'images' && this.isImage(file)) ||
+        (this.mediaTypeFilter === 'documents' && !this.isImage(file));
+      const matchesCategory =
+        this.categoryFilter === 'all' ||
+        file.category === this.categoryFilter;
+      return matchesType && matchesCategory;
+    });
+  }
+
+  onUploadCategoryChange(event: Event): void {
+    const value = (event.target as HTMLSelectElement).value;
+    this.uploadCategory = this.isMediaCategory(value) ? value : '';
+  }
+
+  onCategoryFilterChange(event: Event): void {
+    const value = (event.target as HTMLSelectElement).value;
+    this.categoryFilter =
+      value === 'all' || this.isMediaCategory(value) ? value : 'all';
+  }
+
+  private isMediaCategory(value: string): value is MediaCategory {
+    return this.categories.some((category) => category.value === value);
+  }
+
+  getCategoryLabel(category: string | undefined): string {
+    return (
+      this.categories.find((option) => option.value === category)?.label ||
+      'Sin categoría'
+    );
+  }
+
+  private getCategoryFromPath(path: string): MediaCategory {
+    const pathCategory = path.split('/')[1];
+    return pathCategory && this.isMediaCategory(pathCategory)
+      ? pathCategory
+      : 'sin-categoria';
+  }
+
+  private getFolderForCategory(category: MediaCategory): string {
+    return category === 'sin-categoria'
+      ? 'multimedia'
+      : `multimedia/${category}`;
   }
 
   isSupportedFile(file: File): boolean {
@@ -252,8 +325,8 @@ export class MultimediaComponent {
     if (!image?.path) return;
 
     const result = await Swal.fire({
-      title: '¿Eliminar imagen?',
-      text: `Se eliminará permanentemente "${image.name || 'la imagen'}" de Supabase.`,
+      title: '¿Eliminar archivo?',
+      text: `Se eliminará permanentemente "${image.name || 'el archivo'}" de Supabase.`,
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#ef4444',
@@ -267,10 +340,10 @@ export class MultimediaComponent {
     try {
       this.loading = true;
       await this.supabaseStorage.deleteFile(image.path);
-      await this.loadImages();
+      await this.loadFiles();
       Swal.fire({
         icon: 'success',
-        title: 'Imagen eliminada',
+        title: 'Archivo eliminado',
         timer: 1400,
         showConfirmButton: false,
       });
