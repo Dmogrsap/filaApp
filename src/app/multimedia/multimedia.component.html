@@ -3,11 +3,11 @@
   <div class="gallery-card-header">
     <div class="gallery-title-wrapper">
       <div class="gallery-title-row">
-        <h2 class="gallery-title">Imágenes del Inicio</h2>
-        <span class="gallery-badge">{{ images.length }} {{ images.length === 1 ? 'imagen' : 'imágenes' }}</span>
+        <h2 class="gallery-title">Archivos Multimedia</h2>
+        <span class="gallery-badge">{{ images.length }} {{ images.length === 1 ? 'archivo' : 'archivos' }}</span>
       </div>
       <p class="gallery-subtitle">
-        Gestiona las imágenes almacenadas en Supabase Storage (<strong>images/multimedia</strong>).
+        Gestiona imágenes, PDF y PowerPoint almacenados en Supabase Storage (<strong>images/multimedia</strong>).
       </p>
     </div>
 
@@ -16,7 +16,7 @@
       <input
         #fileInput
         type="file"
-        accept="image/*"
+        accept="image/*,.pdf,.ppt,.pptx,application/pdf,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation"
         (change)="onFileSelected($event)"
         style="display: none"
       />
@@ -24,7 +24,7 @@
       <input
         #replaceFileInput
         type="file"
-        accept="image/*"
+        accept="image/*,.pdf,.ppt,.pptx,application/pdf,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation"
         (change)="onReplaceFileSelected($event)"
         style="display: none"
       />
@@ -41,7 +41,7 @@
           [height]="18"
         ></dx-load-indicator>
         <span *ngIf="!uploading" class="btn-icon">📤</span>
-        <span>{{ uploading ? 'Subiendo...' : 'Subir Imagen' }}</span>
+        <span>{{ uploading ? 'Subiendo...' : 'Subir Archivo' }}</span>
       </button>
 
       <button
@@ -99,19 +99,27 @@
     <dxi-column
       caption="Acciones"
       cellTemplate="actionsCell"
-      [width]="210"
+      [width]="300"
       alignment="center"
     ></dxi-column>
 
     <!-- Template para la celda de la imagen -->
     <div *dxTemplate="let row of 'imageCell'" class="img-preview-cell">
-      <img
-        [src]="row?.data?.url"
-        [alt]="row?.data?.name"
-        class="grid-thumbnail"
-        (click)="onPreview(row?.data)"
-        title="Clic para ampliar"
-      />
+      <ng-container *ngIf="isImage(row?.data); else documentPreview">
+        <img
+          [src]="row?.data?.url"
+          [alt]="row?.data?.name"
+          class="grid-thumbnail"
+          (click)="onPreview(row?.data)"
+          title="Clic para ampliar"
+        />
+      </ng-container>
+      <ng-template #documentPreview>
+        <div class="document-preview" [attr.aria-label]="getFileExtension(row?.data)">
+          <span class="document-icon" aria-hidden="true">📄</span>
+          <span>{{ getFileExtension(row?.data) }}</span>
+        </div>
+      </ng-template>
     </div>
 
     <!-- Template para la ruta -->
@@ -122,12 +130,14 @@
     <!-- Template para las acciones -->
     <div *dxTemplate="let row of 'actionsCell'" class="action-buttons">
       <button
+        *ngIf="isImage(row?.data)"
         type="button"
         class="action-btn btn-view"
         (click)="onPreview(row?.data)"
         title="Ver imagen completa"
       >
-        👁️ Ver
+        <span class="action-icon" aria-hidden="true">👁️</span>
+        <span class="action-label">Ver</span>
       </button>
       <button
         type="button"
@@ -135,7 +145,17 @@
         (click)="openReplaceDialog(row?.data, replaceFileInput)"
         title="Reemplazar por otra imagen"
       >
-        🔄 Cambiar
+        <span class="action-icon" aria-hidden="true">🔄</span>
+        <span class="action-label">Cambiar</span>
+      </button>
+      <button
+        type="button"
+        class="action-btn btn-download"
+        (click)="onDownload(row?.data)"
+        title="Descargar archivo"
+      >
+        <span class="action-icon" aria-hidden="true">⬇️</span>
+        <span class="action-label">Descargar</span>
       </button>
       <button
         type="button"
@@ -143,7 +163,7 @@
         (click)="onDelete(row?.data)"
         title="Eliminar de Supabase"
       >
-        🗑️
+        <span class="action-icon" aria-hidden="true">🗑️</span>
       </button>
     </div>
 

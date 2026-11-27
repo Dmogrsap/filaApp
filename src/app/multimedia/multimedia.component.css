@@ -126,6 +126,27 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
 }
 
+.document-preview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  width: 70px;
+  height: 52px;
+  box-sizing: border-box;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  background: #f8fafc;
+  color: #475569;
+  font-size: 0.65rem;
+  font-weight: 700;
+}
+
+.document-icon {
+  font-size: 1.2rem;
+}
+
 .path-chip {
   background-color: #f1f5f9;
   color: #475569;
@@ -140,17 +161,51 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  align-content: center;
+  flex-wrap: wrap;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
   gap: 6px;
 }
 
 .action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  flex: 0 1 auto;
+  min-width: 0;
+  max-width: 100%;
+  min-height: 30px;
+  box-sizing: border-box;
   border: 1px solid transparent;
   padding: 5px 10px;
   border-radius: 6px;
   font-size: 0.8rem;
   font-weight: 600;
+  line-height: 1.2;
+  white-space: normal;
+  overflow-wrap: anywhere;
   cursor: pointer;
   transition: all 0.2s ease;
+}
+
+.action-icon,
+.action-label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+}
+
+.action-icon {
+  flex: 0 0 auto;
+  line-height: 1;
+}
+
+.action-label {
+  overflow-wrap: anywhere;
 }
 
 .btn-view {
@@ -172,6 +227,17 @@
 .btn-replace:hover {
   background: #f1f5f9;
   border-color: #94a3b8;
+}
+
+.btn-download {
+  background: #ecfdf5;
+  color: #047857;
+  border-color: #a7f3d0;
+}
+
+.btn-download:hover {
+  background: #d1fae5;
+  border-color: #6ee7b7;
 }
 
 .btn-delete {
@@ -275,6 +341,16 @@
   .gallery-card {
     padding: 16px;
     margin-bottom: 20px;
+  }
+
+  .action-buttons {
+    gap: 4px;
+  }
+
+  .action-btn {
+    flex: 1 1 calc(50% - 4px);
+    min-height: 34px;
+    padding: 6px 8px;
   }
 
   .gallery-card-header {

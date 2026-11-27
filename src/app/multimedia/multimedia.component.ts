@@ -19,16 +19,18 @@ export class MultimediaComponent {
   /* --- Fin de variables --- */
   constructor(private supabaseStorage: SupabaseStorageService) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.loadImages();
+  }
 
   async onFileSelected(event: any) {
     const file: File | undefined = event.target.files?.[0];
     if (!file) return;
 
-    if (!file.type.startsWith('image/')) {
+    if (!this.isSupportedFile(file)) {
       Swal.fire(
         'Formato incorrecto',
-        'Por favor selecciona un archivo de imagen (PNG, JPG, etc.)',
+        'Selecciona una imagen, un archivo PDF o una presentación PowerPoint (PPT/PPTX).',
         'warning',
       );
       event.target.value = '';
@@ -41,8 +43,8 @@ export class MultimediaComponent {
       await this.loadImages();
       Swal.fire({
         icon: 'success',
-        title: '¡Imagen subida!',
-        text: 'La imagen se guardó exitosamente en Supabase (images/multimedia).',
+        title: '¡Archivo subido!',
+        text: 'El archivo se guardó exitosamente en Supabase (images/multimedia).',
         timer: 1600,
         showConfirmButton: false,
       });
@@ -75,10 +77,10 @@ export class MultimediaComponent {
     const file: File | undefined = event.target.files?.[0];
     if (!file || !this.imageToReplace) return;
 
-    if (!file.type.startsWith('image/')) {
+    if (!this.isSupportedFile(file)) {
       Swal.fire(
         'Formato incorrecto',
-        'Por favor selecciona un archivo de imagen válido',
+        'Selecciona una imagen, un archivo PDF o una presentación PowerPoint (PPT/PPTX).',
         'warning',
       );
       event.target.value = '';
@@ -96,8 +98,8 @@ export class MultimediaComponent {
       await this.loadImages();
       Swal.fire({
         icon: 'success',
-        title: '¡Imagen reemplazada!',
-        text: 'La imagen ha sido actualizada en Supabase con éxito.',
+        title: '¡Archivo reemplazado!',
+        text: 'El archivo ha sido actualizado en Supabase con éxito.',
         timer: 1600,
         showConfirmButton: false,
       });
@@ -115,13 +117,135 @@ export class MultimediaComponent {
   }
 
   onPreview(image: any) {
+    if (!this.isImage(image)) return;
     this.selectedImage = image;
     this.popupVisible = true;
+  }
+
+  isSupportedFile(file: File): boolean {
+    if (file.type.startsWith('image/')) return true;
+
+    const extension = file.name.split('.').pop()?.toLowerCase();
+    return ['pdf', 'ppt', 'pptx'].includes(extension || '');
+  }
+
+  isImage(file: any): boolean {
+    if (!file) return false;
+    if (file.contentType?.startsWith('image/')) return true;
+
+    const filename = file.name || file.path || '';
+    return /\.(avif|bmp|gif|jpe?g|png|svg|webp)$/i.test(filename);
+  }
+
+  getFileExtension(file: any): string {
+    const filename = file?.name || file?.path || '';
+    const extension = filename.split('.').pop();
+    return extension && extension !== filename
+      ? extension.toUpperCase()
+      : 'FILE';
   }
 
   openReplaceDialog(image: any, fileInput: HTMLInputElement) {
     this.imageToReplace = image;
     fileInput.click();
+  }
+
+  async onDownload(image: any) {
+    if (!image?.url) return;
+
+    try {
+      const response = await fetch(image.url);
+      if (!response.ok) {
+        throw new Error(`No se pudo descargar la imagen (${response.status})`);
+      }
+
+      const blob = await response.blob();
+      const originalName = image.name || 'imagen';
+      const dotIndex = originalName.lastIndexOf('.');
+      const nameWithoutExtension =
+        dotIndex > 0 ? originalName.substring(0, dotIndex) : originalName;
+      const mimeExtensions: Record<string, string> = {
+        'image/avif': 'avif',
+        'image/bmp': 'bmp',
+        'image/gif': 'gif',
+        'image/jpeg': 'jpg',
+        'image/png': 'png',
+        'image/svg+xml': 'svg',
+        'image/webp': 'webp',
+        'application/pdf': 'pdf',
+        'application/vnd.ms-powerpoint': 'ppt',
+        'application/vnd.openxmlformats-officedocument.presentationml.presentation':
+          'pptx',
+      };
+      const extension =
+        (dotIndex > 0 ? originalName.substring(dotIndex + 1).toLowerCase() : '') ||
+        mimeExtensions[blob.type] ||
+        'jpg';
+      const downloadName = `${nameWithoutExtension}.${extension}`;
+      const mimeTypes: Record<string, string> = {
+        jpg: 'image/jpeg',
+        jpeg: 'image/jpeg',
+        pdf: 'application/pdf',
+        ppt: 'application/vnd.ms-powerpoint',
+        pptx:
+          'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+      };
+      const mimeType = mimeTypes[extension] || blob.type || 'application/octet-stream';
+
+      const savePicker = (window as any).showSaveFilePicker;
+      if (typeof savePicker === 'function') {
+        try {
+          const handle = await savePicker({
+            suggestedName: downloadName,
+            types: [
+              {
+                description: `Archivo ${extension.toUpperCase()}`,
+                accept: {
+                  [mimeType]: [`.${extension}`],
+                },
+              },
+            ],
+          });
+          const writable = await handle.createWritable();
+          await writable.write(blob);
+          await writable.close();
+          return;
+        } catch (err: any) {
+          if (err?.name === 'AbortError') return;
+          throw err;
+        }
+      }
+
+      const result = await Swal.fire({
+        title: 'Nombre de descarga',
+        input: 'text',
+        inputValue: downloadName,
+        showCancelButton: true,
+        confirmButtonText: 'Descargar',
+        cancelButtonText: 'Cancelar',
+        inputValidator: (value) => (!value.trim() ? 'Ingresa un nombre válido' : undefined),
+      });
+      if (!result.isConfirmed) return;
+
+      const chosenName = result.value.trim();
+      const objectUrl = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = objectUrl;
+      link.download = chosenName.toLowerCase().endsWith(`.${extension}`)
+        ? chosenName
+        : `${chosenName}.${extension}`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(objectUrl);
+    } catch (err: any) {
+      console.error('Download error', err);
+      Swal.fire(
+        'Error',
+        err?.message || 'No se pudo descargar la imagen',
+        'error',
+      );
+    }
   }
 
   async onDelete(image: any) {
